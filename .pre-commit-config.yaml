@@ -8,9 +8,3 @@ repos:
     -   id: check-added-large-files
     -   id: check-merge-conflict
     -   id: pretty-format-json
--   repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.4.1
-    hooks:
-    -   id: commitizen
-    -   id: commitizen-branch
-        stages: [pre-push]

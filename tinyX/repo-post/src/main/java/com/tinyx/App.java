@@ -1,13 +1,20 @@
 package com.tinyx;
 
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
+
 /**
  * Hello world!
  *
  */
+@Path("/")
 public class App 
 {
-    public static void main( String[] args )
+    @GET
+    @Path("/test")
+    public Response test()
     {
-        System.out.println( "Hello World!" );
+        return Response.ok("Hello World").build();
     }
 }

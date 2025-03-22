@@ -43,7 +43,6 @@
   </dependencyManagement>
 
   <build>
-    <pluginManagement>
       <plugins>
         <plugin>
           <groupId>${quarkus.platform.group-id}</groupId>
@@ -70,7 +69,6 @@
           </configuration>
         </plugin>
       </plugins>
-    </pluginManagement>
   </build>
 
 </project>

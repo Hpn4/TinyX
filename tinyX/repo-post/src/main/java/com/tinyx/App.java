@@ -8,13 +8,7 @@ import jakarta.ws.rs.core.Response;
  * Hello world!
  *
  */
-@Path("/")
-public class App 
+public class App
 {
-    @GET
-    @Path("/test")
-    public Response test()
-    {
-        return Response.ok("Hello World").build();
-    }
+    public static void main( String[] args ) {}
 }

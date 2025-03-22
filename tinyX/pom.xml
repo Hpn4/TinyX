@@ -6,20 +6,23 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
-    <compiler-plugin.version>3.11.0</compiler-plugin.version>
-    <java.version>17</java.version>
-    <lombok.version>1.18.28</lombok.version>
-    <maven.compiler.release>17</maven.compiler.release>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-neo4j.version>3.0.3</quarkus-neo4j.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
+    <java.version>17</java.version>
+
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>3.0.4.Final</quarkus.platform.version>
-    <skipITs>true</skipITs>
+
+    <compiler-plugin.version>3.11.0</compiler-plugin.version>
     <surefire-plugin.version>3.0.0</surefire-plugin.version>
+    <skipITs>true</skipITs>
+
+    <quarkus-neo4j.version>3.0.3</quarkus-neo4j.version>
+    <lombok.version>1.18.28</lombok.version>
   </properties>
 
   <modules>
@@ -33,9 +36,9 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-bom</artifactId>
-        <version>3.2.0.Final</version>
+        <groupId>${quarkus.platform.group-id}</groupId>
+        <artifactId>${quarkus.platform.artifact-id}</artifactId>
+        <version>${quarkus.platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -60,9 +63,8 @@
           </executions>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
+          <version>${compiler-plugin.version}</version>
           <configuration>
             <source>17</source>
             <target>17</target>

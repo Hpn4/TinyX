@@ -1,0 +1,134 @@
+image: maven:latest
+
+stages:
+  - linter
+  - build
+  - test
+
+before_script:
+  - cd tinyX
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
+# REPO-POST
+linter_repo_post:
+  stage: linter
+  script:
+    - mvn -pl repo-post spotless:check
+
+build_repo_post:
+  stage: build
+  script:
+    - mvn -pl repo-post compile
+  dependencies:
+    - linter_repo_post
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+test_repo_post:
+  stage: test
+  script:
+    - mvn -pl repo-post test
+  dependencies:
+    - build_repo_post
+
+# REPO-SOCIAL
+linter_repo_social:
+  stage: linter
+  script:
+    - mvn -pl repo-social spotless:check
+
+build_repo_social:
+  stage: build
+  script:
+    - mvn -pl repo-social compile
+  dependencies:
+    - linter_repo_social
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+test_repo_social:
+  stage: test
+  script:
+    - mvn -pl repo-social test
+  dependencies:
+    - build_repo_social
+
+# SRVC-HOME-TIMELINE
+linter_srvc_home_timeline:
+  stage: linter
+  script:
+    - mvn -pl srvc-home-timeline spotless:check
+
+build_srvc_home_timeline:
+  stage: build
+  script:
+    - mvn -pl srvc-home-timeline compile
+  dependencies:
+    - linter_srvc_home_timeline
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+test_srvc_home_timeline:
+  stage: test
+  script:
+    - mvn -pl srvc-home-timeline test
+  dependencies:
+    - build_srvc_home_timeline
+
+# SRVC-SEARCH
+linter_srvc_search:
+  stage: linter
+  script:
+    - mvn -pl srvc-search spotless:check
+
+build_srvc_search:
+  stage: build
+  script:
+    - mvn -pl srvc-search compile
+  dependencies:
+    - linter_srvc_search
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+test_srvc_search:
+  stage: test
+  script:
+    - mvn -pl srvc-search test
+  dependencies:
+    - build_srvc_search
+
+# SRVC-USER-TIMELINE
+linter_srvc_user_timeline:
+  stage: linter
+  script:
+    - mvn -pl srvc-user-timeline spotless:check
+
+build_srvc_user_timeline:
+  stage: build
+  script:
+    - mvn -pl srvc-user-timeline compile
+  dependencies:
+    - linter_srvc_user_timeline
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+test_srvc_user_timeline:
+  stage: test
+  script:
+    - mvn -pl srvc-user-timeline test
+  dependencies:
+    - build_srvc_user_timeline

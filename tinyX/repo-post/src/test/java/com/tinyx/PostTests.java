@@ -11,6 +11,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Implements tests regarding the repo-post service.
@@ -21,6 +22,11 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
  */
 @QuarkusTest
 public class PostTests {
+    @Test
+    public void testApp() {
+        assertTrue(true, "This is a basic test with JUnit 5");
+    }
+
     @Test
     public void simpleNewPost()
     {

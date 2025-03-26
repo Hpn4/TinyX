@@ -16,8 +16,12 @@ public class PostController {
   @Path("/new")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
-    @APIResponse(responseCode = "400", description = "Bad user / post format"),
-    @APIResponse(responseCode = "404", description = "User does not exist")
+    @APIResponse(
+        responseCode = "400",
+        description =
+            "Bad user / post format, too many medias, post text exceeds 160 characters, cannot be reply and repost"),
+    @APIResponse(responseCode = "403", description = "Cannot reply to blocked user"),
+    @APIResponse(responseCode = "404", description = "User does not exist, reply target not found")
   })
   public Response newPostEndpoint(@HeaderParam("X-User") UUID userId) // TODO add post as body
       {
@@ -29,7 +33,7 @@ public class PostController {
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad user"),
-    @APIResponse(responseCode = "401", description = "Cannot delete another user's post"),
+    @APIResponse(responseCode = "403", description = "Cannot delete another user's post"),
     @APIResponse(responseCode = "404", description = "User / post does not exist")
   })
   public Response deletePostEndpoint(@HeaderParam("X-User") UUID userId) // TODO add postId as body
@@ -42,9 +46,11 @@ public class PostController {
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad author format"),
+    @APIResponse(responseCode = "403", description = "Cannot get blocked user posts"),
     @APIResponse(responseCode = "404", description = "Author does not exist")
   })
-  public Response queryUserPostsEndpoint(@PathParam("authorId") UUID authorId) {
+  public Response queryUserPostsEndpoint(
+      @HeaderParam("X-User") UUID userId, @PathParam("authorId") UUID authorId) {
     return Response.status(Response.Status.NOT_IMPLEMENTED).build();
   }
 
@@ -53,9 +59,11 @@ public class PostController {
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad post format"),
+    @APIResponse(responseCode = "403", description = "Post belongs to blocked user"),
     @APIResponse(responseCode = "404", description = "Post does not exist")
   })
-  public Response queryPostEndpoint(@PathParam("postId") UUID postId) {
+  public Response queryPostEndpoint(
+      @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
     return Response.status(Response.Status.NOT_IMPLEMENTED).build();
   }
 
@@ -64,9 +72,11 @@ public class PostController {
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad post format"),
+    @APIResponse(responseCode = "403", description = "Post belongs to blocked user"),
     @APIResponse(responseCode = "404", description = "Post does not exist")
   })
-  public Response queryPostRepliesEndpoint(@PathParam("postId") UUID postId) {
+  public Response queryPostRepliesEndpoint(
+      @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
     return Response.status(Response.Status.NOT_IMPLEMENTED).build();
   }
 }

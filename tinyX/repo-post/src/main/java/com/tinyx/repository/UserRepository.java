@@ -7,9 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.util.UUID;
 
 @ApplicationScoped
-/**
- * This class handles MongoDB operations regarding users.
- */
 public class UserRepository implements PanacheMongoRepositoryBase<User, UUID> {
     /**
      * Creates a user in the DB
@@ -27,4 +24,11 @@ public class UserRepository implements PanacheMongoRepositoryBase<User, UUID> {
     public User getUser(UUID id) {
         return null;
     }
+
+    /**
+     * Attemps to update user data (except its id)
+     * If no user matches the given id, no new user will be created.
+     * @param user The new data to apply.
+     */
+    public void updateUser(User user) {}
 }

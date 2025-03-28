@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-public class AppTest {
+public class SrvcSocialTests {
 
   @Test
   public void testApp() {

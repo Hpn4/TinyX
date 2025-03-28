@@ -31,6 +31,8 @@
     <module>srvc-search</module>
     <module>srvc-user-timeline</module>
     <module>srvc-home-timeline</module>
+    <module>repo-post</module>
+    <module>repo-social</module>
   </modules>
 
   <dependencyManagement>

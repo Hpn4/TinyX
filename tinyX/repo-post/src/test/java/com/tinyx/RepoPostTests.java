@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  * <p>Please add tests here as you implement/fix/work on stuff.
  */
 @QuarkusTest
-public class PostTests {
+public class RepoPostTests {
   @Test
   public void testApp() {
     assertTrue(true, "This is a basic test with JUnit 5");

@@ -2,10 +2,12 @@ package com.tinyx.service;
 
 import com.tinyx.controller.contract.User;
 import com.tinyx.repository.UserRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.UUID;
 
+@ApplicationScoped
 public class UserService {
 
     @Inject
@@ -17,5 +19,5 @@ public class UserService {
         return null;
     }
 
-    public void updateUser(User user) {}
+    public void updateUser(com.tinyx.repository.entity.User user) {}
 }

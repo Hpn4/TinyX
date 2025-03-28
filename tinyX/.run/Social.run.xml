@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Social" type="QuarkusRunConfigurationType" factoryName="Quarkus">
-    <module name="repo-social" />
+    <module name="srvc-social" />
     <QsMavenRunConfiguration>
       <MavenSettings>
         <option name="myGeneralSettings" />

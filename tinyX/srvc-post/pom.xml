@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>repo-post</artifactId>
+  <artifactId>srvc-post</artifactId>
 
   <dependencies>
     <!-- More annotations for endpoints (swagger responses, etc) -->

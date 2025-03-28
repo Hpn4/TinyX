@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Posts" type="QuarkusRunConfigurationType" factoryName="Quarkus">
-    <module name="repo-post" />
+    <module name="srvc-post" />
     <QsMavenRunConfiguration>
       <MavenSettings>
         <option name="myGeneralSettings" />

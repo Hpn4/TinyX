@@ -26,8 +26,8 @@
   </properties>
 
   <modules>
-    <module>repo-post</module>
-    <module>repo-social</module>
+    <module>srvc-post</module>
+    <module>srvc-social</module>
     <module>srvc-search</module>
     <module>srvc-user-timeline</module>
     <module>srvc-home-timeline</module>

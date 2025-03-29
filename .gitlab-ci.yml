@@ -1,134 +1,61 @@
 image: maven:latest
 
 stages:
-  - linter
-  - build
+  - lint
+  - build-common
+  - compile
   - test
-
-before_script:
-  - cd tinyX
 
 cache:
   paths:
-    - .m2/repository/
-    - target/
+    - $CI_PROJECT_DIR/.m2/repository/
 
-# REPO-POST
-linter_repo_post:
-  stage: linter
-  script:
-    - mvn -pl repo-post spotless:check
+variables:
+  MAVEN_CLI_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-build_repo_post:
-  stage: build
+lint:
+  stage: lint
+  parallel:
+    matrix:
+      - SERVICE: ["repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   script:
-    - mvn -pl repo-post compile
-  dependencies:
-    - linter_repo_post
+    - cd tinyX
+    - mvn -pl $SERVICE $MAVEN_CLI_OPTS spotless:check
+
+build-common:
+  stage: build-common
+  script:
+    - cd tinyX
+    - mvn -pl common $MAVEN_CLI_OPTS clean install -DskipTests
+  needs:
+    - lint
   artifacts:
     paths:
-      - target/
-    expire_in: 1 hour
+      - $CI_PROJECT_DIR/.m2/repository
+    expire_in: 1h
 
-test_repo_post:
-  stage: test
+compile:
+  stage: compile
+  parallel:
+    matrix:
+      - SERVICE: ["repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  needs:
+    - build-common
   script:
-    - mvn -pl repo-post test
-  dependencies:
-    - build_repo_post
-
-# REPO-SOCIAL
-linter_repo_social:
-  stage: linter
-  script:
-    - mvn -pl repo-social spotless:check
-
-build_repo_social:
-  stage: build
-  script:
-    - mvn -pl repo-social compile
-  dependencies:
-    - linter_repo_social
+    - cd tinyX
+    - mvn -pl $SERVICE $MAVEN_CLI_OPTS compile -am
   artifacts:
     paths:
-      - target/
-    expire_in: 1 hour
+      - $CI_PROJECT_DIR/.m2/repository
+    expire_in: 1h
 
-test_repo_social:
+test:
   stage: test
+  parallel:
+    matrix:
+      - SERVICE: ["repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  needs:
+    - compile
   script:
-    - mvn -pl repo-social test
-  dependencies:
-    - build_repo_social
-
-# SRVC-HOME-TIMELINE
-linter_srvc_home_timeline:
-  stage: linter
-  script:
-    - mvn -pl srvc-home-timeline spotless:check
-
-build_srvc_home_timeline:
-  stage: build
-  script:
-    - mvn -pl srvc-home-timeline compile
-  dependencies:
-    - linter_srvc_home_timeline
-  artifacts:
-    paths:
-      - target/
-    expire_in: 1 hour
-
-test_srvc_home_timeline:
-  stage: test
-  script:
-    - mvn -pl srvc-home-timeline test
-  dependencies:
-    - build_srvc_home_timeline
-
-# SRVC-SEARCH
-linter_srvc_search:
-  stage: linter
-  script:
-    - mvn -pl srvc-search spotless:check
-
-build_srvc_search:
-  stage: build
-  script:
-    - mvn -pl srvc-search compile
-  dependencies:
-    - linter_srvc_search
-  artifacts:
-    paths:
-      - target/
-    expire_in: 1 hour
-
-test_srvc_search:
-  stage: test
-  script:
-    - mvn -pl srvc-search test
-  dependencies:
-    - build_srvc_search
-
-# SRVC-USER-TIMELINE
-linter_srvc_user_timeline:
-  stage: linter
-  script:
-    - mvn -pl srvc-user-timeline spotless:check
-
-build_srvc_user_timeline:
-  stage: build
-  script:
-    - mvn -pl srvc-user-timeline compile
-  dependencies:
-    - linter_srvc_user_timeline
-  artifacts:
-    paths:
-      - target/
-    expire_in: 1 hour
-
-test_srvc_user_timeline:
-  stage: test
-  script:
-    - mvn -pl srvc-user-timeline test
-  dependencies:
-    - build_srvc_user_timeline
+    - cd tinyX
+    - mvn -pl $SERVICE $MAVEN_CLI_OPTS test -am

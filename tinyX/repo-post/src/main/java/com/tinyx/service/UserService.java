@@ -15,7 +15,7 @@ public class UserService {
 
     public void createUser(User user) {}
 
-    public User getUser(UUID id) {
+    public User queryUser(UUID id) {
         return null;
     }
 

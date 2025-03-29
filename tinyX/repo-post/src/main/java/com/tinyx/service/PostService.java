@@ -14,14 +14,15 @@ public class PostService {
     PostRepository postRepository;
 
     public void createPost(Post post) {}
-    public UUID deletePost(UUID id) {
-        return null;
-    }
-    public List<Post> queryUserPost(UUID userId) {
+    public UUID deletePost(UUID id) { return null; }
+    public List<Post> queryPostsList(List<UUID> postIds) { return null; }
+    public List<Post> queryUserPosts(UUID userId) {
         return null;
     }
     public Post querySpecificPost(UUID id) { return null; }
+    // I don't feel like this function is really necessary, you can use the updatePost system for that matter
     public void updatePostLikes(UUID id, int count) {}
+    // I feel like replies can be gathered using the above list endpoint and neo4j, so is this function really useful ?
     public List<Post> queryPostReplies(UUID id) {
         return null;
     }

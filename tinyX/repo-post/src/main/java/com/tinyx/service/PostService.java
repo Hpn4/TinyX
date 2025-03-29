@@ -25,5 +25,5 @@ public class PostService {
     public List<Post> queryPostReplies(UUID id) {
         return null;
     }
-    public void updatePost(com.tinyx.repository.entity.Post post) {}
+    public void updatePost(Post post) {}
 }

@@ -19,5 +19,5 @@ public class UserService {
         return null;
     }
 
-    public void updateUser(com.tinyx.repository.entity.User user) {}
+    public void updateUser(User user) {}
 }

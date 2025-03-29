@@ -5,6 +5,7 @@
 ## Pre-commit
 ```
 pip install pre-commit
+pre-commit install
 ```
 ## Linter JAVA
 

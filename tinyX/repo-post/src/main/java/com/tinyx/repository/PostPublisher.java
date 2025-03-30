@@ -1,4 +1,3 @@
 package com.tinyx.repository;
 
-public class PostPublisher {
-}
+public class PostPublisher {}

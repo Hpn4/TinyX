@@ -1,4 +1,4 @@
-package com.tinyx.controller.contract;
+package com.tinyx.redis.post;
 
 import java.time.LocalDate;
 import java.util.UUID;

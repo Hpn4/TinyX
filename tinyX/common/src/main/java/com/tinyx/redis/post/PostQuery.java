@@ -1,6 +1,6 @@
-package com.tinyx.controller.contract;
+package com.tinyx.redis.post;
 
-public class RedisPost {
+public class PostQuery {
     public enum Operation {
         CREATE,
         DELETE,
@@ -10,7 +10,7 @@ public class RedisPost {
     public Operation operation;
     public Post post;
 
-    public RedisPost(Operation operation, Post post) {
+    public PostQuery(Operation operation, Post post) {
         this.operation = operation;
         this.post = post;
     }

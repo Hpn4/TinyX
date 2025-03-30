@@ -1,6 +1,6 @@
-package com.tinyx.controller.contract;
+package com.tinyx.redis.post;
 
-public class RedisUser {
+public class UserQuery {
     public enum Operation {
         CREATE,
         UPDATE,
@@ -10,7 +10,7 @@ public class RedisUser {
     public Operation operation;
     public User user;
 
-    public RedisUser(Operation operation, User user) {
+    public UserQuery(Operation operation, User user) {
         this.operation = operation;
         this.user = user;
     }

@@ -1,6 +1,6 @@
 package com.tinyx.service;
 
-import com.tinyx.controller.contract.Post;
+import com.tinyx.redis.post.Post;
 import com.tinyx.repository.PostRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

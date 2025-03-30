@@ -1,6 +1,6 @@
 package com.tinyx.service;
 
-import com.tinyx.controller.contract.User;
+import com.tinyx.redis.post.User;
 import com.tinyx.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

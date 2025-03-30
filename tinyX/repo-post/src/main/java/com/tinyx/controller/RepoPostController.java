@@ -1,8 +1,8 @@
 package com.tinyx.controller;
 
-import com.tinyx.controller.contract.Media;
-import com.tinyx.controller.contract.Post;
-import com.tinyx.controller.contract.User;
+import com.tinyx.redis.post.Media;
+import com.tinyx.redis.post.Post;
+import com.tinyx.redis.post.User;
 import com.tinyx.service.MediaService;
 import com.tinyx.service.PostService;
 import com.tinyx.service.UserService;

@@ -1,6 +1,7 @@
 package com.tinyx.controller;
 
-import com.tinyx.controller.contract.Media;
+import com.tinyx.redis.RedisChannel;
+import com.tinyx.redis.post.Media;
 import com.tinyx.service.MediaService;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.pubsub.PubSubCommands;
@@ -21,7 +22,7 @@ public class UploadMediaSubscriber implements Consumer<Media> {
 
     private final PubSubCommands.RedisSubscriber subscriber;
     public UploadMediaSubscriber(final RedisDataSource ds) {
-        subscriber = ds.pubsub(Media.class).subscribe("TODO", this);
+        subscriber = ds.pubsub(Media.class).subscribe(RedisChannel.UPLOAD_MEDIA.toString(), this);
     }
     @Override
     public void accept(final Media message) {

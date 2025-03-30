@@ -1,4 +1,4 @@
-package com.tinyx.controller.contract;
+package com.tinyx.redis.post;
 
 import java.io.InputStream;
 import java.util.UUID;

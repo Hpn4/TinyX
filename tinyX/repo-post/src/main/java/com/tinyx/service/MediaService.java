@@ -1,7 +1,6 @@
 package com.tinyx.service;
 
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.tinyx.controller.contract.Media;
+import com.tinyx.redis.post.Media;
 import com.tinyx.repository.MediaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

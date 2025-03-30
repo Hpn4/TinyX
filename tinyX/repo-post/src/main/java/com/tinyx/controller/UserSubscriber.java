@@ -1,6 +1,7 @@
 package com.tinyx.controller;
 
-import com.tinyx.controller.contract.RedisUser;
+import com.tinyx.redis.RedisChannel;
+import com.tinyx.redis.post.UserQuery;
 import com.tinyx.service.UserService;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.pubsub.PubSubCommands;
@@ -8,12 +9,11 @@ import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import static io.quarkus.mongodb.runtime.dns.MongoDnsClientProvider.vertx;
 
-public class UserSubscriber implements Consumer<RedisUser> {
+public class UserSubscriber implements Consumer<UserQuery> {
     @Inject
     UserService service;
 
@@ -22,10 +22,10 @@ public class UserSubscriber implements Consumer<RedisUser> {
 
     private final PubSubCommands.RedisSubscriber subscriber;
     public UserSubscriber(final RedisDataSource ds) {
-        subscriber = ds.pubsub(RedisUser.class).subscribe("TODO", this);
+        subscriber = ds.pubsub(UserQuery.class).subscribe(RedisChannel.USER.toString(), this);
     }
     @Override
-    public void accept(final RedisUser message) {
+    public void accept(final UserQuery message) {
         // To keep things simple, we will avoid asynchronous stuff here,
         // so you need to tell Quarkus that you will execute blocking
         // code knowingly, otherwise it may crash at runtime to prevent
@@ -35,10 +35,10 @@ public class UserSubscriber implements Consumer<RedisUser> {
             if (message == null || message.user == null) {
                 logger.error("User message or user itself is null");
             }
-            else if (message.operation == RedisUser.Operation.CREATE) {
+            else if (message.operation == UserQuery.Operation.CREATE) {
                 service.createUser(message.user);
             }
-            else if (message.operation == RedisUser.Operation.UPDATE) {
+            else if (message.operation == UserQuery.Operation.UPDATE) {
                 service.updateUser(message.user);
             }
             else {

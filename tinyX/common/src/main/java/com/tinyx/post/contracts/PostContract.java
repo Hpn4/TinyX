@@ -1,9 +1,9 @@
-package com.tinyx.redis.post;
+package com.tinyx.post.contracts;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class Post {
+public class PostContract {
   public UUID id;
   public UUID userId;
   public String content;
@@ -18,7 +18,9 @@ public class Post {
     REPOST
   }
 
-  public Post(
+  public PostContract() {}
+
+  public PostContract(
       UUID id, UUID userId, String content, LocalDate creationDate, UUID parentId, UUID mediaId) {
     this.id = id;
     this.userId = userId;

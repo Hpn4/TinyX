@@ -1,4 +1,4 @@
-package com.tinyx.repository.entity;
+package com.tinyx.media.entity;
 
 import com.mongodb.client.gridfs.GridFSBucket;
 import io.quarkus.mongodb.panache.common.MongoEntity;

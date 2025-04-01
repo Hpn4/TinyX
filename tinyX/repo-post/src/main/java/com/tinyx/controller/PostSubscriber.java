@@ -2,8 +2,8 @@ package com.tinyx.controller;
 
 import static io.quarkus.mongodb.runtime.dns.MongoDnsClientProvider.vertx;
 
-import com.tinyx.redis.RedisChannel;
-import com.tinyx.redis.post.PostQuery;
+import com.tinyx.redis.PostQuery;
+import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.service.PostService;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.pubsub.PubSubCommands;

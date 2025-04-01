@@ -1,13 +1,13 @@
-package com.tinyx.redis.post;
+package com.tinyx.media.contracts;
 
 import java.io.InputStream;
 import java.util.UUID;
 
-public class Media {
+public class MediaContract {
   public UUID id;
   public InputStream data;
 
-  public Media(UUID id, InputStream data) {
+  public MediaContract(UUID id, InputStream data) {
     this.id = id;
     this.data = data;
   }

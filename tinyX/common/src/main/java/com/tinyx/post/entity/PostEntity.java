@@ -1,4 +1,4 @@
-package com.tinyx.repository.entity;
+package com.tinyx.post.entity;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import java.time.LocalDate;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.bson.codecs.pojo.annotations.BsonId;
 
 @MongoEntity(collection = "Posts")
-public class Post {
+public class PostEntity {
 
   @BsonId public UUID id;
   public UUID userId;
@@ -22,7 +22,7 @@ public class Post {
     REPOST
   }
 
-  public Post(
+  public PostEntity(
       UUID id, UUID userId, String content, LocalDate creationDate, UUID parentId, UUID mediaId) {
     this.id = id;
     this.userId = userId;

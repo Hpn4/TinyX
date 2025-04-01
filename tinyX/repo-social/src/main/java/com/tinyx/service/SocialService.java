@@ -3,6 +3,8 @@ package com.tinyx.service;
 import com.tinyx.post.contracts.PostContract;
 import com.tinyx.repository.RepoSocialRepository;
 import com.tinyx.repository.entity.Post;
+import com.tinyx.repository.entity.User;
+import com.tinyx.user.contracts.UserContract;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -32,14 +34,34 @@ public class SocialService {
         }
     }
 
-    public int createLike(UUID userId, UUID PostId)
+    public void createUser(List<UserContract> luc)
     {
-
-        return repoSocialRepository.CreateLike(userId, PostId);
+        for(var i = 0;i<luc.size();i++)
+        {
+            User u = new User(luc.get(i).id);
+            repoSocialRepository.CreateUser(u);
+        }
     }
 
-    public  int deleteLike(UUID userId, UUID postId)
+    public void deleteUser(List<UserContract> luc)
     {
-        return repoSocialRepository.DeleteLike(userId, postId);
+        for(var i = 0; i< luc.size();i++)
+        {
+            repoSocialRepository.DeleteUser(luc.get(i).id);
+        }
     }
+    public void createRelation(UUID userId,UUID PostId, String relation,String t1, String t2)
+    {
+
+         repoSocialRepository.CreateRelation(userId, PostId,relation,t1,t2 );
+    }
+
+    public void deleteRelation(UUID userId, UUID postId, String relation, String t1, String t2)
+    {
+        repoSocialRepository.DeleteRelation(userId, postId,relation,t1,t2);
+    }
+
+
+
+
 }

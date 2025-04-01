@@ -1,39 +1,45 @@
 package com.tinyx.controller;
 
+import com.tinyx.post.contracts.PostContract;
 import com.tinyx.redis.LikePostQuery;
+import com.tinyx.redis.PostQuery;
+import com.tinyx.redis.UserQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
 import com.tinyx.service.SocialService;
+import com.tinyx.user.contracts.UserContract;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
-import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Startup
-@ApplicationScoped
-public class RedisStreamLikePostSocial extends RedisStreamReader<LikePostQuery> {
+public class RedisStreamUserSocial extends RedisStreamReader<UserQuery> {
     @Inject
     SocialService service;
-    public RedisStreamLikePostSocial(){super();}
+    public RedisStreamUserSocial(){super();}
 
-    public RedisStreamLikePostSocial(final ReactiveRedisDataSource ds)
+    public RedisStreamUserSocial(final ReactiveRedisDataSource ds)
     {
-        super(ds, LikePostQuery.class,"repo-social", RedisChannel.POST);
+        super(ds, UserQuery.class,"repo-social", RedisChannel.POST);
     }
 
     @Override
-    public void process(List<LikePostQuery> data)
+    public void process(List<UserQuery> data)
     {
+
+        List<UserContract> creation = new ArrayList<>();
+
+
         for(var i = 0; i<data.size();i++)
         {
-            if(data.get(i).operation== LikePostQuery.Operation.LIKE)
-                service.createRelation(data.get(i).srcUserId,data.get(i).targetPostId,"LIKE","User","Post");
-            else
-                service.deleteRelation(data.get(i).srcUserId,data.get(i).targetPostId,"LIKE","User","Post");
+            if(data.get(i).operation== UserQuery.Operation.CREATE)
+                creation.add(data.get(i).user);
+
         }
+        service.createUser(creation);
+        
 
     }
 

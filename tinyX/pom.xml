@@ -33,6 +33,7 @@
     <module>srvc-home-timeline</module>
     <module>repo-post</module>
     <module>repo-social</module>
+    <module>common</module>
   </modules>
 
   <dependencyManagement>

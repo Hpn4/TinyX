@@ -52,6 +52,11 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-redis-client</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-scheduler-api</artifactId>
+      <version>3.0.4.Final</version>
+    </dependency>
 
   </dependencies>
 

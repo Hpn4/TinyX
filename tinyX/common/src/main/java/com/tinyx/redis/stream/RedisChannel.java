@@ -1,4 +1,4 @@
-package com.tinyx.redis;
+package com.tinyx.redis.stream;
 
 /** Represents and stores REDIS channels for better and more consistent use throughout the app. */
 public enum RedisChannel {

@@ -3,6 +3,7 @@ package com.tinyx.repository;
 import com.tinyx.post.entity.PostEntity;
 import io.quarkus.mongodb.panache.PanacheMongoRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -12,20 +13,24 @@ public class PostRepository implements PanacheMongoRepositoryBase<PostEntity, UU
   /**
    * Create a new post
    *
-   * @param post post to be created
+   * @param posts post to be created
    */
-  public void createPost(PostEntity post) {}
+  public void createPost(List<PostEntity> posts) {
+    persist(posts);
+  }
 
   /**
    * Delete a specific post
    *
-   * @param id id of the post to delete
-   * @return the id of the deleted post
+   * @param ids ids of the posts to delete
+   * @return the number of elements deleted
    */
-  public UUID deletePost(UUID id) {
-    return null;
+  public long deletePost(List<UUID> ids) {
+    return delete("id in ?1", ids);
   }
 
   // OPTIONAL: not specified in subject
-  public void updatePost(PostEntity post) {}
+  public void updatePost(List<PostEntity> posts) {
+    update(posts);
+  }
 }

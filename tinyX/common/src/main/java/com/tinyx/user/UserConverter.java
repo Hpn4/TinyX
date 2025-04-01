@@ -6,11 +6,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class UserConverter {
-  UserEntity convertUser(UserContract contract) {
+  public UserEntity convertUser(UserContract contract) {
     return new UserEntity(contract.id, contract.userName, contract.creationDate);
   }
 
-  UserContract convertUser(UserEntity entity) {
+  public UserContract convertUser(UserEntity entity) {
     return new UserContract(entity.id, entity.userName, entity.creationDate);
   }
 }

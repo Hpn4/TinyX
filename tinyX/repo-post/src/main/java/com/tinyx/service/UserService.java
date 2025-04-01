@@ -1,21 +1,16 @@
 package com.tinyx.service;
 
-import com.tinyx.redis.post.User;
 import com.tinyx.repository.UserRepository;
+import com.tinyx.user.contracts.UserContract;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.UUID;
 
 @ApplicationScoped
 public class UserService {
 
   @Inject UserRepository userRepository;
 
-  public void createUser(User user) {}
+  public void createUser(UserContract user) {}
 
-  public User queryUser(UUID id) {
-    return null;
-  }
-
-  public void updateUser(User user) {}
+  public void updateUser(UserContract user) {}
 }

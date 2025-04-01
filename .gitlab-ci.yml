@@ -17,7 +17,7 @@ lint:
   stage: lint
   parallel:
     matrix:
-      - SERVICE: ["repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["common", "repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   script:
     - cd tinyX
     - mvn -pl $SERVICE $MAVEN_CLI_OPTS spotless:check

@@ -1,6 +1,7 @@
 package com.tinyx.controller;
 
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
  * to update user data (c.f. Miro)
  */
 @Path("/posts")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class PostController {
   @POST
   @Path("/new")

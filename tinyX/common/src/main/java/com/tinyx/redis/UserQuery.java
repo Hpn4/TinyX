@@ -1,4 +1,6 @@
-package com.tinyx.redis.post;
+package com.tinyx.redis;
+
+import com.tinyx.user.contracts.UserContract;
 
 public class UserQuery {
   public enum Operation {
@@ -8,9 +10,9 @@ public class UserQuery {
   }
 
   public Operation operation;
-  public User user;
+  public UserContract user;
 
-  public UserQuery(Operation operation, User user) {
+  public UserQuery(Operation operation, UserContract user) {
     this.operation = operation;
     this.user = user;
   }

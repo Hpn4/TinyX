@@ -1,10 +1,12 @@
 package com.tinyx.service;
 
+import com.tinyx.post.contracts.PostContract;
 import com.tinyx.repository.RepoSocialRepository;
 import com.tinyx.repository.entity.Post;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -13,15 +15,20 @@ public class SocialService {
     @Inject
     RepoSocialRepository repoSocialRepository;
 
-    public int createPost(UUID id)
+    public void createPost(ArrayList<PostContract> lpc)
     {
-        Post p = new Post(id);
-        return repoSocialRepository.CreatePost(p);
+        for(var i = 0; i<lpc.size();i++){
+
+            Post p = new Post(lpc.get(i).id);
+            repoSocialRepository.CreatePost(p);
+        }
     }
 
-    public int deletePost(UUID id)
+    public void deletePost(ArrayList<PostContract> lpc)
     {
-        return repoSocialRepository.DeletePost(id);
+        for(var i = 0; i< lpc.size();i++){
+             repoSocialRepository.DeletePost(lpc.get(i).id);
+        }
     }
 
     public int createLike(UUID userId, UUID PostId)

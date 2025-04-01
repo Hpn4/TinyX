@@ -27,7 +27,7 @@ public class RedisStreamReaderExample extends RedisStreamReader<PostQuery> {
   }
 
   @Override
-  void process(List<PostQuery> data) {
+  public void process(List<PostQuery> data) {
     // Do stuff with the list of queries
   }
 

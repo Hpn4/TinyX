@@ -27,7 +27,7 @@ public class RedisStreamPostSocial extends RedisStreamReader<PostQuery> {
     }
 
     @Override
-    void process(List<PostQuery> data)
+    public void process(List<PostQuery> data)
     {
         List<PostContract> creation = new ArrayList<>();
         List<PostContract> deletion = new ArrayList<>();
@@ -39,6 +39,8 @@ public class RedisStreamPostSocial extends RedisStreamReader<PostQuery> {
             else if(data.get(i).operation == PostQuery.Operation.DELETE)
                 deletion.add(data.get(i).post);
         }
+        service.createPost(creation);
+        service.deletePost(deletion);
     }
 
 

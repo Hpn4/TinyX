@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -15,7 +16,7 @@ public class SocialService {
     @Inject
     RepoSocialRepository repoSocialRepository;
 
-    public void createPost(ArrayList<PostContract> lpc)
+    public void createPost(List<PostContract> lpc)
     {
         for(var i = 0; i<lpc.size();i++){
 
@@ -24,7 +25,7 @@ public class SocialService {
         }
     }
 
-    public void deletePost(ArrayList<PostContract> lpc)
+    public void deletePost(List<PostContract> lpc)
     {
         for(var i = 0; i< lpc.size();i++){
              repoSocialRepository.DeletePost(lpc.get(i).id);
@@ -33,6 +34,7 @@ public class SocialService {
 
     public int createLike(UUID userId, UUID PostId)
     {
+
         return repoSocialRepository.CreateLike(userId, PostId);
     }
 

@@ -112,7 +112,7 @@ public abstract class RedisStreamReader<T> {
         .with(count -> log.debugf("Collected %d requests", count));
   }
 
-  abstract void process(List<T> data);
+  public abstract void process(List<T> data);
 
   private String[] processMessage(List<StreamMessage<String, String, T>> messages) {
     if (messages == null || messages.isEmpty()) return new String[0];

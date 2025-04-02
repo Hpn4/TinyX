@@ -7,7 +7,6 @@ import com.tinyx.service.SocialService;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,29 +31,25 @@ public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelatio
 
     for (var i = 0; i < data.size(); i++) {
       switch (data.get(i).operation) {
-        case BLOCK ->
-        {
+        case BLOCK -> {
           List<UUID> ids = new ArrayList<>(2);
           ids.add(data.get(i).srcUserId);
           ids.add(data.get(i).targetUserId);
           blocks.add(ids);
         }
-        case FOLLOW ->
-        {
+        case FOLLOW -> {
           List<UUID> ids = new ArrayList<>(2);
           ids.add(data.get(i).srcUserId);
           ids.add(data.get(i).targetUserId);
           follows.add(ids);
         }
-        case UNBLOCK ->
-        {
+        case UNBLOCK -> {
           List<UUID> ids = new ArrayList<>(2);
           ids.add(data.get(i).srcUserId);
           ids.add(data.get(i).targetUserId);
           unblocks.add(ids);
         }
-        case UNFOLLOW ->
-        {
+        case UNFOLLOW -> {
           List<UUID> ids = new ArrayList<>(2);
           ids.add(data.get(i).srcUserId);
           ids.add(data.get(i).targetUserId);
@@ -65,10 +60,10 @@ public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelatio
         }
       }
     }
-    service.createRelation(blocks,"BLOCK","User","User");
-    service.createRelation(blocks,"FOLLOW","User","User");
-    service.deleteRelation(unblocks,"BLOCK","User","User");
-    service.deleteRelation(unfollows,"FOLLOW","User","User");
+    service.createRelation(blocks, "BLOCK", "User", "User");
+    service.createRelation(blocks, "FOLLOW", "User", "User");
+    service.deleteRelation(unblocks, "BLOCK", "User", "User");
+    service.deleteRelation(unfollows, "FOLLOW", "User", "User");
   }
 
   @Scheduled(every = "10m")

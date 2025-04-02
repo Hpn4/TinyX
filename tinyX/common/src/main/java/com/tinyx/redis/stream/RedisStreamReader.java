@@ -133,8 +133,6 @@ public abstract class RedisStreamReader<T> {
     return ids.length > 0 ? this.stream.xack(STREAM, STREAM_GROUP, ids) : Uni.createFrom().item(0);
   }
 
-
-
   protected void trimStream() {
     stream
         .xtrim(STREAM, new XTrimArgs().maxlen(10000).nearlyExactTrimming())
@@ -169,6 +167,4 @@ public abstract class RedisStreamReader<T> {
                     "[%s][%s][%s] Collected %d requests",
                     STREAM, STREAM_GROUP, STREAM_CONSUMER, count));
   }
-
-
 }

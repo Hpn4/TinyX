@@ -8,7 +8,7 @@ import com.tinyx.user.contracts.UserContract;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,45 +20,95 @@ public class SocialService {
 
     public void createPost(List<PostContract> lpc)
     {
+        if(lpc.size()==0)
+            return;
+        String posts = "";//"MERGE (p:Post {id: +post.Id.toString()+})";
         for(var i = 0; i<lpc.size();i++){
 
-            Post p = new Post(lpc.get(i).id);
-            repoSocialRepository.CreatePost(p);
+            posts += "(:Post {id: +"+lpc.get(i).id+"+})";
+            if(i!=lpc.size()-1)
+                posts += ", ";
         }
+        repoSocialRepository.CreatePost(posts);
     }
 
     public void deletePost(List<PostContract> lpc)
     {
+        if(lpc.size()==0)
+            return;
+        String posts = "[";
         for(var i = 0; i< lpc.size();i++){
-             repoSocialRepository.DeletePost(lpc.get(i).id);
+            posts +=lpc.get(i).id;
+            if(i!=lpc.size()-1)
+                posts += ", ";
         }
+        posts += "]";
+        repoSocialRepository.DeletePost(posts);
     }
 
     public void createUser(List<UserContract> luc)
     {
+        if(luc.size()==0)
+            return;
+        String users = "";
         for(var i = 0;i<luc.size();i++)
         {
-            User u = new User(luc.get(i).id);
-            repoSocialRepository.CreateUser(u);
+            users += "(:User {id: +"+luc.get(i).id+"+})";
+            if(i!=luc.size()-1)
+                users += ", ";
+
         }
+        repoSocialRepository.CreateUser(users);
     }
 
     public void deleteUser(List<UserContract> luc)
     {
+        if(luc.size()==0)
+            return;
+        String users = "[";
         for(var i = 0; i< luc.size();i++)
         {
-            repoSocialRepository.DeleteUser(luc.get(i).id);
+            users +=luc.get(i).id;
+            if(i!=luc.size()-1)
+                users += ", ";
         }
-    }
-    public void createRelation(UUID userId,UUID PostId, String relation,String t1, String t2)
-    {
-
-         repoSocialRepository.CreateRelation(userId, PostId,relation,t1,t2 );
+        users+="]";
+        repoSocialRepository.DeleteUser(users);
     }
 
-    public void deleteRelation(UUID userId, UUID postId, String relation, String t1, String t2)
+    public void createRelation(List<List<UUID>> Id, String relation,String t1, String t2)
     {
-        repoSocialRepository.DeleteRelation(userId, postId,relation,t1,t2);
+        if(Id.size()==0)
+            return;
+        String likes = "";
+        for(var i =0; i< Id.size();i++)
+        {
+            likes += "(u:"+t1+" {id:"+Id.get(i).get(0)+"})-[:"+relation+" {creationTime:'"+ Instant.now().toString()+"'}]->(p:"+t2+" {id:"+Id.get(i).get(1)+"})";
+            if(i!=Id.size()-1)
+                likes +=", ";
+        }
+         repoSocialRepository.CreateRelation(likes);
+    }
+
+    public void deleteRelation(List<List<UUID>> ids, String relation, String t1, String t2)
+    {
+        if(ids.size()==0)
+            return;
+        String ids1 = "[";
+        String ids2 = "[";
+        for(var i = 0; i< ids.size(); i++)
+        {
+            ids1 += ids.get(i).get(0);
+            ids2 += ids.get(i).get(1);
+            if(i!=ids.size()-1){
+                ids1+=", ";
+                ids2+=", ";
+            }
+        }
+        ids1 +="]";
+        ids2 += "]";
+        //"MATCH (u:"+type1+" {id:"+UserId.toString()+"})-[r:"+relation+"]->(p:"+type2+" {id:"+PostId+"}) DELETE r"
+        repoSocialRepository.DeleteRelation(ids1, ids2,relation,t1,t2);
     }
 
 

@@ -1,8 +1,5 @@
 package com.tinyx.controller;
 
-import com.tinyx.post.contracts.PostContract;
-import com.tinyx.redis.LikePostQuery;
-import com.tinyx.redis.PostQuery;
 import com.tinyx.redis.UserQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;

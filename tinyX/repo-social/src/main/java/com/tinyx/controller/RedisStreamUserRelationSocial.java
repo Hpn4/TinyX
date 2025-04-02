@@ -1,7 +1,6 @@
 package com.tinyx.controller;
 
-import com.tinyx.post.contracts.PostContract;
-import com.tinyx.redis.PostQuery;
+
 import com.tinyx.redis.UserRelationsQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
@@ -9,8 +8,6 @@ import com.tinyx.service.SocialService;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Inject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelationsQuery> {

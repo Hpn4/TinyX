@@ -2,7 +2,6 @@ package com.tinyx.redis.stream;
 
 import static java.util.Collections.emptyList;
 
-import com.tinyx.redis.PostQuery;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.redis.datasource.stream.*;
 import io.smallrye.mutiny.Multi;

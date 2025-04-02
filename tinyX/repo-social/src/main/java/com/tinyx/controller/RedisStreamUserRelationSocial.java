@@ -7,7 +7,10 @@ import com.tinyx.service.SocialService;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelationsQuery> {
   @Inject SocialService service;
@@ -22,25 +25,50 @@ public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelatio
 
   @Override
   public void process(List<UserRelationsQuery> data) {
+    List<List<UUID>> blocks = new ArrayList<>();
+    List<List<UUID>> unblocks = new ArrayList<>();
+    List<List<UUID>> follows = new ArrayList<>();
+    List<List<UUID>> unfollows = new ArrayList<>();
+
     for (var i = 0; i < data.size(); i++) {
       switch (data.get(i).operation) {
         case BLOCK ->
-            service.createRelation(
-                data.get(i).srcUserId, data.get(i).targetUserId, "BLOCK", "User", "User");
+        {
+          List<UUID> ids = new ArrayList<>(2);
+          ids.add(data.get(i).srcUserId);
+          ids.add(data.get(i).targetUserId);
+          blocks.add(ids);
+        }
         case FOLLOW ->
-            service.createRelation(
-                data.get(i).srcUserId, data.get(i).targetUserId, "FOLLOW", "User", "User");
+        {
+          List<UUID> ids = new ArrayList<>(2);
+          ids.add(data.get(i).srcUserId);
+          ids.add(data.get(i).targetUserId);
+          follows.add(ids);
+        }
         case UNBLOCK ->
-            service.deleteRelation(
-                data.get(i).srcUserId, data.get(i).targetUserId, "BLOCK", "User", "User");
+        {
+          List<UUID> ids = new ArrayList<>(2);
+          ids.add(data.get(i).srcUserId);
+          ids.add(data.get(i).targetUserId);
+          unblocks.add(ids);
+        }
         case UNFOLLOW ->
-            service.deleteRelation(
-                data.get(i).srcUserId, data.get(i).targetUserId, "FOLLOW", "User", "User");
+        {
+          List<UUID> ids = new ArrayList<>(2);
+          ids.add(data.get(i).srcUserId);
+          ids.add(data.get(i).targetUserId);
+          unfollows.add(ids);
+        }
         default -> {
           break;
         }
       }
     }
+    service.createRelation(blocks,"BLOCK","User","User");
+    service.createRelation(blocks,"FOLLOW","User","User");
+    service.deleteRelation(unblocks,"BLOCK","User","User");
+    service.deleteRelation(unfollows,"FOLLOW","User","User");
   }
 
   @Scheduled(every = "10m")

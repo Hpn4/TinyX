@@ -8,49 +8,40 @@ import com.tinyx.user.contracts.UserContract;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class RedisStreamUserSocial extends RedisStreamReader<UserQuery> {
-    @Inject
-    SocialService service;
-    public RedisStreamUserSocial(){super();}
+  @Inject SocialService service;
 
-    public RedisStreamUserSocial(final ReactiveRedisDataSource ds)
-    {
-        super(ds, UserQuery.class,"repo-social", RedisChannel.POST);
+  public RedisStreamUserSocial() {
+    super();
+  }
+
+  public RedisStreamUserSocial(final ReactiveRedisDataSource ds) {
+    super(ds, UserQuery.class, "repo-social", RedisChannel.POST);
+  }
+
+  @Override
+  public void process(List<UserQuery> data) {
+
+    List<UserContract> creation = new ArrayList<>();
+
+    for (var i = 0; i < data.size(); i++) {
+      if (data.get(i).operation == UserQuery.Operation.CREATE) creation.add(data.get(i).user);
     }
+    service.createUser(creation);
+  }
 
-    @Override
-    public void process(List<UserQuery> data)
-    {
+  @Scheduled(every = "10m")
+  @Override
+  public void trimStream() {
+    super.trimStream();
+  }
 
-        List<UserContract> creation = new ArrayList<>();
-
-
-        for(var i = 0; i<data.size();i++)
-        {
-            if(data.get(i).operation== UserQuery.Operation.CREATE)
-                creation.add(data.get(i).user);
-
-        }
-        service.createUser(creation);
-    }
-
-
-
-    @Scheduled(every = "10m")
-    @Override
-    public void trimStream()
-    {
-        super.trimStream();
-    }
-
-    @Scheduled(every = "5s")
-    @Override
-    public void claimPendingMessages(){
-        super.claimPendingMessages();
-    }
-
+  @Scheduled(every = "5s")
+  @Override
+  public void claimPendingMessages() {
+    super.claimPendingMessages();
+  }
 }

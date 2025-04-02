@@ -39,8 +39,6 @@ public class RedisStreamUserSocial extends RedisStreamReader<UserQuery> {
 
         }
         service.createUser(creation);
-        
-
     }
 
 

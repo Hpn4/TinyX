@@ -5,12 +5,16 @@ import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
 import com.tinyx.service.SocialService;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
+import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Startup
+@ApplicationScoped
 public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelationsQuery> {
   @Inject SocialService service;
 
@@ -18,6 +22,7 @@ public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelatio
     super();
   }
 
+  @Inject
   public RedisStreamUserRelationSocial(final ReactiveRedisDataSource ds) {
     super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.POST);
   }

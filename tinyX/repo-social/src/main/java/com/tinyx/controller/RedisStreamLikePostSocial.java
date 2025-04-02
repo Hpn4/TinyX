@@ -22,6 +22,7 @@ public class RedisStreamLikePostSocial extends RedisStreamReader<LikePostQuery> 
     super();
   }
 
+  @Inject
   public RedisStreamLikePostSocial(final ReactiveRedisDataSource ds) {
     super(ds, LikePostQuery.class, "repo-social", RedisChannel.POST);
   }

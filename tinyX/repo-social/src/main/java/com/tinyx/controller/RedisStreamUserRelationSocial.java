@@ -24,7 +24,7 @@ public class RedisStreamUserRelationSocial extends RedisStreamReader<UserRelatio
 
   @Inject
   public RedisStreamUserRelationSocial(final ReactiveRedisDataSource ds) {
-    super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.POST);
+    super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.USER);
   }
 
   @Override

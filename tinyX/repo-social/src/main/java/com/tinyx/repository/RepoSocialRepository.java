@@ -1,8 +1,13 @@
 package com.tinyx.repository;
 
+import com.tinyx.user.contracts.UserContract;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.neo4j.driver.Driver;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @ApplicationScoped
 public class RepoSocialRepository {
@@ -26,9 +31,27 @@ public class RepoSocialRepository {
 
   public void CreateUser(String users) {
     final var Session = neo4jDriver.session();
+
     String query = "MERGE " + users;
     Session.executeWrite(tx -> tx.run(query).consume().counters().relationshipsCreated());
     Session.close();
+  }
+
+  public void createUsers(List<UUID> ids) {
+    if (ids.isEmpty()) return;
+
+    String query = """
+        UNWIND $users AS user
+        MERGE (:User {id: user.id})
+    """;
+
+    List<Map<String, String>> userParams = ids.stream()
+            .map(id -> Map.of("id", id.toString()))
+            .toList();
+
+    try (var session = neo4jDriver.session()) {
+      session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
+    }
   }
 
   public void DeleteUser(String users) {

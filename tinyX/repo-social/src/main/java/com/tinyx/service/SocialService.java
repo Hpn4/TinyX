@@ -36,14 +36,8 @@ public class SocialService {
     repoSocialRepository.DeletePost(posts);
   }
 
-  public void createUser(List<UserContract> luc) {
-    if (luc.size() == 0) return;
-    String users = "";
-    for (var i = 0; i < luc.size(); i++) {
-      users += "(:User {id: +" + luc.get(i).id + "+})";
-      if (i != luc.size() - 1) users += ", ";
-    }
-    repoSocialRepository.CreateUser(users);
+  public void createUsers(List<UUID> luc) {
+    repoSocialRepository.createUsers(luc);
   }
 
   public void deleteUser(List<UserContract> luc) {

@@ -12,6 +12,8 @@ public class UserQuery {
   public Operation operation;
   public UserContract user;
 
+  public UserQuery() {}
+
   public UserQuery(Operation operation, UserContract user) {
     this.operation = operation;
     this.user = user;

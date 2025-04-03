@@ -16,6 +16,8 @@ public class UserRelationsQuery {
 
   public UUID targetUserId;
 
+  public UserRelationsQuery() {}
+
   public UserRelationsQuery(final Operation op, final UUID srcUserId, final UUID targetUserId) {
     this.operation = op;
     this.srcUserId = srcUserId;

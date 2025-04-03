@@ -10,13 +10,18 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Startup
 @ApplicationScoped
 public class RedisStreamUserSocial extends RedisStreamReader<UserQuery> {
   @Inject SocialService service;
+
+  Logger log = Logger.getLogger(RedisStreamUserSocial.class);
 
   public RedisStreamUserSocial() {
     super();
@@ -29,13 +34,14 @@ public class RedisStreamUserSocial extends RedisStreamReader<UserQuery> {
 
   @Override
   public void process(List<UserQuery> data) {
+    List<UUID> users = data.stream()
+            .filter(q -> q.operation == UserQuery.Operation.CREATE)
+            .map(q -> q.user.id)
+            .toList();
 
-    List<UserContract> creation = new ArrayList<>();
+    log.info("Received users: " + users);
 
-    for (var i = 0; i < data.size(); i++) {
-      if (data.get(i).operation == UserQuery.Operation.CREATE) creation.add(data.get(i).user);
-    }
-    service.createUser(creation);
+    service.createUsers(users);
   }
 
   @Scheduled(every = "10m")

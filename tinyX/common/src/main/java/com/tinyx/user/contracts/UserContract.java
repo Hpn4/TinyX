@@ -11,8 +11,9 @@ public class UserContract {
   public LocalDate creationDate;
   public List<UUID> blockedUsers;
 
-  public UserContract(UUID id, String userName, LocalDate creationDate) {
+  public UserContract() {}
 
+  public UserContract(UUID id, String userName, LocalDate creationDate) {
     this.id = id;
     this.userName = userName;
     this.creationDate = creationDate;

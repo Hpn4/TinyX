@@ -17,7 +17,7 @@ lint:
   stage: lint
   parallel:
     matrix:
-      - SERVICE: ["common", "repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["common", "repo-post", "repo-social", "repo-home-timeline", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   script:
     - cd tinyX
     - mvn -pl $SERVICE $MAVEN_CLI_OPTS spotless:check
@@ -38,7 +38,7 @@ compile:
   stage: compile
   parallel:
     matrix:
-      - SERVICE: ["repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["repo-post", "repo-social", "repo-home-timeline", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   needs:
     - build-common
   script:
@@ -53,7 +53,7 @@ test:
   stage: test
   parallel:
     matrix:
-      - SERVICE: ["repo-post", "repo-social", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["repo-post", "repo-social", "repo-home-timeline", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   needs:
     - compile
   script:

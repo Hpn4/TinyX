@@ -31,6 +31,7 @@
     <module>srvc-search</module>
     <module>srvc-user-timeline</module>
     <module>srvc-home-timeline</module>
+    <module>repo-home-timeline</module>
     <module>repo-post</module>
     <module>repo-social</module>
     <module>common</module>
@@ -117,6 +118,7 @@
             <java>
               <googleJavaFormat />
             </java>
+            <lineEndings>UNIX</lineEndings>
           </configuration>
         </plugin>
       </plugins>

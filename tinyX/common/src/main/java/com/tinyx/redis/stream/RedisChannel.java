@@ -4,6 +4,7 @@ package com.tinyx.redis.stream;
 public enum RedisChannel {
   POST("post"),
   USER("user"),
+  SOCIAL("social"),
   UPLOAD_MEDIA("media");
 
   private final String channel;

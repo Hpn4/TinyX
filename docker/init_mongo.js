@@ -13,3 +13,4 @@ db.createUser(
 db.createCollection("Media");
 db.createCollection("Users");
 db.createCollection("Posts");
+db.createCollection("HomeTimeline");

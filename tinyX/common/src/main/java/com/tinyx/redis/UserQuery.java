@@ -4,13 +4,25 @@ import com.tinyx.user.contracts.UserContract;
 
 public class UserQuery {
   public enum Operation {
-    CREATE,
-    UPDATE,
-    // Potentially add delete here
+    CREATE("CREATE"),
+    UPDATE("UPDATE");
+
+    private final String operation;
+
+    Operation(String operation) {
+      this.operation = operation;
+    }
+
+    @Override
+    public String toString() {
+      return this.operation;
+    }
   }
 
   public Operation operation;
   public UserContract user;
+
+  public UserQuery() {}
 
   public UserQuery(Operation operation, UserContract user) {
     this.operation = operation;

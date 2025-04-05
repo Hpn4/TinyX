@@ -3,14 +3,11 @@ package com.tinyx.redis.stream;
 import com.tinyx.post.contracts.PostContract;
 import com.tinyx.redis.PostQuery;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
-import io.quarkus.runtime.Startup;
-import io.quarkus.scheduler.Scheduled;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 
-@Startup
-@ApplicationScoped
+// @ApplicationScopped
+// @Startup
 public class RedisStreamReaderExample extends RedisStreamReader<PostQuery> {
 
   public RedisStreamReaderExample() {
@@ -43,14 +40,17 @@ public class RedisStreamReaderExample extends RedisStreamReader<PostQuery> {
         .publishStream(RedisChannel.POST, postQuery, PostQuery.class);
   }
 
-  /* Mandatory stuff, timing might be put inside the application properties to be cleaner */
-  @Scheduled(every = "10m")
+  /* Mandatory stuff, timing might be put inside the application properties to be cleaner
+   *  @Scheduled are commented to avoid having a new subscriber
+   *  (Quarkus auto add ApplicationScopped when using Scheduled)
+   */
+  // @Scheduled(every = "10m")
   @Override
   protected void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "5s")
+  // @Scheduled(every = "5s")
   @Override
   protected void claimPendingMessages() {
     super.claimPendingMessages();

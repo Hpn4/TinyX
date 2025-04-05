@@ -1,0 +1,29 @@
+package com.tinyx;
+
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import java.util.function.Supplier;
+
+public enum ErrorCodes {
+  USER_NOT_FOUND(Status.NOT_FOUND, "User %s was not found"),
+  USERS_NOT_FOUND(Status.NOT_FOUND, "One or multiple users were not found");
+
+  private final Status status;
+  private final String errorMessage;
+
+  ErrorCodes(Status status, String errorMessage) {
+    this.status = status;
+    this.errorMessage = errorMessage;
+  }
+
+  public void throwError(Object... args) {
+    throw asSupplier(args).get();
+  }
+
+  public Supplier<WebApplicationException> asSupplier(Object... args) {
+    return () ->
+        new WebApplicationException(
+            Response.status(status).entity(String.format(errorMessage, args)).build());
+  }
+}

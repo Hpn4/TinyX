@@ -1,6 +1,5 @@
 package com.tinyx.controller;
 
-import com.tinyx.post.contracts.PostContract;
 import com.tinyx.redis.PostQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
@@ -10,32 +9,41 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.ArrayList;
+import org.jboss.logging.Logger;
+
 import java.util.List;
+import java.util.UUID;
 
 @Startup
 @ApplicationScoped
-public class RedisStreamPostSocial extends RedisStreamReader<PostQuery> {
+public class SocialStreamPost extends RedisStreamReader<PostQuery> {
   @Inject SocialService service;
 
-  public RedisStreamPostSocial() {
+  Logger log = Logger.getLogger(SocialRedisStreamUser.class);
+  public SocialStreamPost() {
     super();
   }
 
   @Inject
-  public RedisStreamPostSocial(final ReactiveRedisDataSource ds) {
+  public SocialStreamPost(final ReactiveRedisDataSource ds) {
     super(ds, PostQuery.class, "repo-social", RedisChannel.POST);
   }
 
   @Override
   public void process(List<PostQuery> data) {
-    List<PostContract> creation = new ArrayList<>();
-    List<PostContract> deletion = new ArrayList<>();
 
-    for (var i = 0; i < data.size(); i++) {
-      if (data.get(i).operation == PostQuery.Operation.CREATE) creation.add(data.get(i).post);
-      else if (data.get(i).operation == PostQuery.Operation.DELETE) deletion.add(data.get(i).post);
-    }
+
+    List<UUID> creation = data.stream()
+            .filter(q -> q.operation == PostQuery.Operation.CREATE)
+            .map(q -> q.post.id)
+            .toList();
+    List<UUID> deletion = data.stream()
+            .filter(q -> q.operation == PostQuery.Operation.DELETE)
+            .map(q -> q.post.id)
+            .toList();
+
+    log.info("Created posts "+creation);
+    log.info("Deleted posts "+deletion);
     service.createPost(creation);
     service.deletePost(deletion);
   }

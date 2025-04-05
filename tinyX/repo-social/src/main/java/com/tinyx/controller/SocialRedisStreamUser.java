@@ -4,7 +4,6 @@ import com.tinyx.redis.UserQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
 import com.tinyx.service.SocialService;
-import com.tinyx.user.contracts.UserContract;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
@@ -12,23 +11,22 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Startup
 @ApplicationScoped
-public class RedisStreamUserSocial extends RedisStreamReader<UserQuery> {
+public class SocialRedisStreamUser extends RedisStreamReader<UserQuery> {
   @Inject SocialService service;
 
-  Logger log = Logger.getLogger(RedisStreamUserSocial.class);
+  Logger log = Logger.getLogger(SocialRedisStreamUser.class);
 
-  public RedisStreamUserSocial() {
+  public SocialRedisStreamUser() {
     super();
   }
 
   @Inject
-  public RedisStreamUserSocial(final ReactiveRedisDataSource ds) {
+  public SocialRedisStreamUser(final ReactiveRedisDataSource ds) {
     super(ds, UserQuery.class, "repo-social", RedisChannel.USER);
   }
 
@@ -38,7 +36,6 @@ public class RedisStreamUserSocial extends RedisStreamReader<UserQuery> {
             .filter(q -> q.operation == UserQuery.Operation.CREATE)
             .map(q -> q.user.id)
             .toList();
-
     log.info("Received users: " + users);
 
     service.createUsers(users);

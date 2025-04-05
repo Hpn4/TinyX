@@ -10,7 +10,6 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,16 +38,16 @@ public class SocialRedisStreamUserRelation extends RedisStreamReader<UserRelatio
       UserRelationsQuery idata = data.get(i);
       switch (data.get(i).operation) {
         case BLOCK -> {
-          blocks.add(new SocialRelationEntity(idata.srcUserId,idata.targetUserId));
+          blocks.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
         }
         case FOLLOW -> {
-          follows.add(new SocialRelationEntity(idata.srcUserId,idata.targetUserId));
+          follows.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
         }
         case UNBLOCK -> {
-          unblocks.add(new SocialRelationEntity(idata.srcUserId,idata.targetUserId));
+          unblocks.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
         }
         case UNFOLLOW -> {
-          unfollows.add(new SocialRelationEntity(idata.srcUserId,idata.targetUserId));
+          unfollows.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
         }
         default -> {
           break;

@@ -10,10 +10,9 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.jboss.logging.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.jboss.logging.Logger;
 
 @Startup
 @ApplicationScoped
@@ -21,6 +20,7 @@ public class SocialRedisStreamLikePost extends RedisStreamReader<LikePostQuery> 
   @Inject SocialService service;
 
   Logger log = Logger.getLogger(SocialRedisStreamUser.class);
+
   public SocialRedisStreamLikePost() {
     super();
   }
@@ -37,9 +37,9 @@ public class SocialRedisStreamLikePost extends RedisStreamReader<LikePostQuery> 
 
     for (var i = 0; i < data.size(); i++) {
       if (data.get(i).operation == LikePostQuery.Operation.LIKE) {
-        likes.add(new SocialRelationEntity(data.get(i).srcUserId,data.get(i).targetPostId));
+        likes.add(new SocialRelationEntity(data.get(i).srcUserId, data.get(i).targetPostId));
       } else {
-        dislikes.add(new SocialRelationEntity(data.get(i).srcUserId,data.get(i).targetPostId));
+        dislikes.add(new SocialRelationEntity(data.get(i).srcUserId, data.get(i).targetPostId));
       }
     }
     log.info("create LIKE");

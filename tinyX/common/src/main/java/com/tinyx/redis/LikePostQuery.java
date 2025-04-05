@@ -14,7 +14,8 @@ public class LikePostQuery {
 
   public UUID targetPostId;
 
-  public LikePostQuery(){}
+  public LikePostQuery() {}
+
   public LikePostQuery(final Operation op, final UUID srcUserId, final UUID targetPostId) {
     this.operation = op;
     this.srcUserId = srcUserId;

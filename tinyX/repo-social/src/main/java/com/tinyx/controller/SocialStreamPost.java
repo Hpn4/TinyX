@@ -9,10 +9,9 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.jboss.logging.Logger;
-
 import java.util.List;
 import java.util.UUID;
+import org.jboss.logging.Logger;
 
 @Startup
 @ApplicationScoped
@@ -20,6 +19,7 @@ public class SocialStreamPost extends RedisStreamReader<PostQuery> {
   @Inject SocialService service;
 
   Logger log = Logger.getLogger(SocialRedisStreamUser.class);
+
   public SocialStreamPost() {
     super();
   }
@@ -32,18 +32,19 @@ public class SocialStreamPost extends RedisStreamReader<PostQuery> {
   @Override
   public void process(List<PostQuery> data) {
 
-
-    List<UUID> creation = data.stream()
+    List<UUID> creation =
+        data.stream()
             .filter(q -> q.operation == PostQuery.Operation.CREATE)
             .map(q -> q.post.id)
             .toList();
-    List<UUID> deletion = data.stream()
+    List<UUID> deletion =
+        data.stream()
             .filter(q -> q.operation == PostQuery.Operation.DELETE)
             .map(q -> q.post.id)
             .toList();
 
-    log.info("Created posts "+creation);
-    log.info("Deleted posts "+deletion);
+    log.info("Created posts " + creation);
+    log.info("Deleted posts " + deletion);
     service.createPost(creation);
     service.deletePost(deletion);
   }

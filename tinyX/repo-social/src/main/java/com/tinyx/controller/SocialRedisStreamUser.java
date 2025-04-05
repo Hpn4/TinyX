@@ -9,10 +9,9 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.jboss.logging.Logger;
-
 import java.util.List;
 import java.util.UUID;
+import org.jboss.logging.Logger;
 
 @Startup
 @ApplicationScoped
@@ -32,7 +31,8 @@ public class SocialRedisStreamUser extends RedisStreamReader<UserQuery> {
 
   @Override
   public void process(List<UserQuery> data) {
-    List<UUID> users = data.stream()
+    List<UUID> users =
+        data.stream()
             .filter(q -> q.operation == UserQuery.Operation.CREATE)
             .map(q -> q.user.id)
             .toList();

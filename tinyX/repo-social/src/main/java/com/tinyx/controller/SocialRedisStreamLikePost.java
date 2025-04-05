@@ -10,6 +10,8 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +20,14 @@ import java.util.List;
 public class SocialRedisStreamLikePost extends RedisStreamReader<LikePostQuery> {
   @Inject SocialService service;
 
+  Logger log = Logger.getLogger(SocialRedisStreamUser.class);
   public SocialRedisStreamLikePost() {
     super();
   }
 
   @Inject
   public SocialRedisStreamLikePost(final ReactiveRedisDataSource ds) {
-    super(ds, LikePostQuery.class, "repo-social", RedisChannel.POST);
+    super(ds, LikePostQuery.class, "repo-social", RedisChannel.SOCIAL);
   }
 
   @Override
@@ -39,6 +42,7 @@ public class SocialRedisStreamLikePost extends RedisStreamReader<LikePostQuery> 
         dislikes.add(new SocialRelationEntity(data.get(i).srcUserId,data.get(i).targetPostId));
       }
     }
+    log.info("create LIKE");
     service.createRelation(likes, "LIKE", "User", "Post");
     service.deleteRelation(dislikes, "LIKE", "User", "Post");
   }

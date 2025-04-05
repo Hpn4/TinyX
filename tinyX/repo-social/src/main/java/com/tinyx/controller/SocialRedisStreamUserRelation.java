@@ -25,7 +25,7 @@ public class SocialRedisStreamUserRelation extends RedisStreamReader<UserRelatio
 
   @Inject
   public SocialRedisStreamUserRelation(final ReactiveRedisDataSource ds) {
-    super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.POST);
+    super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.SOCIAL);
   }
 
   @Override
@@ -57,7 +57,7 @@ public class SocialRedisStreamUserRelation extends RedisStreamReader<UserRelatio
     }
 
     service.createRelation(blocks, "BLOCK", "User", "User");
-    service.createRelation(blocks, "FOLLOW", "User", "User");
+    service.createRelation(follows, "FOLLOW", "User", "User");
     service.deleteRelation(unblocks, "BLOCK", "User", "User");
     service.deleteRelation(unfollows, "FOLLOW", "User", "User");
   }

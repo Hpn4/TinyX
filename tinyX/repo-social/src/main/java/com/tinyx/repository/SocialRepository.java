@@ -97,6 +97,8 @@ public class SocialRepository {
              {id: relation.srcId})
             MATCH (b: """+t2+"""
              {id: relation.targetId})
+            WHERE NOT (a)-[:"""+relation+"""
+            ]->(b)
             MERGE (a)-[:"""+relation+"""
              {creation_time: relation.instant}]->(b);
             """;
@@ -104,7 +106,7 @@ public class SocialRepository {
             .map(r -> Map.of("srcId",r.srcId.toString(),"targetId",r.targetId.toString(),"instant",r.timestamp.toString()))
             .toList();
     try (var session = neo4jDriver.session()) {
-      session.executeWrite(tx -> tx.run(query, Map.of("users", relationParams)));
+      session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
     }
   }
 
@@ -122,7 +124,7 @@ public class SocialRepository {
             .map(r -> Map.of("srcId",r.srcId.toString(),"targetId",r.targetId.toString()))
             .toList();
     try (var session = neo4jDriver.session()) {
-      session.executeWrite(tx -> tx.run(query, Map.of("users", relationParams)));
+      session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
     }
 
   }

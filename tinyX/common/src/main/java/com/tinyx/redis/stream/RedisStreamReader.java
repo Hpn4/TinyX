@@ -68,6 +68,8 @@ public abstract class RedisStreamReader<T> {
     consumer.cancel();
     stream
         .xgroupDelConsumer(STREAM, STREAM_GROUP, STREAM_CONSUMER)
+        .onFailure()
+        .invoke(log::error)
         .subscribe()
         .with(
             unack ->

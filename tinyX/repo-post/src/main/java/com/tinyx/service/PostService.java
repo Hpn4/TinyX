@@ -15,27 +15,18 @@ public class PostService {
   @Inject PostRepository postRepository;
   @Inject PostConverter postConverter;
 
-  public boolean isPostValid(PostContract postContract) {
-    return !(postContract.id == null
-        || postContract.userId == null
-        || postContract.content == null
-        || postContract.creationDate == null);
-  }
-
   public void createPost(List<PostContract> posts) {
-    posts.removeIf(post -> !isPostValid(post));
     List<PostEntity> postEntities =
         posts.stream().map(postConverter::convertPost).collect(Collectors.toList());
 
     postRepository.createPost(postEntities);
   }
 
-  public long deletePost(List<UUID> ids) {
-    return postRepository.deletePost(ids);
+  public void deletePost(List<UUID> ids) {
+    postRepository.deletePost(ids);
   }
 
   public void updatePost(List<PostContract> posts) {
-    posts.removeIf(post -> !isPostValid(post));
     List<PostEntity> postEntities =
         posts.stream().map(postConverter::convertPost).collect(Collectors.toList());
 

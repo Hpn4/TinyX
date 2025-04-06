@@ -15,14 +15,7 @@ public class UserService {
   @Inject UserRepository userRepository;
   @Inject UserConverter userConverter;
 
-  public boolean isUserValid(UserContract userContract) {
-    return !(userContract.id == null
-        || userContract.userName == null
-        || userContract.creationDate == null);
-  }
-
   public void createUser(List<UserContract> users) {
-    users.removeIf(user -> !isUserValid(user));
     List<UserEntity> userEntities =
         users.stream().map(userConverter::convertUser).collect(Collectors.toList());
 
@@ -30,7 +23,6 @@ public class UserService {
   }
 
   public void updateUser(List<UserContract> users) {
-    users.removeIf(user -> !isUserValid(user));
     List<UserEntity> userEntities =
         users.stream().map(userConverter::convertUser).collect(Collectors.toList());
 

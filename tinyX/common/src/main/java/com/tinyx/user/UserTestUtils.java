@@ -6,6 +6,7 @@ import com.tinyx.user.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -61,7 +62,8 @@ public class UserTestUtils {
           .anyMatch(rq -> rq.srcUserId == first.user.id && rq.targetUserId == second.user.id))
         continue;
 
-      relationsQueries.add(new UserRelationsQuery(operation, first.user.id, second.user.id));
+      relationsQueries.add(
+          new UserRelationsQuery(operation, first.user.id, second.user.id, ZonedDateTime.now()));
 
       safeGuard++;
     }

@@ -9,13 +9,13 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>srvc-user-timeline</artifactId>
+  <artifactId>repo-user-timeline</artifactId>
 
   <dependencies>
-    <!-- Quarkus -->
+    <!-- More annotations for endpoints (swagger responses, etc) -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-reactive</artifactId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
 
     <!-- NoSQL: MongoDB -->
@@ -32,6 +32,12 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-client-reactive-jackson</artifactId>
+    </dependency>
+
+    <!-- Messaging Queue: Redis -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-redis-client</artifactId>
     </dependency>
 
     <!-- Logging -->
@@ -52,5 +58,7 @@
       <artifactId>common</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+
   </dependencies>
+
 </project>

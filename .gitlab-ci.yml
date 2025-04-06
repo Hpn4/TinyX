@@ -51,6 +51,21 @@ compile:
 
 test:
   stage: test
+  services:
+    - name: mongo:latest
+      alias: mongo
+    - name: redis:alpine
+      alias: redis
+    - name: neo4j:3.5
+      alias: neo4j
+  variables:
+    MONGO_INITDB_ROOT_USERNAME: admin
+    MONGO_INITDB_ROOT_PASSWORD: admin
+    MONGO_INITDB_DATABASE: Tinyx
+    NEO4J_AUTH: none
+    MONGODB_CONNECTION_STRING: "mongodb://admin:admin@mongo:27017/?authSource=admin&retryWrites=true&w=majority&uuidRepresentation=STANDARD"
+    REDIS_CONNECTION_STRING: "redis://redis:6379"
+    NEO4J_CONNECTION_STRING: "bolt://neo4j:7687"
   parallel:
     matrix:
       - SERVICE: ["repo-post", "repo-social", "repo-home-timeline", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]

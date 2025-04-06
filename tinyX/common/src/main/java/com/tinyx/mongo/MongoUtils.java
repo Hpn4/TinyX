@@ -4,14 +4,10 @@ import com.mongodb.MongoBulkWriteException;
 import com.mongodb.bulk.BulkWriteError;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.BulkWriteOptions;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.InsertOneModel;
-import com.mongodb.client.model.WriteModel;
+import com.mongodb.client.model.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jboss.logging.Logger;
 
@@ -127,10 +123,13 @@ public class MongoUtils {
         errorHandling);
   }
 
+  public <T, V> Optional<BulkWriteResult> Remove(
+      String field, List<V> values, MongoCollection<T> collection) {
+    return BulkWriteOperations(
+        List.of(new DeleteManyModel<T>(Filters.in(field, values))), collection);
+  }
+
   public <E, T> List<E> Find(String field, List<T> values, MongoCollection<E> collection) {
-    return values.stream()
-        .flatMap(
-            value -> collection.find(Filters.eq(field, value)).into(new ArrayList<>()).stream())
-        .collect(Collectors.toList());
+    return collection.find(Filters.in(field, values)).into(new ArrayList<>());
   }
 }

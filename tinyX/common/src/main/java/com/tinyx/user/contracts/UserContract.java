@@ -10,6 +10,7 @@ public class UserContract {
   public String userName;
   public ZonedDateTime creationDate;
   public List<UUID> blockedUsers;
+  public List<UUID> posts;
 
   public UserContract() {}
 
@@ -18,5 +19,19 @@ public class UserContract {
     this.userName = userName;
     this.creationDate = creationDate;
     this.blockedUsers = new ArrayList<>();
+    this.posts = new ArrayList<>();
+  }
+
+  public UserContract(
+      UUID id,
+      String userName,
+      ZonedDateTime creationDate,
+      List<UUID> blockedUsers,
+      List<UUID> posts) {
+    this.id = id;
+    this.userName = userName;
+    this.creationDate = creationDate;
+    this.blockedUsers = blockedUsers;
+    this.posts = posts;
   }
 }

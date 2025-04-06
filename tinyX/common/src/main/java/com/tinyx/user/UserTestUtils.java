@@ -29,6 +29,14 @@ public class UserTestUtils {
     return users;
   }
 
+  public static List<String> randomUserNames(int n) {
+    ArrayList<String> users = new ArrayList<>();
+
+    for (int i = 0; i < n; i++) users.add("user" + UUID.randomUUID().toString().substring(0, 8));
+
+    return users;
+  }
+
   public List<UserQuery> randomUserCreationQueries(int n) {
     return randomUsers(n).stream()
         .map(u -> new UserQuery(UserQuery.Operation.CREATE, userConverter.convertUser(u)))

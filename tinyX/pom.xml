@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.tinyx</groupId>
   <artifactId>tinyx</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -12,19 +11,15 @@
     <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.release>17</maven.compiler.release>
     <java.version>17</java.version>
-
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>3.0.4.Final</quarkus.platform.version>
-
     <compiler-plugin.version>3.11.0</compiler-plugin.version>
     <surefire-plugin.version>3.0.0</surefire-plugin.version>
     <skipITs>true</skipITs>
-
     <quarkus-neo4j.version>3.0.3</quarkus-neo4j.version>
     <lombok.version>1.18.28</lombok.version>
   </properties>
-
   <modules>
     <module>common</module>
     <module>srvc-post</module>
@@ -36,8 +31,8 @@
     <module>repo-post</module>
     <module>repo-social</module>
     <module>repo-user-timeline</module>
+    <module>srvc-user</module>
   </modules>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -49,7 +44,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -64,7 +58,6 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
-
     <!-- Testing -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -72,7 +65,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
       <plugins>
         <!-- Plugin Quarkus -->
@@ -124,5 +116,4 @@
         </plugin>
       </plugins>
   </build>
-
 </project>

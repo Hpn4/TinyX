@@ -9,7 +9,6 @@ import com.tinyx.timeline.entity.UserTimelineEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
-import java.time.ZoneId;
 import java.util.*;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -25,11 +24,9 @@ public class UserTimelineService {
   }
 
   /**
-   * Partition the PostQueries from Redis in two groups:
-   * - Creation one: will add a new entry in the user timeline of the one who created the post (the timestamp is the
-   *   creation date of the post).
-   * - Deletion one: will remove the post from all user timeline.
-   * These operations are batched.
+   * Partition the PostQueries from Redis in two groups: - Creation one: will add a new entry in the
+   * user timeline of the one who created the post (the timestamp is the creation date of the post).
+   * - Deletion one: will remove the post from all user timeline. These operations are batched.
    *
    * @param data List of post queries.
    */
@@ -43,11 +40,10 @@ public class UserTimelineService {
         var entry = new UserTimelineEntity.UserTimelinePostEntry();
         entry.id = q.post.id;
         // TODO: time format adapt
-        entry.timestamp = q.post.creationDate.atStartOfDay(ZoneId.systemDefault());
+        entry.timestamp = q.post.creationDate;
 
         toAdd.computeIfAbsent(q.post.userId, e -> new ArrayList<>()).add(entry);
-      } else if (q.operation == PostQuery.Operation.DELETE)
-        toRemove.add(q.post.id);
+      } else if (q.operation == PostQuery.Operation.DELETE) toRemove.add(q.post.id);
     }
 
     repository.removeFromAllUsers(toRemove);
@@ -55,7 +51,8 @@ public class UserTimelineService {
   }
 
   /**
-   * Take a list of BLOCK user relations and for each one of these removes entries of liked post of a blocked user.
+   * Take a list of BLOCK user relations and for each one of these removes entries of liked post of
+   * a blocked user.
    *
    * @param data List of user relations queries, excepting to contain only BLOCK queries.
    */
@@ -76,8 +73,7 @@ public class UserTimelineService {
 
         // If there is another error than a user not found (previously deleted) we cancel the
         // processing
-        if (status != 200 && status != 404)
-          throw e;
+        if (status != 200 && status != 404) throw e;
       }
 
       // We then remove all posts of the blocked user (`targetUserId`) from the `srcUserId` timeline
@@ -90,10 +86,9 @@ public class UserTimelineService {
   }
 
   /**
-   * Partition a list of LIKE/UNLIKE queries in two groups:
-   * - LIKE: simply add a new entry (the timestamp is when the like was done)
-   * - UNLIKE: simply remove the previously liked post
-   * These operations are batched.
+   * Partition a list of LIKE/UNLIKE queries in two groups: - LIKE: simply add a new entry (the
+   * timestamp is when the like was done) - UNLIKE: simply remove the previously liked post These
+   * operations are batched.
    *
    * @param data List of like queries.
    */

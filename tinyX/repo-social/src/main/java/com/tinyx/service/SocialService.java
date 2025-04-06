@@ -1,12 +1,9 @@
 package com.tinyx.service;
 
-import com.tinyx.controller.SocialSubscriberUser;
 import com.tinyx.repository.SocialRepository;
 import com.tinyx.repository.entity.SocialRelationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.jboss.logging.Logger;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -15,14 +12,14 @@ public class SocialService {
 
   @Inject SocialRepository repoSocialRepository;
 
-  public void createPost(List<UUID> lpc) {
+  public void createPosts(List<UUID> lpc) {
     if (lpc.isEmpty()) return;
     repoSocialRepository.createPosts(lpc);
   }
 
-  public void deletePost(List<UUID> lpc) {
+  public void deletePosts(List<UUID> lpc) {
     if (lpc.isEmpty()) return;
-    repoSocialRepository.deletePost(lpc);
+    repoSocialRepository.deletePosts(lpc);
   }
 
   public void createUsers(List<UUID> luc) {
@@ -30,20 +27,20 @@ public class SocialService {
     repoSocialRepository.createUsers(luc);
   }
 
-  public void deleteUser(List<UUID> luc) {
+  public void deleteUsers(List<UUID> luc) {
     if (luc.isEmpty()) return;
-    repoSocialRepository.deleteUser(luc);
+    repoSocialRepository.deleteUsers(luc);
   }
 
-  public void createRelation(
+  public void createRelations(
       List<SocialRelationEntity> lre, String relation, String t1, String t2) {
     if (lre.isEmpty()) return;
-    repoSocialRepository.createRelation(lre, relation, t1, t2);
+    repoSocialRepository.createRelations(lre, relation, t1, t2);
   }
 
-  public void deleteRelation(
+  public void deleteRelations(
       List<SocialRelationEntity> lre, String relation, String t1, String t2) {
     if (lre.isEmpty()) return;
-    repoSocialRepository.deleteRelation(lre, relation, t1, t2);
+    repoSocialRepository.deleteRelations(lre, relation, t1, t2);
   }
 }

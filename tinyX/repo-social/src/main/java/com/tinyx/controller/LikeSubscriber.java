@@ -16,17 +16,16 @@ import org.jboss.logging.Logger;
 
 @Startup
 @ApplicationScoped
-public class SocialSubscriberLikePost extends RedisStreamReader<LikePostQuery> {
+public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
   @Inject SocialService service;
 
-  Logger log = Logger.getLogger(SocialSubscriberUser.class);
 
-  public SocialSubscriberLikePost() {
+  public LikeSubscriber() {
     super();
   }
 
   @Inject
-  public SocialSubscriberLikePost(final ReactiveRedisDataSource ds) {
+  public LikeSubscriber(final ReactiveRedisDataSource ds) {
     super(ds, LikePostQuery.class, "repo-social", RedisChannel.SOCIAL);
   }
 
@@ -36,15 +35,16 @@ public class SocialSubscriberLikePost extends RedisStreamReader<LikePostQuery> {
     List<SocialRelationEntity> dislikes = new ArrayList<>();
 
     for (var i = 0; i < data.size(); i++) {
+      SocialRelationEntity sre = new SocialRelationEntity(data.get(i).srcUserId,data.get(i).targetPostId);
       if (data.get(i).operation == LikePostQuery.Operation.LIKE) {
-        likes.add(new SocialRelationEntity(data.get(i).srcUserId, data.get(i).targetPostId));
+        likes.add(sre);
       } else {
-        dislikes.add(new SocialRelationEntity(data.get(i).srcUserId, data.get(i).targetPostId));
+        dislikes.add(sre);
       }
     }
-    log.info("create LIKE");
-    service.createRelation(likes, "LIKE", "User", "Post");
-    service.deleteRelation(dislikes, "LIKE", "User", "Post");
+
+    service.createRelations(likes, "LIKE", "User", "Post");
+    service.deleteRelations(dislikes, "LIKE", "User", "Post");
   }
 
   @Scheduled(every = "10m")

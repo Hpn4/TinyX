@@ -1,13 +1,12 @@
 package com.tinyx.repository;
 
-import com.tinyx.controller.SocialSubscriberUser;
+import com.tinyx.controller.UserSubscriber;
 import com.tinyx.repository.entity.SocialRelationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.jboss.logging.Logger;
 import org.neo4j.driver.Driver;
 
@@ -15,7 +14,8 @@ import org.neo4j.driver.Driver;
 public class SocialRepository {
   @Inject Driver neo4jDriver;
 
-  Logger log = Logger.getLogger(SocialSubscriberUser.class);
+  Logger log = Logger.getLogger(UserSubscriber.class);
+
   public void createPosts(List<UUID> posts) {
     if (posts.isEmpty()) return;
 
@@ -29,15 +29,13 @@ public class SocialRepository {
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("posts", postParams)));
-      log.info("Posts created :"+posts);
-    }
-    catch (Exception e)
-    {
-      log.info("Failed to create posts: "+posts);
+      log.info("%d Posts created: ".formatted(posts.size()) + posts);
+    } catch (Exception e) {
+      log.info("Failed to create %d posts: ".formatted(posts.size()) + posts);
     }
   }
 
-  public void deletePost(List<UUID> posts) {
+  public void deletePosts(List<UUID> posts) {
 
     String query =
         """
@@ -49,13 +47,10 @@ public class SocialRepository {
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("posts", postParams)));
-      log.info("Succesfully deleted posts: "+posts);
+      log.info("Successfully deleted %d posts: ".formatted(posts.size()) + posts);
+    } catch (Exception e) {
+      log.info("Failed to delete %d posts: ".formatted(posts.size()) + posts);
     }
-    catch (Exception e)
-    {
-      log.info("Failed to delete posts: "+posts);
-    }
-
   }
 
   public void createUsers(List<UUID> ids) {
@@ -71,15 +66,13 @@ public class SocialRepository {
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
-      log.info("Succesfully created users: "+ids);
-    }
-    catch (Exception e)
-    {
-      log.info("Failed to create users: "+ids);
+      log.info("Succesfully created %d users: ".formatted(ids.size()) + ids);
+    } catch (Exception e) {
+      log.info("Failed to create %d users: ".formatted(ids.size())+ids);
     }
   }
 
-  public void deleteUser(List<UUID> users) {
+  public void deleteUsers(List<UUID> users) {
 
     String query =
         """
@@ -91,36 +84,22 @@ public class SocialRepository {
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
-      log.info("Successfully deleted users: "+users);
-    }
-    catch (Exception e)
-    {
-      log.info("Failed to delete users: "+users);
+      log.info("Successfully deleted %d users: ".formatted(users.size()) + users);
+    } catch (Exception e) {
+      log.info("Failed to delete %d users: ".formatted(users.size()) + users);
     }
   }
 
-  public void createRelation(
+  public void createRelations(
       List<SocialRelationEntity> relations, String relation, String t1, String t2) {
     String query =
         """
             UNWIND $relations AS relation
-            MATCH (a:"""
-            + t1
-            + """
-             {id: relation.srcId})
-            MATCH (b: """
-            + t2
-            + """
-             {id: relation.targetId})
-            WHERE NOT (a)-[:"""
-            + relation
-            + """
-            ]->(b)
-            MERGE (a)-[:"""
-            + relation
-            + """
-             {creation_time: relation.instant}]->(b);
-            """;
+            MATCH (a:%s {id: relation.srcId})
+            MATCH (b:%s {id: relation.targetId})
+            WHERE NOT (a)-[:%s]->(b)
+            MERGE (a)-[:%s {creation_time: relation.instant}]->(b);
+            """.formatted(t1,t2,relation,relation);
     List<Map<String, String>> relationParams =
         relations.stream()
             .map(
@@ -135,42 +114,31 @@ public class SocialRepository {
             .toList();
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
-      log.info("Successfully created relation "+relation+" between "+t1+": "+"and "+t2);
-    }
-    catch(Exception e)
-    {
-      log.info("Failed to create relation "+relation+" between "+t1+": "+"and "+t2);
+      log.info("Successfully created %d %s relations".formatted(relations.size(),relation));
+    } catch (Exception e) {
+      log.info("Failed to create %d %s relations".formatted(relations.size(),relation));
     }
   }
 
-  public void deleteRelation(
+  public void deleteRelations(
       List<SocialRelationEntity> relations, String relation, String type1, String type2) {
     String query =
         """
             UNWIND $relations AS relation
-            MATCH (:"""
-            + type1
-            + """
-             {id: relation.srcId})-[r:"""
-            + relation
-            + """
-            ]->(:"""
-            + type2
-            + """
-             {id: relation.targetId})
+            MATCH (:%s {id: relation.srcId})-[r:%s]->(:%s {id: relation.targetId})
               DELETE r
-            """;
+            """.formatted(type1,relations,type2);
     List<Map<String, String>> relationParams =
         relations.stream()
             .map(r -> Map.of("srcId", r.srcId.toString(), "targetId", r.targetId.toString()))
             .toList();
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
-      log.info("Successfully deleted relation "+relation+" between "+type1+": "+"and "+type2);
-    }
-    catch(Exception e)
-    {
-      log.info("Failed to create relation "+relation+" between "+type1+": "+"and "+type2);
+      log.info(
+          "Successfully deleted %d %s relations.".formatted(relations.size(),relation));
+    } catch (Exception e) {
+      log.info(
+          "Failed to delete %d %s relations".formatted(relations.size(),relation));
     }
   }
 }

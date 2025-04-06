@@ -15,15 +15,15 @@ import java.util.List;
 
 @Startup
 @ApplicationScoped
-public class SocialSubscriberUserRelation extends RedisStreamReader<UserRelationsQuery> {
+public class UserRelationSubscriber extends RedisStreamReader<UserRelationsQuery> {
   @Inject SocialService service;
 
-  public SocialSubscriberUserRelation() {
+  public UserRelationSubscriber() {
     super();
   }
 
   @Inject
-  public SocialSubscriberUserRelation(final ReactiveRedisDataSource ds) {
+  public UserRelationSubscriber(final ReactiveRedisDataSource ds) {
     super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.SOCIAL);
   }
 
@@ -36,18 +36,19 @@ public class SocialSubscriberUserRelation extends RedisStreamReader<UserRelation
 
     for (var i = 0; i < data.size(); i++) {
       UserRelationsQuery idata = data.get(i);
+      SocialRelationEntity sre = new SocialRelationEntity(idata.srcUserId,idata.targetUserId);
       switch (data.get(i).operation) {
         case BLOCK -> {
-          blocks.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
+          blocks.add(sre);
         }
         case FOLLOW -> {
-          follows.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
+          follows.add(sre);
         }
         case UNBLOCK -> {
-          unblocks.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
+          unblocks.add(sre);
         }
         case UNFOLLOW -> {
-          unfollows.add(new SocialRelationEntity(idata.srcUserId, idata.targetUserId));
+          unfollows.add(sre);
         }
         default -> {
           break;
@@ -55,10 +56,10 @@ public class SocialSubscriberUserRelation extends RedisStreamReader<UserRelation
       }
     }
 
-    service.createRelation(blocks, "BLOCK", "User", "User");
-    service.createRelation(follows, "FOLLOW", "User", "User");
-    service.deleteRelation(unblocks, "BLOCK", "User", "User");
-    service.deleteRelation(unfollows, "FOLLOW", "User", "User");
+    service.createRelations(blocks, "BLOCK", "User", "User");
+    service.createRelations(follows, "FOLLOW", "User", "User");
+    service.deleteRelations(unblocks, "BLOCK", "User", "User");
+    service.deleteRelations(unfollows, "FOLLOW", "User", "User");
   }
 
   @Scheduled(every = "10m")

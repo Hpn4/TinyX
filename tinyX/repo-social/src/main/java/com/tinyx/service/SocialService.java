@@ -1,9 +1,12 @@
 package com.tinyx.service;
 
+import com.tinyx.controller.SocialSubscriberUser;
 import com.tinyx.repository.SocialRepository;
 import com.tinyx.repository.entity.SocialRelationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
+
 import java.util.List;
 import java.util.UUID;
 

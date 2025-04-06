@@ -15,15 +15,15 @@ import java.util.List;
 
 @Startup
 @ApplicationScoped
-public class SocialRedisStreamUserRelation extends RedisStreamReader<UserRelationsQuery> {
+public class SocialSubscriberUserRelation extends RedisStreamReader<UserRelationsQuery> {
   @Inject SocialService service;
 
-  public SocialRedisStreamUserRelation() {
+  public SocialSubscriberUserRelation() {
     super();
   }
 
   @Inject
-  public SocialRedisStreamUserRelation(final ReactiveRedisDataSource ds) {
+  public SocialSubscriberUserRelation(final ReactiveRedisDataSource ds) {
     super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.SOCIAL);
   }
 

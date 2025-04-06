@@ -16,17 +16,17 @@ import org.jboss.logging.Logger;
 
 @Startup
 @ApplicationScoped
-public class SocialRedisStreamLikePost extends RedisStreamReader<LikePostQuery> {
+public class SocialSubscriberLikePost extends RedisStreamReader<LikePostQuery> {
   @Inject SocialService service;
 
-  Logger log = Logger.getLogger(SocialRedisStreamUser.class);
+  Logger log = Logger.getLogger(SocialSubscriberUser.class);
 
-  public SocialRedisStreamLikePost() {
+  public SocialSubscriberLikePost() {
     super();
   }
 
   @Inject
-  public SocialRedisStreamLikePost(final ReactiveRedisDataSource ds) {
+  public SocialSubscriberLikePost(final ReactiveRedisDataSource ds) {
     super(ds, LikePostQuery.class, "repo-social", RedisChannel.SOCIAL);
   }
 

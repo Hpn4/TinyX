@@ -26,6 +26,7 @@
   </properties>
 
   <modules>
+    <module>common</module>
     <module>srvc-post</module>
     <module>srvc-social</module>
     <module>srvc-search</module>
@@ -34,7 +35,7 @@
     <module>repo-home-timeline</module>
     <module>repo-post</module>
     <module>repo-social</module>
-    <module>common</module>
+    <module>repo-user-timeline</module>
   </modules>
 
   <dependencyManagement>

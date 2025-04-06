@@ -13,6 +13,7 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 import org.jboss.logging.Logger;
 
@@ -54,20 +55,20 @@ public class TestStream {
 
     var like = factory.<LikePostQuery>createPublisher();
 
-    LikePostQuery lpq = new LikePostQuery(LikePostQuery.Operation.LIKE, unique, uniquepost);
-    LikePostQuery unlpq = new LikePostQuery(LikePostQuery.Operation.UNLIKE, unique, uniquepost);
+    LikePostQuery lpq = new LikePostQuery(LikePostQuery.Operation.LIKE, unique, uniquepost, ZonedDateTime.now());
+    LikePostQuery unlpq = new LikePostQuery(LikePostQuery.Operation.UNLIKE, unique, uniquepost,ZonedDateTime.now());
 
     var realtion = factory.<UserRelationsQuery>createPublisher();
 
     UserRelationsQuery blurq =
-        new UserRelationsQuery(UserRelationsQuery.Operation.BLOCK, unique, UUID.randomUUID());
+        new UserRelationsQuery(UserRelationsQuery.Operation.BLOCK, unique, UUID.randomUUID(),ZonedDateTime.now());
     UserRelationsQuery unblurq =
-        new UserRelationsQuery(UserRelationsQuery.Operation.UNBLOCK, unique, second);
+        new UserRelationsQuery(UserRelationsQuery.Operation.UNBLOCK, unique, second,ZonedDateTime.now());
 
     UserRelationsQuery folurq =
-        new UserRelationsQuery(UserRelationsQuery.Operation.FOLLOW, unique, UUID.randomUUID());
+        new UserRelationsQuery(UserRelationsQuery.Operation.FOLLOW, unique, UUID.randomUUID(),ZonedDateTime.now());
     UserRelationsQuery unfolurq =
-        new UserRelationsQuery(UserRelationsQuery.Operation.UNFOLLOW, unique, second);
+        new UserRelationsQuery(UserRelationsQuery.Operation.UNFOLLOW, unique, second,ZonedDateTime.now());
 
     for (var i = 0; i < 10; i++) {
       user.publishStream(RedisChannel.USER, q, UserQuery.class);

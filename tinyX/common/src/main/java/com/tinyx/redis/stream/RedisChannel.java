@@ -5,6 +5,7 @@ public enum RedisChannel {
   POST("post"),
   USER("user"),
   SOCIAL("social"),
+  LIKE("like"),
   UPLOAD_MEDIA("media");
 
   private final String channel;

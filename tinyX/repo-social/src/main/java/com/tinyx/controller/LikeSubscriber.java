@@ -12,7 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import org.jboss.logging.Logger;
+
 
 @Startup
 @ApplicationScoped

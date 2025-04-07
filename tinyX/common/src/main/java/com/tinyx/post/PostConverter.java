@@ -3,6 +3,8 @@ package com.tinyx.post;
 import com.tinyx.post.contracts.PostContract;
 import com.tinyx.post.entity.PostEntity;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
+import java.util.UUID;
 
 @ApplicationScoped
 public class PostConverter {
@@ -14,8 +16,8 @@ public class PostConverter {
             contract.content,
             contract.creationDate,
             contract.parentId,
-            contract.mediaId);
-    entity.likes = contract.likes;
+            contract.mediaId,
+            new ArrayList<UUID>());
     return entity;
   }
 
@@ -28,7 +30,6 @@ public class PostConverter {
             entity.creationDate,
             entity.parentId,
             entity.mediaId);
-    contract.likes = entity.likes;
     return contract;
   }
 }

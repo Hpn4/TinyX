@@ -11,7 +11,6 @@ public class PostContract {
   public ZonedDateTime creationDate;
   public UUID parentId;
   public UUID mediaId;
-  public int likes;
 
   public enum postType {
     NONE,
@@ -34,7 +33,6 @@ public class PostContract {
     this.creationDate = creationDate;
     this.parentId = parentId;
     this.mediaId = mediaId;
-    this.likes = 0;
   }
 
   @Override
@@ -54,8 +52,6 @@ public class PostContract {
         + parentId
         + ", mediaId="
         + mediaId
-        + ", likes="
-        + likes
         + '}';
   }
 
@@ -64,7 +60,6 @@ public class PostContract {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     PostContract that = (PostContract) o;
-    if (likes != that.likes) return false;
     if (!Objects.equals(id, that.id)) return false;
     if (!Objects.equals(userId, that.userId)) return false;
     if (!Objects.equals(content, that.content)) return false;

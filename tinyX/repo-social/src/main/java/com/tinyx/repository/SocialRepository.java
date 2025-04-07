@@ -7,8 +7,12 @@ import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.jboss.logging.Logger;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Values;
 
 @ApplicationScoped
 public class SocialRepository {
@@ -40,7 +44,6 @@ public class SocialRepository {
     String query =
         """
             UNWIND $posts AS post
-            MATCH (:User)-[r:LIKE]->(:Post {id: post.id}) DELETE r;
             MATCH (n:Post {id: post.id}) DELETE n;
             """;
     List<Map<String, String>> postParams =
@@ -133,5 +136,20 @@ public class SocialRepository {
       session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
       log.info("Successfully deleted %d %s relations.".formatted(relations.size(), relation));
     }
+  }
+
+  public List<UUID> getUsersId(UUID postId)
+  {
+    String query = """
+            MATCH (u:User)-[:LIKE]->(:Post {id: $postId}) RETURN u.id""";
+    var session = neo4jDriver.session();
+    List<UUID> r = session.executeRead(tx ->{Result result = tx.run(query, Values.parameters("postId", postId.toString()));
+
+      return result.stream()
+              .map(record -> UUID.fromString(record.get("uuid").asString()))
+              .collect(Collectors.toList());
+
+      });
+    return r;
   }
 }

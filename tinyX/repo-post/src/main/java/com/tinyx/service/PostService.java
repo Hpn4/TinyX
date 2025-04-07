@@ -1,7 +1,7 @@
 package com.tinyx.service;
 
-import com.tinyx.post.PostConverter;
 import com.tinyx.post.contracts.PostContract;
+import com.tinyx.post.converter.PostContractToPostEntityConverter;
 import com.tinyx.post.entity.PostEntity;
 import com.tinyx.repository.PostRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,11 +13,13 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class PostService {
   @Inject PostRepository postRepository;
-  @Inject PostConverter postConverter;
+  @Inject PostContractToPostEntityConverter postContractToPostEntityConverter;
 
   public void createPost(List<PostContract> posts) {
     List<PostEntity> postEntities =
-        posts.stream().map(postConverter::convertPost).collect(Collectors.toList());
+        posts.stream()
+            .map(postContractToPostEntityConverter::converter)
+            .collect(Collectors.toList());
 
     postRepository.createPost(postEntities);
   }
@@ -28,7 +30,9 @@ public class PostService {
 
   public void updatePost(List<PostContract> posts) {
     List<PostEntity> postEntities =
-        posts.stream().map(postConverter::convertPost).collect(Collectors.toList());
+        posts.stream()
+            .map(postContractToPostEntityConverter::converter)
+            .collect(Collectors.toList());
 
     postRepository.updatePost(postEntities);
   }

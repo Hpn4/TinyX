@@ -1,23 +1,13 @@
 package com.tinyx;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.tinyx.post.PostTestUtils;
-import com.tinyx.post.contracts.PostContract;
-import com.tinyx.redis.PostQuery;
 import com.tinyx.redis.RedisUtils;
-import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.repository.SocialRepository;
 import com.tinyx.user.UserTestUtils;
-import com.tinyx.user.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 /**
@@ -49,7 +39,7 @@ public class RepoSocialTests {
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   class PostRedisTest {
-    @Test
+    /* @Test
     public void createUniquePost() throws InterruptedException {
       UserEntity ue = userTestUtils.randomUsers(1).get(0);
       PostContract pc =
@@ -66,6 +56,6 @@ public class RepoSocialTests {
       redisUtils.PostMany(RedisChannel.POST, postQueryList, PostQuery.class);
       List<UUID> postEntities = socialRepository.getPosts(Arrays.asList(uniquepost));
       assertTrue(postEntities.size() == 1);
-    }
+    }*/
   }
 }

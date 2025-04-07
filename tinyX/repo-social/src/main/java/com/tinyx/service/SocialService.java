@@ -5,6 +5,7 @@ import com.tinyx.redis.UserRelationsQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisPublisherFactory;
 import com.tinyx.repository.SocialRepository;
+import com.tinyx.repository.entity.PostEntity;
 import com.tinyx.repository.entity.SocialRelationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -19,19 +20,19 @@ public class SocialService {
 
   @Inject RedisPublisherFactory redisPublisherFactory;
 
-  public void createPosts(List<UUID> lpc) {
+  public void createPosts(List<PostEntity> lpc) {
     if (lpc.isEmpty()) return;
     repoSocialRepository.createPosts(lpc);
   }
 
-  public void deletePosts(List<UUID> lpc) {
+  public void deletePosts(List<PostEntity> lpc) {
     if (lpc.isEmpty()) return;
     for (var i = 0; i < lpc.size(); i++) {
-      List<UUID> userIds = repoSocialRepository.getUsersId(lpc.get(i));
+      List<UUID> userIds = repoSocialRepository.getUsersId(lpc.get(i).id);
       for (var j = 0; j < userIds.size(); j++) {
         LikePostQuery lpq =
             new LikePostQuery(
-                LikePostQuery.Operation.UNLIKE, userIds.get(j), lpc.get(i), ZonedDateTime.now());
+                LikePostQuery.Operation.UNLIKE, userIds.get(j), lpc.get(i).id, ZonedDateTime.now());
         redisPublisherFactory
             .<LikePostQuery>createPublisher()
             .publishStream(RedisChannel.LIKE, lpq, LikePostQuery.class);
@@ -73,6 +74,20 @@ public class SocialService {
         redisPublisherFactory
             .<UserRelationsQuery>createPublisher()
             .publishStream(RedisChannel.SOCIAL, unfollowBfromA, UserRelationsQuery.class);
+
+        List<UUID> postIds =
+            repoSocialRepository.getPostsFromUser(lre.get(i).srcId, lre.get(i).targetId);
+        for (var j = 0; j < postIds.size(); j++) {
+          LikePostQuery likePostQuery =
+              new LikePostQuery(
+                  LikePostQuery.Operation.UNLIKE,
+                  lre.get(i).srcId,
+                  postIds.get(i),
+                  ZonedDateTime.now());
+          redisPublisherFactory
+              .<LikePostQuery>createPublisher()
+              .publishStream(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
+        }
       }
     }
     repoSocialRepository.createRelations(lre, relation, t1, t2);

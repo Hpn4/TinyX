@@ -17,7 +17,7 @@ lint:
   stage: lint
   parallel:
     matrix:
-      - SERVICE: ["common", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["common", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   script:
     - cd tinyX
     - mvn -pl $SERVICE $MAVEN_CLI_OPTS spotless:check
@@ -38,7 +38,7 @@ compile:
   stage: compile
   parallel:
     matrix:
-      - SERVICE: ["repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   needs:
     - build-common
   script:
@@ -68,7 +68,7 @@ test:
     NEO4J_CONNECTION_STRING: "bolt://neo4j:7687"
   parallel:
     matrix:
-      - SERVICE: ["repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   needs:
     - compile
   script:

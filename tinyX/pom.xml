@@ -22,15 +22,17 @@
   </properties>
   <modules>
     <module>common</module>
+    <module>srvc-media</module>
     <module>srvc-post</module>
     <module>srvc-social</module>
     <module>srvc-search</module>
     <module>srvc-user-timeline</module>
     <module>srvc-home-timeline</module>
+    <module>repo-user-timeline</module>
     <module>repo-home-timeline</module>
+    <module>repo-media</module>
     <module>repo-post</module>
     <module>repo-social</module>
-    <module>repo-user-timeline</module>
     <module>srvc-user</module>
   </modules>
   <dependencyManagement>

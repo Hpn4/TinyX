@@ -40,6 +40,7 @@ public class SocialRepository {
     String query =
         """
             UNWIND $posts AS post
+            MATCH (:User)-[r:LIKE]->(:Post {id: post.id}) DELETE r;
             MATCH (n:Post {id: post.id}) DELETE n;
             """;
     List<Map<String, String>> postParams =

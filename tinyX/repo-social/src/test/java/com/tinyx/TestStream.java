@@ -11,6 +11,7 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 import org.jboss.logging.Logger;
 
@@ -30,7 +31,7 @@ public class TestStream {
   public void publish() {
     var user = factory.<UserQuery>createPublisher();
 
-    UserContract contract = new UserContract(unique, "bro", LocalDate.now());
+    UserContract contract = new UserContract(unique, "bro", ZonedDateTime.now());
     UserQuery q = new UserQuery(UserQuery.Operation.CREATE, contract);
 
     // UserContract secondContract = new UserContract(second, "dude", LocalDate.now());
@@ -42,7 +43,7 @@ public class TestStream {
             uniquepost,
             contract.id,
             "sup bro",
-            LocalDate.now(),
+            ZonedDateTime.now(),
             UUID.randomUUID(),
             UUID.randomUUID());
     PostQuery pq = new PostQuery(PostQuery.Operation.CREATE, pc);

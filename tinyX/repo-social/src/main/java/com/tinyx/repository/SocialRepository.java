@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.jboss.logging.Logger;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
@@ -138,36 +137,40 @@ public class SocialRepository {
     }
   }
 
-  public List<UUID> getUsersId(UUID postId)
-  {
-    String query = """
+  public List<UUID> getUsersId(UUID postId) {
+    String query =
+        """
             MATCH (u:User)-[:LIKE]->(:Post {id: $postId}) RETURN u.id AS uuid""";
     var session = neo4jDriver.session();
-    List<UUID> r = session.executeRead(tx ->{Result result = tx.run(query, Values.parameters("postId", postId.toString()));
+    List<UUID> r =
+        session.executeRead(
+            tx -> {
+              Result result = tx.run(query, Values.parameters("postId", postId.toString()));
 
-      return result.stream()
-              .map(record -> UUID.fromString(record.get("uuid").asString()))
-              .collect(Collectors.toList());
-
-      });
+              return result.stream()
+                  .map(record -> UUID.fromString(record.get("uuid").asString()))
+                  .collect(Collectors.toList());
+            });
     return r;
   }
-  public List<UUID> getPosts(List<UUID> postIds)
-  {
-    String query = """
+
+  public List<UUID> getPosts(List<UUID> postIds) {
+    String query =
+        """
             UNWIND $posts AS post
             MATCH (p:Post {id: post.id}) RETURN p.id AS uuid""";
     List<Map<String, String>> postParams =
-            postIds.stream().map(id -> Map.of("id", id.toString())).toList();
+        postIds.stream().map(id -> Map.of("id", id.toString())).toList();
     var session = neo4jDriver.session();
-    List<UUID> r = session.executeRead(tx -> {
-      Result result = tx.run(query, Map.of("posts", postParams));
+    List<UUID> r =
+        session.executeRead(
+            tx -> {
+              Result result = tx.run(query, Map.of("posts", postParams));
 
-      return result.stream()
-              .map(record -> UUID.fromString(record.get("uuid").asString()))
-              .collect(Collectors.toList());
-
-    });
+              return result.stream()
+                  .map(record -> UUID.fromString(record.get("uuid").asString()))
+                  .collect(Collectors.toList());
+            });
     return r;
   }
 }

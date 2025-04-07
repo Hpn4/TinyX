@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.tinyx.post.PostTestUtils;
 import com.tinyx.post.contracts.PostContract;
-import com.tinyx.post.entity.PostEntity;
 import com.tinyx.redis.PostQuery;
 import com.tinyx.redis.RedisUtils;
 import com.tinyx.redis.stream.RedisChannel;
@@ -13,15 +12,13 @@ import com.tinyx.user.UserTestUtils;
 import com.tinyx.user.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * Implements tests regarding the repo-post service. In the future when more tests are added, this
@@ -31,49 +28,44 @@ import java.util.UUID;
  */
 @QuarkusTest
 public class RepoSocialTests {
-  @Inject
-  RedisUtils redisUtils;
+  @Inject RedisUtils redisUtils;
 
-  @Inject
-  PostTestUtils postTestUtils;
+  @Inject PostTestUtils postTestUtils;
 
-  @Inject
-  UserTestUtils userTestUtils;
+  @Inject UserTestUtils userTestUtils;
 
-  @Inject
-  SocialRepository socialRepository;
+  @Inject SocialRepository socialRepository;
 
   private int REDIS_DELAY = 1000;
 
   private int N_FIRST_POST_TO_DELETE = 10;
 
-  //public void testApp() {
+  // public void testApp() {
   //  assertTrue(true, "This is a basic test with JUnit 5");
-  //}
+  // }
 
   private UUID uniquepost = UUID.randomUUID();
+
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class PostRedisTest
-  {
-      @Test
-      public void createUniquePost() throws InterruptedException
-      {
-        UserEntity ue = userTestUtils.randomUsers(1).get(0);
-        PostContract pc =
-              new PostContract(
-                      uniquepost,
-                      ue.id,
-                      "sup bro",
-                      ZonedDateTime.now(),
-                      UUID.randomUUID(),
-                      UUID.randomUUID());
-        PostQuery pq = new PostQuery(PostQuery.Operation.CREATE, pc);
-        List<PostQuery> postQueryList = Arrays.asList(pq,pq);
+  class PostRedisTest {
+    @Test
+    public void createUniquePost() throws InterruptedException {
+      UserEntity ue = userTestUtils.randomUsers(1).get(0);
+      PostContract pc =
+          new PostContract(
+              uniquepost,
+              ue.id,
+              "sup bro",
+              ZonedDateTime.now(),
+              UUID.randomUUID(),
+              UUID.randomUUID());
+      PostQuery pq = new PostQuery(PostQuery.Operation.CREATE, pc);
+      List<PostQuery> postQueryList = Arrays.asList(pq, pq);
 
-        redisUtils.PostMany(RedisChannel.POST,postQueryList,PostQuery.class);
-        List<UUID> postEntities = socialRepository.getPosts(Arrays.asList(uniquepost));
-        assertTrue(postEntities.size()==1);
-      }
+      redisUtils.PostMany(RedisChannel.POST, postQueryList, PostQuery.class);
+      List<UUID> postEntities = socialRepository.getPosts(Arrays.asList(uniquepost));
+      assertTrue(postEntities.size() == 1);
+    }
   }
 }

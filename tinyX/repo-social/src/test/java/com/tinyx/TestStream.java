@@ -10,7 +10,6 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import org.jboss.logging.Logger;

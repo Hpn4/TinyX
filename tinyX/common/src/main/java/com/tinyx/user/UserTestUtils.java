@@ -5,7 +5,6 @@ import com.tinyx.redis.UserRelationsQuery;
 import com.tinyx.user.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,15 @@ public class UserTestUtils {
     ArrayList<UserEntity> users = new ArrayList<>();
 
     for (int i = 0; i < n; i++)
-      users.add(new UserEntity(UUID.randomUUID(), RandomUsername(), LocalDate.now()));
+      users.add(new UserEntity(UUID.randomUUID(), RandomUsername(), ZonedDateTime.now()));
+
+    return users;
+  }
+
+  public static List<String> randomUserNames(int n) {
+    ArrayList<String> users = new ArrayList<>();
+
+    for (int i = 0; i < n; i++) users.add("user" + UUID.randomUUID().toString().substring(0, 8));
 
     return users;
   }

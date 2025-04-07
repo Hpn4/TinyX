@@ -7,7 +7,8 @@ import java.util.function.Supplier;
 
 public enum ErrorCodes {
   USER_NOT_FOUND(Status.NOT_FOUND, "User %s was not found"),
-  USERS_NOT_FOUND(Status.NOT_FOUND, "One or multiple users were not found");
+  USERS_NOT_FOUND(Status.NOT_FOUND, "One or multiple users were not found"),
+  DUPLICATE_KEY(Status.CONFLICT, "A user with the username %s already exists");
 
   private final Status status;
   private final String errorMessage;

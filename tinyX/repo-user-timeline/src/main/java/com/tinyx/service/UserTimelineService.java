@@ -9,7 +9,6 @@ import com.tinyx.timeline.entity.UserTimelineEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
-import java.time.ZoneId;
 import java.util.*;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -41,7 +40,7 @@ public class UserTimelineService {
         var entry = new UserTimelineEntity.UserTimelinePostEntry();
         entry.id = q.post.id;
         // TODO: time format adapt
-        entry.timestamp = q.post.creationDate.atStartOfDay(ZoneId.systemDefault());
+        entry.timestamp = q.post.creationDate;
 
         toAdd.computeIfAbsent(q.post.userId, e -> new ArrayList<>()).add(entry);
       } else if (q.operation == PostQuery.Operation.DELETE) toRemove.add(q.post.id);

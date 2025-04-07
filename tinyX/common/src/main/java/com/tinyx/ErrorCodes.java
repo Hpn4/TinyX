@@ -8,6 +8,9 @@ import java.util.function.Supplier;
 public enum ErrorCodes {
   USER_NOT_FOUND(Status.NOT_FOUND, "User %s was not found"),
   USERS_NOT_FOUND(Status.NOT_FOUND, "One or multiple users were not found"),
+  MEDIA_BAD_ID(Status.BAD_REQUEST, "Null media ID"),
+  MEDIA_BAD_STREAM(Status.BAD_REQUEST, "Media stream could not be resolved"),
+  MEDIA_NOT_FOUND(Status.NOT_FOUND, "Media with ID '%s' was not found"),
   DUPLICATE_KEY(Status.CONFLICT, "A user with the username %s already exists");
 
   private final Status status;

@@ -18,7 +18,7 @@ import org.jboss.resteasy.reactive.ClientWebApplicationException;
 public class HomeTimelineController {
   @Inject SvcHomeTimelineService service;
 
-  @POST
+  @GET
   @Path("/timeline/home")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),

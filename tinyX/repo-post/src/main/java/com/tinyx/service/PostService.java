@@ -16,7 +16,6 @@ public class PostService {
   @Inject PostConverter postConverter;
 
   /**
-   *
    * @param posts List of posts to create
    */
   public void createPost(List<PostContract> posts) {
@@ -27,7 +26,6 @@ public class PostService {
   }
 
   /**
-   *
    * @param ids List of ids of posts to delete
    */
   public void deletePost(List<UUID> ids) {
@@ -35,7 +33,6 @@ public class PostService {
   }
 
   /**
-   *
    * @param posts List of posts to update
    */
   public void updatePost(List<PostContract> posts) {

@@ -46,20 +46,6 @@ public class RepoHomeTimelineTests {
     this.collection = repository.mongoCollection();
   }
 
-  /*
-  @ParameterizedTest
-  @ValueSource(ints = {1, 20, 100})
-  public void testCreateMany(int n) throws InterruptedException, DuplicateKeyException {
-    List<UserQuery> userCreateQueries = userTestUtils.randomUserCreationQueries(n);
-
-    redisUtils.PostMany(RedisChannel.USER, userCreateQueries, UserQuery.class);
-
-    // will throw and fail the test if any element is missing
-    mongoTestUtils.<UUID>TestFind(
-        "_id", userCreateQueries.stream().map(q -> q.user.id).toList(), true);
-  }
-  */
-
   @ParameterizedTest
   @ValueSource(ints = {2, 100})
   public void testCreateDuplicates(int n) throws InterruptedException, DuplicateKeyException {

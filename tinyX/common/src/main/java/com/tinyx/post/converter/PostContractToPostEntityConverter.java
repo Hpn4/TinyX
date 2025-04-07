@@ -1,4 +1,4 @@
-package com.tinyx.post;
+package com.tinyx.post.converter;
 
 import com.tinyx.post.contracts.PostContract;
 import com.tinyx.post.entity.PostEntity;
@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 @ApplicationScoped
-public class PostConverter {
-  public PostEntity convertPost(PostContract contract) {
+public class PostContractToPostEntityConverter {
+  public PostEntity converter(PostContract contract) {
     PostEntity entity =
         new PostEntity(
             contract.id,
@@ -17,19 +17,8 @@ public class PostConverter {
             contract.creationDate,
             contract.parentId,
             contract.mediaId,
+            contract.postType,
             new ArrayList<UUID>());
     return entity;
-  }
-
-  public PostContract convertPost(PostEntity entity) {
-    PostContract contract =
-        new PostContract(
-            entity.id,
-            entity.userId,
-            entity.content,
-            entity.creationDate,
-            entity.parentId,
-            entity.mediaId);
-    return contract;
   }
 }

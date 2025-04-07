@@ -1,5 +1,8 @@
 package com.tinyx.controller;
 
+import com.tinyx.controller.request.CreatePostRequest;
+import com.tinyx.service.PostService;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,6 +19,9 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PostController {
+
+  @Inject private PostService postService;
+
   @POST
   @Path("/new")
   @APIResponses({
@@ -27,22 +33,23 @@ public class PostController {
     @APIResponse(responseCode = "403", description = "Cannot reply to blocked user"),
     @APIResponse(responseCode = "404", description = "User does not exist, reply target not found")
   })
-  public Response newPostEndpoint(@HeaderParam("X-User") UUID userId) // TODO add post as body
-      {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+  public Response newPostEndpoint(@HeaderParam("X-User") UUID userId, CreatePostRequest post) {
+    postService.newPost(userId, post);
+    return Response.ok().build();
   }
 
   @DELETE
-  @Path("/delete")
+  @Path("/delete/{postId}")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad user"),
     @APIResponse(responseCode = "403", description = "Cannot delete another user's post"),
     @APIResponse(responseCode = "404", description = "User / post does not exist")
   })
-  public Response deletePostEndpoint(@HeaderParam("X-User") UUID userId) // TODO add postId as body
-      {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+  public Response deletePostEndpoint(
+      @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
+    postService.deletePost(userId, postId);
+    return Response.ok().build();
   }
 
   /**
@@ -60,7 +67,7 @@ public class PostController {
     @APIResponse(responseCode = "404", description = "A post ID does not link to an existing post")
   })
   public Response queryPostsList(@HeaderParam("X-User") UUID userId, List<UUID> postIds) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    return Response.ok(postService.GetAllPost(postIds, userId)).build();
   }
 
   @GET
@@ -73,7 +80,7 @@ public class PostController {
   })
   public Response queryUserPostsEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("authorId") UUID authorId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    return Response.ok(postService.GetAllPostsFromUser(authorId, userId)).build();
   }
 
   @GET
@@ -86,7 +93,7 @@ public class PostController {
   })
   public Response queryPostEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    return Response.ok(postService.GetPostById(postId, userId)).build();
   }
 
   @GET
@@ -99,6 +106,6 @@ public class PostController {
   })
   public Response queryPostRepliesEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    return Response.ok(postService.GetRepliesByPostId(postId, userId)).build();
   }
 }

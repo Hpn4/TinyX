@@ -1,5 +1,6 @@
 package com.tinyx.post.contracts;
 
+import com.tinyx.post.enumeration.PostType;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,14 +12,26 @@ public class PostContract {
   public ZonedDateTime creationDate;
   public UUID parentId;
   public UUID mediaId;
-
-  public enum postType {
-    NONE,
-    REPLY,
-    REPOST
-  }
+  public PostType postType;
 
   public PostContract() {}
+
+  public PostContract(
+      UUID id,
+      UUID userId,
+      String content,
+      ZonedDateTime creationDate,
+      UUID parentId,
+      UUID mediaId,
+      PostType postType) {
+    this.id = id;
+    this.userId = userId;
+    this.content = content;
+    this.creationDate = creationDate;
+    this.parentId = parentId;
+    this.mediaId = mediaId;
+    this.postType = postType;
+  }
 
   public PostContract(
       UUID id,
@@ -33,6 +46,7 @@ public class PostContract {
     this.creationDate = creationDate;
     this.parentId = parentId;
     this.mediaId = mediaId;
+    this.postType = PostType.NONE;
   }
 
   @Override

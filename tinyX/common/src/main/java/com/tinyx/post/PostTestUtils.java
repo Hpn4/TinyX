@@ -4,6 +4,7 @@ import com.mongodb.assertions.Assertions;
 import com.mongodb.client.MongoCollection;
 import com.tinyx.mongo.MongoUtils;
 import com.tinyx.post.contracts.PostContract;
+import com.tinyx.post.converter.PostContractToPostEntityConverter;
 import com.tinyx.post.entity.PostEntity;
 import com.tinyx.redis.PostQuery;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,7 +18,7 @@ import java.util.UUID;
 public class PostTestUtils {
 
   @Inject MongoUtils mongoUtils;
-  @Inject PostConverter postConverter;
+  @Inject PostContractToPostEntityConverter postContractToPostEntityConverter;
 
   public String randomContent() {
     return "THIS IS A RANDOM CONTENT: " + UUID.randomUUID().toString().substring(0, 8);
@@ -57,7 +58,9 @@ public class PostTestUtils {
 
   public void assertPostsArePresent(List<PostQuery> expectedPosts, List<PostEntity> actualPosts) {
     List<PostEntity> expectedPostsEntities =
-        expectedPosts.stream().map(p -> postConverter.convertPost(p.post)).toList();
+        expectedPosts.stream()
+            .map(p -> postContractToPostEntityConverter.converter(p.post))
+            .toList();
     for (PostEntity p : expectedPostsEntities) {
       Assertions.assertTrue(actualPosts.stream().anyMatch(p::equals));
     }

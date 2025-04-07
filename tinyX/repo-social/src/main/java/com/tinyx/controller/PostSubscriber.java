@@ -11,13 +11,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.UUID;
-import org.jboss.logging.Logger;
 
 @Startup
 @ApplicationScoped
 public class PostSubscriber extends RedisStreamReader<PostQuery> {
   @Inject SocialService service;
-
 
   public PostSubscriber() {
     super();

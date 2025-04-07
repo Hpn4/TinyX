@@ -15,9 +15,7 @@ public class LikePostQuery {
 
   public UUID targetPostId;
 
-
   public LikePostQuery() {}
-
 
   public ZonedDateTime creationDate;
 
@@ -25,8 +23,7 @@ public class LikePostQuery {
       final Operation op,
       final UUID srcUserId,
       final UUID targetPostId,
-      final ZonedDateTime creationDate)
-  {
+      final ZonedDateTime creationDate) {
     this.operation = op;
     this.srcUserId = srcUserId;
     this.targetPostId = targetPostId;

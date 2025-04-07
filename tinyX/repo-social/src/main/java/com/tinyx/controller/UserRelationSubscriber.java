@@ -36,7 +36,7 @@ public class UserRelationSubscriber extends RedisStreamReader<UserRelationsQuery
 
     for (var i = 0; i < data.size(); i++) {
       UserRelationsQuery idata = data.get(i);
-      SocialRelationEntity sre = new SocialRelationEntity(idata.srcUserId,idata.targetUserId);
+      SocialRelationEntity sre = new SocialRelationEntity(idata.srcUserId, idata.targetUserId);
       switch (data.get(i).operation) {
         case BLOCK -> {
           blocks.add(sre);

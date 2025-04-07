@@ -13,12 +13,10 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Startup
 @ApplicationScoped
 public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
   @Inject SocialService service;
-
 
   public LikeSubscriber() {
     super();
@@ -26,7 +24,7 @@ public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
 
   @Inject
   public LikeSubscriber(final ReactiveRedisDataSource ds) {
-    super(ds, LikePostQuery.class, "repo-social", RedisChannel.SOCIAL);
+    super(ds, LikePostQuery.class, "repo-social", RedisChannel.LIKE);
   }
 
   @Override
@@ -35,7 +33,8 @@ public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
     List<SocialRelationEntity> dislikes = new ArrayList<>();
 
     for (var i = 0; i < data.size(); i++) {
-      SocialRelationEntity sre = new SocialRelationEntity(data.get(i).srcUserId,data.get(i).targetPostId);
+      SocialRelationEntity sre =
+          new SocialRelationEntity(data.get(i).srcUserId, data.get(i).targetPostId);
       if (data.get(i).operation == LikePostQuery.Operation.LIKE) {
         likes.add(sre);
       } else {

@@ -67,8 +67,6 @@ public class SocialRepository {
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
       log.info("Succesfully created %d users: ".formatted(ids.size()) + ids);
-    } catch (Exception e) {
-      log.info("Failed to create %d users: ".formatted(ids.size())+ids);
     }
   }
 
@@ -85,8 +83,6 @@ public class SocialRepository {
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
       log.info("Successfully deleted %d users: ".formatted(users.size()) + users);
-    } catch (Exception e) {
-      log.info("Failed to delete %d users: ".formatted(users.size()) + users);
     }
   }
 
@@ -99,7 +95,8 @@ public class SocialRepository {
             MATCH (b:%s {id: relation.targetId})
             WHERE NOT (a)-[:%s]->(b)
             MERGE (a)-[:%s {creation_time: relation.instant}]->(b);
-            """.formatted(t1,t2,relation,relation);
+            """
+            .formatted(t1, t2, relation, relation);
     List<Map<String, String>> relationParams =
         relations.stream()
             .map(
@@ -114,9 +111,7 @@ public class SocialRepository {
             .toList();
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
-      log.info("Successfully created %d %s relations".formatted(relations.size(),relation));
-    } catch (Exception e) {
-      log.info("Failed to create %d %s relations".formatted(relations.size(),relation));
+      log.info("Successfully created %d %s relations".formatted(relations.size(), relation));
     }
   }
 
@@ -127,18 +122,15 @@ public class SocialRepository {
             UNWIND $relations AS relation
             MATCH (:%s {id: relation.srcId})-[r:%s]->(:%s {id: relation.targetId})
               DELETE r
-            """.formatted(type1,relations,type2);
+            """
+            .formatted(type1, relations, type2);
     List<Map<String, String>> relationParams =
         relations.stream()
             .map(r -> Map.of("srcId", r.srcId.toString(), "targetId", r.targetId.toString()))
             .toList();
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
-      log.info(
-          "Successfully deleted %d %s relations.".formatted(relations.size(),relation));
-    } catch (Exception e) {
-      log.info(
-          "Failed to delete %d %s relations".formatted(relations.size(),relation));
+      log.info("Successfully deleted %d %s relations.".formatted(relations.size(), relation));
     }
   }
 }

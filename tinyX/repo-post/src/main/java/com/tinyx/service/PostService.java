@@ -15,6 +15,10 @@ public class PostService {
   @Inject PostRepository postRepository;
   @Inject PostConverter postConverter;
 
+  /**
+   *
+   * @param posts List of posts to create
+   */
   public void createPost(List<PostContract> posts) {
     List<PostEntity> postEntities =
         posts.stream().map(postConverter::convertPost).collect(Collectors.toList());
@@ -22,10 +26,18 @@ public class PostService {
     postRepository.createPost(postEntities);
   }
 
+  /**
+   *
+   * @param ids List of ids of posts to delete
+   */
   public void deletePost(List<UUID> ids) {
     postRepository.deletePost(ids);
   }
 
+  /**
+   *
+   * @param posts List of posts to update
+   */
   public void updatePost(List<PostContract> posts) {
     List<PostEntity> postEntities =
         posts.stream().map(postConverter::convertPost).collect(Collectors.toList());

@@ -28,7 +28,7 @@ public class SocialService {
   public void deletePosts(List<PostEntity> lpc) {
     if (lpc.isEmpty()) return;
     for (var i = 0; i < lpc.size(); i++) {
-      List<UUID> userIds = repoSocialRepository.getUsersId(lpc.get(i).id);
+      List<UUID> userIds = repoSocialRepository.getLikersId(lpc.get(i).id);
       for (var j = 0; j < userIds.size(); j++) {
         LikePostQuery lpq =
             new LikePostQuery(
@@ -46,15 +46,30 @@ public class SocialService {
     repoSocialRepository.createUsers(luc);
   }
 
-  public void deleteUsers(List<UUID> luc) {
-    if (luc.isEmpty()) return;
-    repoSocialRepository.deleteUsers(luc);
-  }
-
   public void createRelations(
       List<SocialRelationEntity> lre, String relation, String t1, String t2) {
     if (lre.isEmpty()) return;
-    if (relation == "BLOCK") {
+
+    if (relation == "LIKE") {
+      for (var i = 0; i < lre.size(); i++) {
+        if (repoSocialRepository.IsUserBlocked(
+            lre.get(i).srcId, repoSocialRepository.getPostAuthor(lre.get(i).targetId)) &&
+                repoSocialRepository.IsUserBlocked(repoSocialRepository.getPostAuthor(lre.get(i).targetId),lre.get(i).srcId)) {
+          lre.remove(i);
+          i--;
+        }
+      }
+    } else if (relation == "FOLLOW") {
+      for (var i = 0; i < lre.size(); i++) {
+        SocialRelationEntity socialRelationEntity = lre.get(i);
+        if (repoSocialRepository.IsUserBlocked(
+            socialRelationEntity.srcId, socialRelationEntity.targetId) &&
+                repoSocialRepository.IsUserBlocked(socialRelationEntity.targetId,socialRelationEntity.srcId)) {
+          lre.remove(i);
+          i--;
+        }
+      }
+    } else if (relation == "BLOCK") {
       for (var i = 0; i < lre.size(); i++) {
         UserRelationsQuery unfolowAfromB =
             new UserRelationsQuery(
@@ -76,7 +91,7 @@ public class SocialService {
             .publishStream(RedisChannel.SOCIAL, unfollowBfromA, UserRelationsQuery.class);
 
         List<UUID> postIds =
-            repoSocialRepository.getPostsFromUser(lre.get(i).srcId, lre.get(i).targetId);
+            repoSocialRepository.getPostIdsFromUser(lre.get(i).srcId, lre.get(i).targetId);
         for (var j = 0; j < postIds.size(); j++) {
           LikePostQuery likePostQuery =
               new LikePostQuery(

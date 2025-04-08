@@ -73,23 +73,9 @@ public class SocialRepository {
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
-      log.info("Succesfully created %d users: ".formatted(ids.size()) + ids);
-    }
-  }
-
-  public void deleteUsers(List<UUID> users) {
-
-    String query =
-        """
-            UNWIND $users AS user
-            MATCH (n:User {id: user.id}) DELETE n;
-            """;
-    List<Map<String, String>> userParams =
-        users.stream().map(id -> Map.of("id", id.toString())).toList();
-
-    try (var session = neo4jDriver.session()) {
-      session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
-      log.info("Successfully deleted %d users: ".formatted(users.size()) + users);
+      log.info("Successfully created %d users: ".formatted(ids.size()) + ids);
+    } catch (Exception e) {
+      log.info("Failed to create %d users: ".formatted(ids.size()) + ids);
     }
   }
 
@@ -141,7 +127,21 @@ public class SocialRepository {
     }
   }
 
-  public List<UUID> getUsersId(UUID postId) {
+  public Boolean IsUserBlocked(UUID srcUserId, UUID blockedId) {
+    var session = neo4jDriver.session();
+    String query =
+        "RETURN EXISTS {"
+            + "MATCH (:User {id: $srcId})-[:BLOCK]->(:User {id: $blockId}) LIMIT 1"
+            + "} AS IsBlocked";
+    return session.executeRead(
+        tx -> {
+          var result = tx.run(query, Values.parameters("srcId", srcUserId, "blockId", blockedId));
+          if (result.hasNext()) return result.single().get("IsBlocked").asBoolean();
+          else return false;
+        });
+  }
+
+  public List<UUID> getLikersId(UUID postId) {
     String query =
         """
             MATCH (u:User)-[:LIKE]->(:Post {id: $postId}) RETURN u.id AS uuid""";
@@ -158,27 +158,22 @@ public class SocialRepository {
     return r;
   }
 
-  public List<UUID> getPosts(List<UUID> postIds) {
-    String query =
-        """
-            UNWIND $posts AS post
-            MATCH (p:Post {id: post.id}) RETURN p.id AS uuid""";
-    List<Map<String, String>> postParams =
-        postIds.stream().map(id -> Map.of("id", id.toString())).toList();
+  public UUID getPostAuthor(UUID postId) {
+    String query = """
+            MATCH (p:Post {id: $postId}) RETURN p.authorId AS uuid""";
+
     var session = neo4jDriver.session();
-    List<UUID> r =
+    UUID r =
         session.executeRead(
             tx -> {
-              Result result = tx.run(query, Map.of("posts", postParams));
+              Result result = tx.run(query, Values.parameters("postId", postId));
 
-              return result.stream()
-                  .map(record -> UUID.fromString(record.get("uuid").asString()))
-                  .collect(Collectors.toList());
+              return UUID.fromString(result.single().get("uuid").asString());
             });
     return r;
   }
 
-  public List<UUID> getPostsFromUser(UUID likerId, UUID authorId) {
+  public List<UUID> getPostIdsFromUser(UUID likerId, UUID authorId) {
     String query =
         """
                 MATCH (:User {id: $likerId})-[:LIKE]->(p:Post {authorId: $authId}) RETURN p.id AS uuid""";

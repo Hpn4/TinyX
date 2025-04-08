@@ -30,7 +30,7 @@ public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
   @Override
   public void process(List<LikePostQuery> data) {
     List<SocialRelationEntity> likes = new ArrayList<>();
-    List<SocialRelationEntity> dislikes = new ArrayList<>();
+    List<SocialRelationEntity> unlikes = new ArrayList<>();
 
     for (var i = 0; i < data.size(); i++) {
       SocialRelationEntity sre =
@@ -38,12 +38,12 @@ public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
       if (data.get(i).operation == LikePostQuery.Operation.LIKE) {
         likes.add(sre);
       } else {
-        dislikes.add(sre);
+        unlikes.add(sre);
       }
     }
 
     service.createRelations(likes, "LIKE", "User", "Post");
-    service.deleteRelations(dislikes, "LIKE", "User", "Post");
+    service.deleteRelations(unlikes, "LIKE", "User", "Post");
   }
 
   @Scheduled(every = "10m")

@@ -29,28 +29,16 @@ public class PostSubscriber extends RedisStreamReader<PostQuery> {
 
   @Override
   public void process(List<PostQuery> data) {
-
-    /* List<UUID> creation =
-            data.stream()
-                .filter(q -> q.operation == PostQuery.Operation.CREATE)
-                .map(q -> q.post.id)
-                .toList();
-        List<UUID> deletion =
-            data.stream()
-                .filter(q -> q.operation == PostQuery.Operation.DELETE)
-                .map(q -> q.post.id)
-                .toList();
-    */
-    List<PostEntity> creation = new ArrayList<>();
-    List<PostEntity> deletion = new ArrayList<>();
+    List<PostEntity> creations = new ArrayList<>();
+    List<PostEntity> deletions = new ArrayList<>();
 
     for (var i = 0; i < data.size(); i++) {
       PostEntity pe = new PostEntity(data.get(i).post.id, data.get(i).post.userId);
-      if (data.get(i).operation == PostQuery.Operation.CREATE) creation.add(pe);
-      else deletion.add(pe);
+      if (data.get(i).operation == PostQuery.Operation.CREATE) creations.add(pe);
+      else deletions.add(pe);
     }
-    service.createPosts(creation);
-    service.deletePosts(deletion);
+    service.createPosts(creations);
+    service.deletePosts(deletions);
   }
 
   @Scheduled(every = "10m")

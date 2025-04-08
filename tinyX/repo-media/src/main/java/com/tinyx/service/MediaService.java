@@ -3,7 +3,6 @@ package com.tinyx.service;
 import com.tinyx.media.MediaConverter;
 import com.tinyx.media.contracts.MediaContract;
 import com.tinyx.media.entity.MediaEntity;
-import com.tinyx.post.PostConverter;
 import com.tinyx.post.contracts.PostContract;
 import com.tinyx.repository.MediaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,8 +17,6 @@ public class MediaService {
   @Inject MediaRepository mediaRepository;
 
   @Inject MediaConverter mediaConverter;
-
-  @Inject PostConverter postConverter;
 
   /**
    * Allows to upload a media to the database (asynchronously).

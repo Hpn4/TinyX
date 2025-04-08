@@ -1,5 +1,6 @@
 package com.tinyx.post.entity;
 
+import com.tinyx.post.enumeration.PostType;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -16,13 +17,8 @@ public class PostEntity {
   public ZonedDateTime creationDate;
   public UUID parentId;
   public UUID mediaId;
+  public PostType postType;
   public List<UUID> children;
-
-  public enum postType {
-    NONE,
-    REPLY,
-    REPOST
-  }
 
   public PostEntity() {}
 
@@ -33,6 +29,7 @@ public class PostEntity {
       ZonedDateTime creationDate,
       UUID parentId,
       UUID mediaId,
+      PostType postType,
       List<UUID> children) {
     this.id = id;
     this.userId = userId;
@@ -40,6 +37,7 @@ public class PostEntity {
     this.creationDate = creationDate;
     this.parentId = parentId;
     this.mediaId = mediaId;
+    this.postType = postType;
     this.children = children;
   }
 

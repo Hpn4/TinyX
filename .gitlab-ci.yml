@@ -1,11 +1,11 @@
 image: maven:latest
 
 stages:
+  - deploy
   - lint
   - build-common
   - compile
   - test
-  - deploy
 
 cache:
   paths:

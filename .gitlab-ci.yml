@@ -17,23 +17,22 @@ variables:
 deploy:
   stage: deploy
   image:
-    name: gcr.io/kaniko-project/executor:latest
+    name: quay.io/buildah/stable:v1.21.0
     entrypoint: [""]
   variables:
-    DOCKER_CONFIG: /kaniko/.docker/
+    TAG: "${CI_COMMIT_TAG:-latest}"
   parallel:
     matrix:
-      - SERVICE: ["srvc-user"]
+      - SERVICE: ["srvc-user", "srvc-auth", "srvc-timeline"]
   script:
-    - VERSION="${CI_COMMIT_TAG#build-}"
-    - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - cd tinyX
-    - /kaniko/executor \
-        --context "$SERVICE" \
-        --dockerfile "$SERVICE/Dockerfile" \
-        --destination "$CI_REGISTRY_IMAGE/$SERVICE:$VERSION"
-
+    - echo "Using tag: $TAG"
+    - cd tinyX/$SERVICE
+    - echo "🔨 Building image for $SERVICE"
+    - buildah bud -f Dockerfile -t ${CI_REGISTRY_IMAGE}/${SERVICE}:${TAG} .
+    - echo "🔑 Logging into registry"
+    - echo "$CI_REGISTRY_PASSWORD" | buildah login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "🚀 Pushing image to $CI_REGISTRY_IMAGE/$SERVICE:$TAG"
+    - buildah push ${CI_REGISTRY_IMAGE}/${SERVICE}:${TAG}
 
 lint:
   stage: lint

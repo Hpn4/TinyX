@@ -14,7 +14,7 @@ cache:
 variables:
   MAVEN_CLI_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   DOCKER_CONFIG: "/kaniko/.docker/"
-  VERSION: "${CI_COMMIT_TAG#build-}"
+  #VERSION: "${CI_COMMIT_TAG#build-}"
 
 deploy:
   stage: deploy

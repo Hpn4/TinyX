@@ -15,6 +15,8 @@ public class LikePostQuery {
 
   public UUID targetPostId;
 
+  public LikePostQuery() {}
+
   public ZonedDateTime creationDate;
 
   public LikePostQuery(

@@ -26,7 +26,7 @@ deploy:
       - SERVICE: ["srvc-user"]
   script:
     - cd tinyX
-    - buildah bud -f $SERVICE/Dockerfile -t ${CI_REGISTRY_IMAGE}/${SERVICE}:${TAG} .
+    - buildah bud --isolation=chroot -f $SERVICE/Dockerfile -t ${CI_REGISTRY_IMAGE}/${SERVICE}:${TAG} .
     - echo "$CI_REGISTRY_PASSWORD" | buildah login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - buildah push ${CI_REGISTRY_IMAGE}/${SERVICE}:${TAG}
 

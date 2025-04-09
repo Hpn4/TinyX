@@ -139,7 +139,7 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public PostContract GetPostById(UUID postId, UUID userId) {
+  public PostContract getPostById(UUID postId, UUID userId) {
     if (postId == null || userId == null) {
       ErrorCodes.WRONG_UUID.throwError();
     }
@@ -161,7 +161,7 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public List<PostContract> GetAllPost(List<UUID> postsIds, UUID userId) {
+  public List<PostContract> getAllPost(List<UUID> postsIds, UUID userId) {
     if (postsIds == null || userId == null) {
       ErrorCodes.WRONG_UUID.throwError();
     }
@@ -180,7 +180,7 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public List<PostContract> GetAllPostsFromUser(UUID authorId, UUID userId) {
+  public List<PostContract> getAllPostsFromUser(UUID authorId, UUID userId) {
     if (authorId == null || userId == null) {
       ErrorCodes.WRONG_UUID.throwError();
     }
@@ -206,7 +206,7 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public List<PostContract> GetRepliesByPostId(UUID postId, UUID userId) {
+  public List<PostContract> getRepliesByPostId(UUID postId, UUID userId) {
     if (postId == null || userId == null) {
       ErrorCodes.WRONG_UUID.throwError();
     }

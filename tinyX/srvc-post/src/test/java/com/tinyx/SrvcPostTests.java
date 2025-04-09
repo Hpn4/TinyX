@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 public class SrvcPostTests {
   @Test
-  public void CreatePost() {
+  public void createPost() {
     given()
         .contentType(ContentType.JSON)
         .header("X-User", UUID.randomUUID().toString())
@@ -31,32 +31,32 @@ public class SrvcPostTests {
   }
 
   @Test
-  public void DeletePost() {
+  public void deletePost() {
     fail("Pas implémenté");
   }
 
   @Test
-  public void UpdatePost() {
+  public void updatePost() {
     fail("Pas implémenté");
   }
 
   @Test
-  public void GetPostById() {
+  public void getPostById() {
     fail("Pas implémenté");
   }
 
   @Test
-  public void GetAllPost() {
+  public void getAllPost() {
     fail("Pas implémenté");
   }
 
   @Test
-  public void GetAllPostsFromUser() {
+  public void getAllPostsFromUser() {
     fail("Pas implémenté");
   }
 
   @Test
-  public void GetRepliesByPostId() {
+  public void getRepliesByPostId() {
     fail("Pas implémenté");
   }
 }

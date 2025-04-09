@@ -14,6 +14,24 @@ cache:
 variables:
   MAVEN_CLI_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  parallel:
+    matrix:
+      - SERVICE: ["srvc-user"]
+  script:
+    - VERSION="${CI_COMMIT_TAG#build-}"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - cd tinyX
+    - docker build -f "$SERVICE/Dockerfile" -t "$CI_REGISTRY_IMAGE/$SERVICE:$VERSION" "$SERVICE"
+    - docker push "$CI_REGISTRY_IMAGE/$SERVICE:$VERSION"
+
 lint:
   stage: lint
   parallel:

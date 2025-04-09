@@ -3,9 +3,11 @@ package com.tinyx.repository;
 import com.tinyx.redis.LikePostQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisPublisherFactory;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.UUID;
 
+@ApplicationScoped
 public class UnlikePublisher {
 
   @Inject RedisPublisherFactory redisPublisherFactory;

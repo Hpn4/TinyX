@@ -33,16 +33,17 @@ public class UserSubscriber extends RedisStreamReader<UserQuery> {
             .filter(q -> q.operation == UserQuery.Operation.CREATE)
             .map(q -> q.user.id)
             .toList();
-    service.createUsers(users);
+
+    if (!users.isEmpty()) service.createUsers(users);
   }
 
-  @Scheduled(every = "10m")
+  @Scheduled(every = "{tinyx.redis-stream.trim.every}")
   @Override
   public void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "5s")
+  @Scheduled(every = "{tinyx.redis-stream.claim.every}")
   @Override
   public void claimPendingMessages() {
     super.claimPendingMessages();

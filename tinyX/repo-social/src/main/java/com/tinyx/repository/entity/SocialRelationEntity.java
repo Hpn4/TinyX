@@ -9,9 +9,9 @@ public class SocialRelationEntity {
 
   public ZonedDateTime timestamp;
 
-  public SocialRelationEntity(UUID srcId, UUID targetId) {
+  public SocialRelationEntity(UUID srcId, UUID targetId, ZonedDateTime timestamp) {
     this.srcId = srcId;
     this.targetId = targetId;
-    this.timestamp = ZonedDateTime.now();
+    this.timestamp = timestamp;
   }
 }

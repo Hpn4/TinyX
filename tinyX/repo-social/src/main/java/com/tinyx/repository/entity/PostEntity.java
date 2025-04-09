@@ -5,12 +5,12 @@ import java.util.UUID;
 public class PostEntity {
   public UUID id;
 
-  public UUID authId;
+  public UUID authorId;
 
   public PostEntity() {}
 
-  public PostEntity(UUID id, UUID authId) {
+  public PostEntity(UUID id, UUID authorId) {
     this.id = id;
-    this.authId = authId;
+    this.authorId = authorId;
   }
 }

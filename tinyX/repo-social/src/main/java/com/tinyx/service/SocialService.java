@@ -1,7 +1,12 @@
 package com.tinyx.service;
 
+import com.tinyx.converter.LikePostQueryToSocialRelationEntityConverter;
 import com.tinyx.converter.PostQueryToPostEntityConverter;
+import com.tinyx.converter.UserRelationsQueryToSocialRelationEntityConverter;
+import com.tinyx.redis.LikePostQuery;
 import com.tinyx.redis.PostQuery;
+import com.tinyx.redis.UserRelationsQuery;
+import com.tinyx.repository.RelationsRepository;
 import com.tinyx.repository.SocialRepository;
 import com.tinyx.repository.UnfollowPublisher;
 import com.tinyx.repository.UnlikePublisher;
@@ -15,16 +20,24 @@ import java.util.UUID;
 @ApplicationScoped
 public class SocialService {
 
-  @Inject SocialRepository repoSocialRepository;
+  @Inject SocialRepository socialRepository;
+
+  @Inject RelationsRepository relationsRepository;
 
   @Inject PostQueryToPostEntityConverter postQueryToPostEntityConverter;
+
+  @Inject LikePostQueryToSocialRelationEntityConverter likePostQueryToSocialRelationEntityConverter;
+
+  @Inject
+  UserRelationsQueryToSocialRelationEntityConverter
+      userRelationsQueryToSocialRelationEntityConverter;
 
   @Inject UnlikePublisher unlikePublisher;
 
   @Inject UnfollowPublisher unfollowPublisher;
 
   public void createPosts(List<PostQuery> queries) {
-    repoSocialRepository.createPosts(postQueryToPostEntityConverter.convert(queries));
+    socialRepository.createPosts(postQueryToPostEntityConverter.convert(queries));
   }
 
   public void deletePosts(List<PostQuery> queries) {
@@ -32,55 +45,66 @@ public class SocialService {
 
     // Publish an unlike messages for each like relations linked to the post we want to delete
     for (PostEntity postEntity : postsEntities) {
-      List<UUID> userIds = repoSocialRepository.getLikersId(postEntity.id);
+      List<UUID> userIds = socialRepository.getLikersId(postEntity.id);
       for (UUID userId : userIds) {
         unlikePublisher.publish(userId, postEntity.id);
       }
     }
 
     // Delete the post and all his likes relations
-    repoSocialRepository.deletePosts(postsEntities);
+    socialRepository.deletePosts(postsEntities);
   }
 
-  public void createUsers(List<UUID> luc) {
-    if (luc.isEmpty()) return;
-    repoSocialRepository.createUsers(luc);
+  public void createUsers(List<UUID> userIds) {
+    socialRepository.createUsers(userIds);
   }
 
-  public void createRelations(
-      List<SocialRelationEntity> lre, String relation, String t1, String t2) {
-    if (lre.isEmpty()) return;
+  public void likeRelations(List<LikePostQuery> queries) {
+    relationsRepository.createLikeRelations(
+        likePostQueryToSocialRelationEntityConverter.convert(queries));
+  }
 
-    if (relation != "BLOCK") {
-      for (var i = 0; i < lre.size(); i++) {
-        UUID blockId = null;
-        if (relation == "LIKE") blockId = repoSocialRepository.getPostAuthor(lre.get(i).targetId);
-        else if (relation == "FOLLOW") blockId = lre.get(i).targetId;
-        if (repoSocialRepository.IsUserBlocked(lre.get(i).srcId, blockId)
-            && repoSocialRepository.IsUserBlocked(blockId, lre.get(i).srcId)) {
-          lre.remove(i);
-          i--;
-        }
-      }
-    } else {
-      for (var i = 0; i < lre.size(); i++) {
-        unfollowPublisher.publish(lre.get(i).srcId, lre.get(i).targetId);
-        unfollowPublisher.publish(lre.get(i).targetId, lre.get(i).srcId);
+  public void unlikeRelations(List<LikePostQuery> queries) {
+    List<SocialRelationEntity> unlikeRelations =
+        likePostQueryToSocialRelationEntityConverter.convert(queries);
 
-        List<UUID> postIds =
-            repoSocialRepository.getPostIdsFromUser(lre.get(i).srcId, lre.get(i).targetId);
+    relationsRepository.deleteRelations(unlikeRelations, "LIKE", "User", "Post");
+  }
 
-        for (var j = 0; j < postIds.size(); j++) {
-          unlikePublisher.publish(lre.get(i).srcId, postIds.get(i));
-        }
+  public void followRelations(List<UserRelationsQuery> queries) {
+    relationsRepository.createFollowRelations(
+        userRelationsQueryToSocialRelationEntityConverter.convert(queries));
+  }
+
+  public void unfollowRelations(List<UserRelationsQuery> queries) {
+    List<SocialRelationEntity> unfollowRelations =
+        userRelationsQueryToSocialRelationEntityConverter.convert(queries);
+
+    relationsRepository.deleteRelations(unfollowRelations, "FOLLOW", "User", "User");
+  }
+
+  public void blockRelations(List<UserRelationsQuery> queries) {
+    List<SocialRelationEntity> blockRelations =
+        userRelationsQueryToSocialRelationEntityConverter.convert(queries);
+
+    for (SocialRelationEntity sre : blockRelations) {
+      // Blocked users implies UNFOLLOW in both directions
+      unfollowPublisher.publish(sre.srcId, sre.targetId);
+      unfollowPublisher.publish(sre.targetId, sre.srcId);
+
+      // UNLIKE all posts srcId user has with the new blocked user
+      for (UUID postId : socialRepository.getPostIdsFromUser(sre.srcId, sre.targetId)) {
+        unlikePublisher.publish(sre.srcId, postId);
       }
     }
-    repoSocialRepository.createRelations(lre, relation, t1, t2);
+
+    relationsRepository.createBlockRelations(blockRelations);
   }
 
-  public void deleteRelations(
-      List<SocialRelationEntity> lre, String relation, String t1, String t2) {
-    if (lre.isEmpty()) return;
-    repoSocialRepository.deleteRelations(lre, relation, t1, t2);
+  public void unblockRelations(List<UserRelationsQuery> queries) {
+    List<SocialRelationEntity> unblockRelations =
+        userRelationsQueryToSocialRelationEntityConverter.convert(queries);
+
+    relationsRepository.deleteRelations(unblockRelations, "BLOCK", "User", "User");
   }
 }

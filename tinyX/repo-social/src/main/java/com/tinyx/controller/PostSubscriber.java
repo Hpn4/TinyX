@@ -40,17 +40,16 @@ public class PostSubscriber extends RedisStreamReader<PostQuery> {
     }
 
     if (!creations.isEmpty()) service.createPosts(creations);
-
     if (!deletions.isEmpty()) service.deletePosts(deletions);
   }
 
-  @Scheduled(every = "10m")
+  @Scheduled(every = "{tinyx.redis-stream.trim.every}")
   @Override
   public void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "5s")
+  @Scheduled(every = "{tinyx.redis-stream.claim.every}")
   @Override
   public void claimPendingMessages() {
     super.claimPendingMessages();

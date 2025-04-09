@@ -3,7 +3,6 @@ package com.tinyx.controller;
 import com.tinyx.redis.LikePostQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
-import com.tinyx.repository.entity.SocialRelationEntity;
 import com.tinyx.service.SocialService;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.runtime.Startup;
@@ -28,28 +27,26 @@ public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
   }
 
   @Override
-  public void process(List<LikePostQuery> data) {
-    List<SocialRelationEntity> likes = new ArrayList<>();
-    List<SocialRelationEntity> unlikes = new ArrayList<>();
+  public void process(List<LikePostQuery> queries) {
+    List<LikePostQuery> likes = new ArrayList<>();
+    List<LikePostQuery> unlikes = new ArrayList<>();
 
-    for (LikePostQuery datum : data) {
-      SocialRelationEntity sre = new SocialRelationEntity(datum.srcUserId, datum.targetPostId);
-
-      if (datum.operation == LikePostQuery.Operation.LIKE) likes.add(sre);
-      else unlikes.add(sre);
+    for (LikePostQuery query : queries) {
+      if (query.operation == LikePostQuery.Operation.LIKE) likes.add(query);
+      else unlikes.add(query);
     }
 
-    service.createRelations(likes, "LIKE", "User", "Post");
-    service.deleteRelations(unlikes, "LIKE", "User", "Post");
+    service.likeRelations(likes);
+    service.unlikeRelations(unlikes);
   }
 
-  @Scheduled(every = "10m")
+  @Scheduled(every = "{tinyx.redis-stream.trim.every}")
   @Override
   public void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "5s")
+  @Scheduled(every = "{tinyx.redis-stream.claim.every}")
   @Override
   public void claimPendingMessages() {
     super.claimPendingMessages();

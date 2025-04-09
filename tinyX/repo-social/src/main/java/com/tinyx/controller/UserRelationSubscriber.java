@@ -3,7 +3,6 @@ package com.tinyx.controller;
 import com.tinyx.redis.UserRelationsQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
-import com.tinyx.repository.entity.SocialRelationEntity;
 import com.tinyx.service.SocialService;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.runtime.Startup;
@@ -28,36 +27,35 @@ public class UserRelationSubscriber extends RedisStreamReader<UserRelationsQuery
   }
 
   @Override
-  public void process(List<UserRelationsQuery> data) {
-    List<SocialRelationEntity> blocks = new ArrayList<>();
-    List<SocialRelationEntity> unblocks = new ArrayList<>();
-    List<SocialRelationEntity> follows = new ArrayList<>();
-    List<SocialRelationEntity> unfollows = new ArrayList<>();
+  public void process(List<UserRelationsQuery> queries) {
+    List<UserRelationsQuery> blocks = new ArrayList<>();
+    List<UserRelationsQuery> unblocks = new ArrayList<>();
+    List<UserRelationsQuery> follows = new ArrayList<>();
+    List<UserRelationsQuery> unfollows = new ArrayList<>();
 
-    for (UserRelationsQuery query : data) {
-      SocialRelationEntity sre = new SocialRelationEntity(query.srcUserId, query.targetUserId);
+    for (UserRelationsQuery query : queries) {
       switch (query.operation) {
-        case BLOCK -> blocks.add(sre);
-        case FOLLOW -> follows.add(sre);
-        case UNBLOCK -> unblocks.add(sre);
-        case UNFOLLOW -> unfollows.add(sre);
+        case BLOCK -> blocks.add(query);
+        case FOLLOW -> follows.add(query);
+        case UNBLOCK -> unblocks.add(query);
+        case UNFOLLOW -> unfollows.add(query);
         default -> {}
       }
     }
 
-    service.createRelations(blocks, "BLOCK", "User", "User");
-    service.createRelations(follows, "FOLLOW", "User", "User");
-    service.deleteRelations(unblocks, "BLOCK", "User", "User");
-    service.deleteRelations(unfollows, "FOLLOW", "User", "User");
+    if (!blocks.isEmpty()) service.blockRelations(blocks);
+    if (!follows.isEmpty()) service.followRelations(follows);
+    if (!unblocks.isEmpty()) service.unblockRelations(unblocks);
+    if (!unfollows.isEmpty()) service.unfollowRelations(unfollows);
   }
 
-  @Scheduled(every = "10m")
+  @Scheduled(every = "{tinyx.redis-stream.trim.every}")
   @Override
   public void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "5s")
+  @Scheduled(every = "{tinyx.redis-stream.claim.every}")
   @Override
   public void claimPendingMessages() {
     super.claimPendingMessages();

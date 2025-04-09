@@ -5,6 +5,7 @@ stages:
   - build-common
   - compile
   - test
+  - deploy
 
 cache:
   paths:

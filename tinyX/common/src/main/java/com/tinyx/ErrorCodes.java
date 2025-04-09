@@ -16,6 +16,7 @@ public enum ErrorCodes {
   POST_NOT_FOUND(Status.NOT_FOUND, "Post %s was not found"),
   MEDIA_NOT_FOUND(Status.NOT_FOUND, "Media %s was not found"),
   MEDIA_BAD_ID(Status.BAD_REQUEST, "Null media ID"),
+  UNREACHABLE(Status.SERVICE_UNAVAILABLE, "%s is unreachable"),
   MEDIA_BAD_STREAM(Status.BAD_REQUEST, "Media stream could not be resolved");
   private final Status status;
   private final String errorMessage;

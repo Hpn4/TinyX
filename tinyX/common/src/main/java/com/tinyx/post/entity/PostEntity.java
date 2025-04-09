@@ -42,6 +42,28 @@ public class PostEntity {
   }
 
   @Override
+  public String toString() {
+
+    return "PostEntity{"
+        + "id="
+        + id
+        + ", userId="
+        + userId
+        + ", content='"
+        + content
+        + '\''
+        + ", creationDate="
+        + creationDate
+        + ", parentId="
+        + parentId
+        + ", mediaId="
+        + mediaId
+        + ", children="
+        + children
+        + '}';
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

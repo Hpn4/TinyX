@@ -37,7 +37,6 @@ public class RedisStreamPost extends RedisStreamReader<PostQuery> {
   public void process(List<PostQuery> data) {
     List<PostContract> createPosts = new ArrayList<>();
     List<UUID> deletePosts = new ArrayList<>();
-    List<PostContract> updatePosts = new ArrayList<>();
     for (PostQuery postQuery : data) {
       PostQuery.Operation operation = postQuery.operation;
       PostContract postContract = postQuery.post;
@@ -49,9 +48,6 @@ public class RedisStreamPost extends RedisStreamReader<PostQuery> {
         case DELETE:
           deletePosts.add(postContract.id);
           break;
-        case UPDATE:
-          updatePosts.add(postContract);
-          break;
         default:
           break;
       }
@@ -59,17 +55,16 @@ public class RedisStreamPost extends RedisStreamReader<PostQuery> {
 
     postService.createPost(createPosts);
     postService.deletePost(deletePosts);
-    postService.updatePost(updatePosts);
   }
 
   /* Mandatory stuff, timing might be put inside the application properties to be cleaner */
-  @Scheduled(every = "10m")
+  @Scheduled(every = "{tinyx.redis-stream.trim.every}")
   @Override
   protected void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "5s")
+  @Scheduled(every = "{tinyx.redis-stream.claim.every}")
   @Override
   protected void claimPendingMessages() {
     super.claimPendingMessages();

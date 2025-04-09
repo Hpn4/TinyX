@@ -7,6 +7,5 @@ RUN mvn package -pl srvc-user -am -Dquarkus.package.type=uber-jar -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
 COPY --from=build build/srvc-user/target/*-runner.jar ./service.jar
 ENTRYPOINT ["java", "-jar", "/app/service.jar"]

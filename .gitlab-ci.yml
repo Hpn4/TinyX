@@ -31,7 +31,7 @@ deploy:
       > /kaniko/.docker/config.json
     - >
       /kaniko/executor
-      --context "tinyX/$SERVICE"
+      --context "tinyX"
       --dockerfile "tinyX/$SERVICE/Dockerfile"
       --destination "$CI_REGISTRY_IMAGE/$SERVICE:$TAG"
 

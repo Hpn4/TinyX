@@ -6,7 +6,7 @@ import jakarta.ws.rs.PathParam;
 import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-@RegisterRestClient(baseUri = "http://localhost:8088")
+@RegisterRestClient(configKey = "media-client")
 @Path("/")
 public interface MediaRestClient {
   @GET

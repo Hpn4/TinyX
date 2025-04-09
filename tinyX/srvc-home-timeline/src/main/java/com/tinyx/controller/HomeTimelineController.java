@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 @Path("/")
@@ -17,6 +18,8 @@ import org.jboss.resteasy.reactive.ClientWebApplicationException;
 @Consumes(MediaType.APPLICATION_JSON)
 public class HomeTimelineController {
   @Inject SvcHomeTimelineService service;
+
+  @Inject Logger logger;
 
   @GET
   @Path("/timeline/home")
@@ -36,6 +39,7 @@ public class HomeTimelineController {
     } catch (NotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).build();
     } catch (ClientWebApplicationException e) {
+      logger.error(e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 

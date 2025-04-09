@@ -190,7 +190,7 @@ public class PostService {
     // Test if author exist
     UserContract author = getUser(authorId);
 
-    if (user.blockedUsers != null && !user.blockedUsers.contains(authorId)) {
+    if (user.blockedUsers != null && user.blockedUsers.contains(authorId)) {
       ErrorCodes.BLOCKED_USER_POST.throwError(authorId);
     }
 

@@ -74,6 +74,12 @@ public class UserTimelineService {
     // mongo query
     distinctUsersIds.remove(userId);
 
+    System.out.println("-----------");
+    System.out.println(usersId);
+    System.out.println(distinctUsersIds);
+    System.out.println(distinctUsersIds.stream().toList());
+    System.out.println(repository.findOrderedPostsByUsers(distinctUsersIds.stream().toList()));
+
     return getPostsContract(
         userId, repository.findOrderedPostsByUsers(distinctUsersIds.stream().toList()));
   }

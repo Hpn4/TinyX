@@ -25,7 +25,7 @@
               <list />
             </option>
             <option name="resolveToWorkspace" value="false" />
-            <option name="workingDirPath" value="$PROJECT_DIR$/repo-post" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/srvc-post" />
           </MavenRunnerParameters>
         </option>
       </MavenSettings>

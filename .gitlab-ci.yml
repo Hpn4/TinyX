@@ -20,11 +20,12 @@ deploy:
   stage: deploy
   image:
     name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]  # empêche GitLab de lancer `sh`
+    entrypoint: [""]
   parallel:
     matrix:
-      - SERVICE: ["srvc-user"]
+      - SERVICE: ["common", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   script:
+    - echo "${CI_COMMIT_TAG#build-}"
     - mkdir -p /kaniko/.docker
     - >
       echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}"

@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 /** Rest client for contacting the Post service. Used for getting a specific user's posts. */
-@RegisterRestClient(configKey = "tinyx.rest-client.srvc-post.host")
+@RegisterRestClient(configKey = "posts-client")
 public interface PostRestClient {
 
   @Path("/posts/{authorId}")

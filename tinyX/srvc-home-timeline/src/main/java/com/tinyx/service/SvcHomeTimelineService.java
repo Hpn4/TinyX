@@ -7,6 +7,7 @@ import com.tinyx.repository.UserTimelineRestClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -28,8 +29,10 @@ public class SvcHomeTimelineService {
    */
   public List<PostContract> GetUserTimeline(UUID userId) {
     HomeTimelineMongoEntity mongoUser =
-        repository.findByIdOptional(userId).orElseThrow(() -> new NotFoundException());
+        repository.findByIdOptional(userId).orElseThrow(NotFoundException::new);
 
-    return userTimelineClient.GetUsersTimeline(mongoUser.timelineIds);
+    if (mongoUser.timelineIds.isEmpty()) return new ArrayList<>();
+
+    return userTimelineClient.GetUsersTimeline(userId, mongoUser.timelineIds);
   }
 }

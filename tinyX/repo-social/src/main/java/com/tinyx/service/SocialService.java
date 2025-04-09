@@ -50,58 +50,55 @@ public class SocialService {
       List<SocialRelationEntity> lre, String relation, String t1, String t2) {
     if (lre.isEmpty()) return;
 
-    if (relation == "LIKE") {
+    if (relation != "BLOCK") {
       for (var i = 0; i < lre.size(); i++) {
+        UUID  blockId = null;
+        if(relation == "LIKE")
+          blockId = repoSocialRepository.getPostAuthor(lre.get(i).targetId);
+        else if(relation == "FOLLOW")
+          blockId = lre.get(i).targetId;
         if (repoSocialRepository.IsUserBlocked(
-            lre.get(i).srcId, repoSocialRepository.getPostAuthor(lre.get(i).targetId)) &&
-                repoSocialRepository.IsUserBlocked(repoSocialRepository.getPostAuthor(lre.get(i).targetId),lre.get(i).srcId)) {
+            lre.get(i).srcId, blockId) &&
+                repoSocialRepository.IsUserBlocked(blockId,lre.get(i).srcId)) {
           lre.remove(i);
           i--;
         }
       }
-    } else if (relation == "FOLLOW") {
-      for (var i = 0; i < lre.size(); i++) {
-        SocialRelationEntity socialRelationEntity = lre.get(i);
-        if (repoSocialRepository.IsUserBlocked(
-            socialRelationEntity.srcId, socialRelationEntity.targetId) &&
-                repoSocialRepository.IsUserBlocked(socialRelationEntity.targetId,socialRelationEntity.srcId)) {
-          lre.remove(i);
-          i--;
-        }
-      }
-    } else if (relation == "BLOCK") {
+    }
+    else
+    {
       for (var i = 0; i < lre.size(); i++) {
         UserRelationsQuery unfolowAfromB =
-            new UserRelationsQuery(
-                UserRelationsQuery.Operation.UNFOLLOW,
-                lre.get(i).srcId,
-                lre.get(i).targetId,
-                ZonedDateTime.now());
+                new UserRelationsQuery(
+                        UserRelationsQuery.Operation.UNFOLLOW,
+                        lre.get(i).srcId,
+                        lre.get(i).targetId,
+                        ZonedDateTime.now());
         redisPublisherFactory
-            .<UserRelationsQuery>createPublisher()
-            .publishStream(RedisChannel.SOCIAL, unfolowAfromB, UserRelationsQuery.class);
+                .<UserRelationsQuery>createPublisher()
+                .publishStream(RedisChannel.SOCIAL, unfolowAfromB, UserRelationsQuery.class);
         UserRelationsQuery unfollowBfromA =
-            new UserRelationsQuery(
-                UserRelationsQuery.Operation.UNFOLLOW,
-                lre.get(i).targetId,
-                lre.get(i).srcId,
-                ZonedDateTime.now());
+                new UserRelationsQuery(
+                        UserRelationsQuery.Operation.UNFOLLOW,
+                        lre.get(i).targetId,
+                        lre.get(i).srcId,
+                        ZonedDateTime.now());
         redisPublisherFactory
-            .<UserRelationsQuery>createPublisher()
-            .publishStream(RedisChannel.SOCIAL, unfollowBfromA, UserRelationsQuery.class);
+                .<UserRelationsQuery>createPublisher()
+                .publishStream(RedisChannel.SOCIAL, unfollowBfromA, UserRelationsQuery.class);
 
         List<UUID> postIds =
-            repoSocialRepository.getPostIdsFromUser(lre.get(i).srcId, lre.get(i).targetId);
+                repoSocialRepository.getPostIdsFromUser(lre.get(i).srcId, lre.get(i).targetId);
         for (var j = 0; j < postIds.size(); j++) {
           LikePostQuery likePostQuery =
-              new LikePostQuery(
-                  LikePostQuery.Operation.UNLIKE,
-                  lre.get(i).srcId,
-                  postIds.get(i),
-                  ZonedDateTime.now());
+                  new LikePostQuery(
+                          LikePostQuery.Operation.UNLIKE,
+                          lre.get(i).srcId,
+                          postIds.get(i),
+                          ZonedDateTime.now());
           redisPublisherFactory
-              .<LikePostQuery>createPublisher()
-              .publishStream(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
+                  .<LikePostQuery>createPublisher()
+                  .publishStream(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
         }
       }
     }

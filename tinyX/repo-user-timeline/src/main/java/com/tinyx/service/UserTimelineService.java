@@ -20,7 +20,7 @@ public class UserTimelineService {
   @Inject @RestClient PostRestClient postRestClient;
 
   public void createUsers(List<UUID> userIds) {
-    repository.saveUsers(userIds);
+    if (!userIds.isEmpty()) repository.saveUsers(userIds);
   }
 
   /**
@@ -39,15 +39,16 @@ public class UserTimelineService {
         // We create a new entry with the ID and the creation date of the post
         var entry = new UserTimelineEntity.UserTimelinePostEntry();
         entry.id = q.post.id;
-        // TODO: time format adapt
         entry.timestamp = q.post.creationDate;
 
-        toAdd.computeIfAbsent(q.post.userId, e -> new ArrayList<>()).add(entry);
+        toAdd.computeIfAbsent(q.post.userId, e -> new ArrayList<>());
+        toAdd.get(q.post.userId).add(entry);
       } else if (q.operation == PostQuery.Operation.DELETE) toRemove.add(q.post.id);
     }
 
-    repository.removeFromAllUsers(toRemove);
-    repository.addToUsers(toAdd);
+    if (!toRemove.isEmpty()) repository.removeFromAllUsers(toRemove);
+
+    if (!toAdd.isEmpty()) repository.addToUsers(toAdd);
   }
 
   /**
@@ -77,12 +78,11 @@ public class UserTimelineService {
       }
 
       // We then remove all posts of the blocked user (`targetUserId`) from the `srcUserId` timeline
-      entriesToRemovePerUser
-          .computeIfAbsent(q.srcUserId, e -> new ArrayList<>())
-          .addAll(blockedUerPosts);
+      entriesToRemovePerUser.computeIfAbsent(q.srcUserId, e -> new ArrayList<>());
+      entriesToRemovePerUser.get(q.srcUserId).addAll(blockedUerPosts);
     }
 
-    repository.removeForUsers(entriesToRemovePerUser);
+    if (!entriesToRemovePerUser.isEmpty()) repository.removeForUsers(entriesToRemovePerUser);
   }
 
   /**
@@ -105,14 +105,15 @@ public class UserTimelineService {
         entry.id = q.targetPostId;
         entry.timestamp = q.creationDate;
 
-        entriesToAddPerUser.computeIfAbsent(q.srcUserId, e -> new ArrayList<>()).add(entry);
-      } else
-        entriesToRemovePerUser
-            .computeIfAbsent(q.srcUserId, e -> new ArrayList<>())
-            .add(q.targetPostId);
+        entriesToAddPerUser.computeIfAbsent(q.srcUserId, e -> new ArrayList<>());
+        entriesToAddPerUser.get(q.srcUserId).add(entry);
+      } else {
+        entriesToRemovePerUser.computeIfAbsent(q.srcUserId, e -> new ArrayList<>());
+        entriesToRemovePerUser.get(q.srcUserId).add(q.targetPostId);
+      }
     }
 
-    repository.removeForUsers(entriesToRemovePerUser);
-    repository.addToUsers(entriesToAddPerUser);
+    if (!entriesToRemovePerUser.isEmpty()) repository.removeForUsers(entriesToRemovePerUser);
+    if (!entriesToAddPerUser.isEmpty()) repository.addToUsers(entriesToAddPerUser);
   }
 }

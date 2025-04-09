@@ -21,11 +21,14 @@ deploy:
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+  only:
+    - tags
   parallel:
     matrix:
       - SERVICE: ["repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
   script:
-    - echo -e $CI_COMMIT_TAG
+    - echo "Pipeline déclenchée par le tag: $CI_COMMIT_TAG"
+    - echo "Pipeline déclenchée par le tag: $VERSION"
     - mkdir -p /kaniko/.docker
     - >
       echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}"

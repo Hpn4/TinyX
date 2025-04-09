@@ -22,7 +22,7 @@ variables:
 deploy:
   stage: deploy
   image:
-    name: registry.cri.epita.fr/gcr.io/kaniko-project/executor:debug
+    name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   parallel:
     matrix:

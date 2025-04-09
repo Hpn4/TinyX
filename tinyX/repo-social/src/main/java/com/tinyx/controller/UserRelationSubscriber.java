@@ -34,25 +34,14 @@ public class UserRelationSubscriber extends RedisStreamReader<UserRelationsQuery
     List<SocialRelationEntity> follows = new ArrayList<>();
     List<SocialRelationEntity> unfollows = new ArrayList<>();
 
-    for (var i = 0; i < data.size(); i++) {
-      UserRelationsQuery idata = data.get(i);
-      SocialRelationEntity sre = new SocialRelationEntity(idata.srcUserId, idata.targetUserId);
-      switch (data.get(i).operation) {
-        case BLOCK -> {
-          blocks.add(sre);
-        }
-        case FOLLOW -> {
-          follows.add(sre);
-        }
-        case UNBLOCK -> {
-          unblocks.add(sre);
-        }
-        case UNFOLLOW -> {
-          unfollows.add(sre);
-        }
-        default -> {
-          break;
-        }
+    for (UserRelationsQuery query : data) {
+      SocialRelationEntity sre = new SocialRelationEntity(query.srcUserId, query.targetUserId);
+      switch (query.operation) {
+        case BLOCK -> blocks.add(sre);
+        case FOLLOW -> follows.add(sre);
+        case UNBLOCK -> unblocks.add(sre);
+        case UNFOLLOW -> unfollows.add(sre);
+        default -> {}
       }
     }
 

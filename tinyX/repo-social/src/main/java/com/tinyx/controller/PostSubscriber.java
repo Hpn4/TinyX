@@ -3,7 +3,6 @@ package com.tinyx.controller;
 import com.tinyx.redis.PostQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
-import com.tinyx.repository.entity.PostEntity;
 import com.tinyx.service.SocialService;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.runtime.Startup;
@@ -28,17 +27,21 @@ public class PostSubscriber extends RedisStreamReader<PostQuery> {
   }
 
   @Override
-  public void process(List<PostQuery> data) {
-    List<PostEntity> creations = new ArrayList<>();
-    List<PostEntity> deletions = new ArrayList<>();
+  public void process(List<PostQuery> queries) {
+    List<PostQuery> creations = new ArrayList<>();
+    List<PostQuery> deletions = new ArrayList<>();
 
-    for (var i = 0; i < data.size(); i++) {
-      PostEntity pe = new PostEntity(data.get(i).post.id, data.get(i).post.userId);
-      if (data.get(i).operation == PostQuery.Operation.CREATE) creations.add(pe);
-      else deletions.add(pe);
+    for (PostQuery query : queries) {
+      switch (query.operation) {
+        case CREATE -> creations.add(query);
+        case DELETE -> deletions.add(query);
+        default -> {}
+      }
     }
-    service.createPosts(creations);
-    service.deletePosts(deletions);
+
+    if (!creations.isEmpty()) service.createPosts(creations);
+
+    if (!deletions.isEmpty()) service.deletePosts(deletions);
   }
 
   @Scheduled(every = "10m")

@@ -32,14 +32,11 @@ public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
     List<SocialRelationEntity> likes = new ArrayList<>();
     List<SocialRelationEntity> unlikes = new ArrayList<>();
 
-    for (var i = 0; i < data.size(); i++) {
-      SocialRelationEntity sre =
-          new SocialRelationEntity(data.get(i).srcUserId, data.get(i).targetPostId);
-      if (data.get(i).operation == LikePostQuery.Operation.LIKE) {
-        likes.add(sre);
-      } else {
-        unlikes.add(sre);
-      }
+    for (LikePostQuery datum : data) {
+      SocialRelationEntity sre = new SocialRelationEntity(datum.srcUserId, datum.targetPostId);
+
+      if (datum.operation == LikePostQuery.Operation.LIKE) likes.add(sre);
+      else unlikes.add(sre);
     }
 
     service.createRelations(likes, "LIKE", "User", "Post");

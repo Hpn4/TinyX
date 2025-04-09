@@ -1,15 +1,14 @@
 package com.tinyx.service;
 
-import com.tinyx.redis.LikePostQuery;
-import com.tinyx.redis.UserRelationsQuery;
-import com.tinyx.redis.stream.RedisChannel;
-import com.tinyx.redis.stream.RedisPublisherFactory;
+import com.tinyx.converter.PostQueryToPostEntityConverter;
+import com.tinyx.redis.PostQuery;
 import com.tinyx.repository.SocialRepository;
+import com.tinyx.repository.UnfollowPublisher;
+import com.tinyx.repository.UnlikePublisher;
 import com.tinyx.repository.entity.PostEntity;
 import com.tinyx.repository.entity.SocialRelationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,27 +17,29 @@ public class SocialService {
 
   @Inject SocialRepository repoSocialRepository;
 
-  @Inject RedisPublisherFactory redisPublisherFactory;
+  @Inject PostQueryToPostEntityConverter postQueryToPostEntityConverter;
 
-  public void createPosts(List<PostEntity> lpc) {
-    if (lpc.isEmpty()) return;
-    repoSocialRepository.createPosts(lpc);
+  @Inject UnlikePublisher unlikePublisher;
+
+  @Inject UnfollowPublisher unfollowPublisher;
+
+  public void createPosts(List<PostQuery> queries) {
+    repoSocialRepository.createPosts(postQueryToPostEntityConverter.convert(queries));
   }
 
-  public void deletePosts(List<PostEntity> lpc) {
-    if (lpc.isEmpty()) return;
-    for (var i = 0; i < lpc.size(); i++) {
-      List<UUID> userIds = repoSocialRepository.getLikersId(lpc.get(i).id);
-      for (var j = 0; j < userIds.size(); j++) {
-        LikePostQuery lpq =
-            new LikePostQuery(
-                LikePostQuery.Operation.UNLIKE, userIds.get(j), lpc.get(i).id, ZonedDateTime.now());
-        redisPublisherFactory
-            .<LikePostQuery>createPublisher()
-            .publishStream(RedisChannel.LIKE, lpq, LikePostQuery.class);
+  public void deletePosts(List<PostQuery> queries) {
+    List<PostEntity> postsEntities = postQueryToPostEntityConverter.convert(queries);
+
+    // Publish an unlike messages for each like relations linked to the post we want to delete
+    for (PostEntity postEntity : postsEntities) {
+      List<UUID> userIds = repoSocialRepository.getLikersId(postEntity.id);
+      for (UUID userId : userIds) {
+        unlikePublisher.publish(userId, postEntity.id);
       }
     }
-    repoSocialRepository.deletePosts(lpc);
+
+    // Delete the post and all his likes relations
+    repoSocialRepository.deletePosts(postsEntities);
   }
 
   public void createUsers(List<UUID> luc) {
@@ -52,53 +53,25 @@ public class SocialService {
 
     if (relation != "BLOCK") {
       for (var i = 0; i < lre.size(); i++) {
-        UUID  blockId = null;
-        if(relation == "LIKE")
-          blockId = repoSocialRepository.getPostAuthor(lre.get(i).targetId);
-        else if(relation == "FOLLOW")
-          blockId = lre.get(i).targetId;
-        if (repoSocialRepository.IsUserBlocked(
-            lre.get(i).srcId, blockId) &&
-                repoSocialRepository.IsUserBlocked(blockId,lre.get(i).srcId)) {
+        UUID blockId = null;
+        if (relation == "LIKE") blockId = repoSocialRepository.getPostAuthor(lre.get(i).targetId);
+        else if (relation == "FOLLOW") blockId = lre.get(i).targetId;
+        if (repoSocialRepository.IsUserBlocked(lre.get(i).srcId, blockId)
+            && repoSocialRepository.IsUserBlocked(blockId, lre.get(i).srcId)) {
           lre.remove(i);
           i--;
         }
       }
-    }
-    else
-    {
+    } else {
       for (var i = 0; i < lre.size(); i++) {
-        UserRelationsQuery unfolowAfromB =
-                new UserRelationsQuery(
-                        UserRelationsQuery.Operation.UNFOLLOW,
-                        lre.get(i).srcId,
-                        lre.get(i).targetId,
-                        ZonedDateTime.now());
-        redisPublisherFactory
-                .<UserRelationsQuery>createPublisher()
-                .publishStream(RedisChannel.SOCIAL, unfolowAfromB, UserRelationsQuery.class);
-        UserRelationsQuery unfollowBfromA =
-                new UserRelationsQuery(
-                        UserRelationsQuery.Operation.UNFOLLOW,
-                        lre.get(i).targetId,
-                        lre.get(i).srcId,
-                        ZonedDateTime.now());
-        redisPublisherFactory
-                .<UserRelationsQuery>createPublisher()
-                .publishStream(RedisChannel.SOCIAL, unfollowBfromA, UserRelationsQuery.class);
+        unfollowPublisher.publish(lre.get(i).srcId, lre.get(i).targetId);
+        unfollowPublisher.publish(lre.get(i).targetId, lre.get(i).srcId);
 
         List<UUID> postIds =
-                repoSocialRepository.getPostIdsFromUser(lre.get(i).srcId, lre.get(i).targetId);
+            repoSocialRepository.getPostIdsFromUser(lre.get(i).srcId, lre.get(i).targetId);
+
         for (var j = 0; j < postIds.size(); j++) {
-          LikePostQuery likePostQuery =
-                  new LikePostQuery(
-                          LikePostQuery.Operation.UNLIKE,
-                          lre.get(i).srcId,
-                          postIds.get(i),
-                          ZonedDateTime.now());
-          redisPublisherFactory
-                  .<LikePostQuery>createPublisher()
-                  .publishStream(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
+          unlikePublisher.publish(lre.get(i).srcId, postIds.get(i));
         }
       }
     }

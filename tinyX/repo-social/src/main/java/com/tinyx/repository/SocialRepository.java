@@ -36,9 +36,9 @@ public class SocialRepository {
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("posts", postParams)));
-      log.info("%d Posts created: ".formatted(posts.size()) + posts);
+      log.infof("%d Posts created", posts.size());
     } catch (Exception e) {
-      log.info("Failed to create %d posts: ".formatted(posts.size()) + posts);
+      log.errorf("Failed to create %d posts", e, posts.size());
     }
   }
 
@@ -47,16 +47,17 @@ public class SocialRepository {
     String query =
         """
             UNWIND $posts AS post
-            MATCH (n:Post {id: post.id}) DELETE n;
+            MATCH (n:Post {id: post.id})
+            DETACH DELETE n;
             """;
     List<Map<String, String>> postParams =
         posts.stream().map(post -> Map.of("id", post.id.toString())).toList();
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("posts", postParams)));
-      log.info("Successfully deleted %d posts: ".formatted(posts.size()) + posts);
+      log.infof("%d Posts deleted", posts.size());
     } catch (Exception e) {
-      log.info("Failed to delete %d posts: ".formatted(posts.size()) + posts);
+      log.errorf("Failed to delete %d posts", e, posts.size());
     }
   }
 
@@ -73,9 +74,9 @@ public class SocialRepository {
 
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("users", userParams)));
-      log.info("Successfully created %d users: ".formatted(ids.size()) + ids);
+      log.infof("Successfully created %d users", ids.size());
     } catch (Exception e) {
-      log.info("Failed to create %d users: ".formatted(ids.size()) + ids);
+      log.errorf("Failed to create %d users", e, ids.size());
     }
   }
 
@@ -104,7 +105,9 @@ public class SocialRepository {
             .toList();
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
-      log.info("Successfully created %d %s relations".formatted(relations.size(), relation));
+      log.infof("Successfully created %d relations", relations.size());
+    } catch (Exception e) {
+      log.errorf("Failed to create %d relations", e, relations.size());
     }
   }
 
@@ -123,16 +126,21 @@ public class SocialRepository {
             .toList();
     try (var session = neo4jDriver.session()) {
       session.executeWrite(tx -> tx.run(query, Map.of("relations", relationParams)));
-      log.info("Successfully deleted %d %s relations.".formatted(relations.size(), relation));
+      log.infof("Successfully deleted %d relations", relations.size());
+    } catch (Exception e) {
+      log.errorf("Failed to delete %d relations", e, relations.size());
     }
   }
 
   public Boolean IsUserBlocked(UUID srcUserId, UUID blockedId) {
     var session = neo4jDriver.session();
     String query =
-        "RETURN EXISTS {"
-            + "MATCH (:User {id: $srcId})-[:BLOCK]->(:User {id: $blockId}) LIMIT 1"
-            + "} AS IsBlocked";
+        """
+            RETURN EXISTS {
+            MATCH (:User {id: $srcId})-[:BLOCK]->(:User {id: $blockId}) LIMIT 1
+            } AS IsBlocked
+            """;
+
     return session.executeRead(
         tx -> {
           var result = tx.run(query, Values.parameters("srcId", srcUserId, "blockId", blockedId));
@@ -144,7 +152,9 @@ public class SocialRepository {
   public List<UUID> getLikersId(UUID postId) {
     String query =
         """
-            MATCH (u:User)-[:LIKE]->(:Post {id: $postId}) RETURN u.id AS uuid""";
+            MATCH (u:User)-[:LIKE]->(:Post {id: $postId})
+            RETURN u.id AS uuid
+            """;
     var session = neo4jDriver.session();
     List<UUID> r =
         session.executeRead(
@@ -159,8 +169,11 @@ public class SocialRepository {
   }
 
   public UUID getPostAuthor(UUID postId) {
-    String query = """
-            MATCH (p:Post {id: $postId}) RETURN p.authorId AS uuid""";
+    String query =
+        """
+            MATCH (p:Post {id: $postId})
+            RETURN p.authorId AS uuid
+            """;
 
     var session = neo4jDriver.session();
     UUID r =
@@ -176,7 +189,8 @@ public class SocialRepository {
   public List<UUID> getPostIdsFromUser(UUID likerId, UUID authorId) {
     String query =
         """
-                MATCH (:User {id: $likerId})-[:LIKE]->(p:Post {authorId: $authId}) RETURN p.id AS uuid""";
+                MATCH (:User {id: $likerId})-[:LIKE]->(p:Post {authorId: $authId})
+                RETURN p.id AS uuid""";
 
     var session = neo4jDriver.session();
     List<UUID> r =

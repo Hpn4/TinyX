@@ -33,7 +33,7 @@ deploy:
       /kaniko/executor
       --context "tinyX"
       --dockerfile "tinyX/$SERVICE/Dockerfile"
-      --destination "$CI_REGISTRY_IMAGE/$SERVICE:$TAG"
+      --destination "$CI_REGISTRY_IMAGE/$SERVICE:$VERSION"
 
 lint:
   stage: lint

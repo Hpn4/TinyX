@@ -82,6 +82,7 @@ public class TestStream {
     logger.info("Published 10x " + contract.id.toString());
 
     /* var post = factory.<PostQuery>createPublisher();
+    
     PostContract pc = new PostContract(UUID.randomUUID(),contract.id,"sup bro",LocalDate.now(),UUID.randomUUID(),UUID.randomUUID());
     PostQuery pq = new PostQuery(PostQuery.Operation.CREATE, pc);*/
 

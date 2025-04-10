@@ -110,4 +110,28 @@ public class SocialRepository {
 
     return readUUID(query, Values.parameters("authId", authorId, "likerId", likerId));
   }
+
+  public int isNodeThere(List<UUID> ids, String nodeName) {
+    final String query =
+        """
+            UNWIND nodeIds AS nodeId
+            MATCH (n:%s {id: $nodeId})
+            RETURN n.id AS uuid
+            """
+            .formatted(nodeName);
+    final List<Map<String, String>> userParams =
+        ids.stream().map(id -> Map.of("nodeId", id.toString())).toList();
+
+    Session session = neo4jDriver.session();
+    return session
+        .executeRead(
+            tx -> {
+              final Result result = tx.run(query, Map.of("nodeIds", userParams));
+
+              return result.stream()
+                  .map(record -> UUID.fromString(record.get("uuid").asString()))
+                  .collect(Collectors.toList());
+            })
+        .size();
+  }
 }

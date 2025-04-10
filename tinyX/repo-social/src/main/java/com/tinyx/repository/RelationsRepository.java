@@ -5,6 +5,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.Values;
 
 @ApplicationScoped
 public class RelationsRepository {
@@ -98,5 +102,20 @@ public class RelationsRepository {
 
     socialRepository.safeWrite(
         query, Map.of("relations", relationParams), "delete relations", relations.size());
+  }
+
+  public Boolean isThereRelation(String relation, UUID srcId, UUID targetId, String targetType) {
+    final String query =
+        """
+            RETURN EXISTS((:User {id: $srcId})-[:%s]->(:%s {id: $targetId})) AS relationExist"""
+            .formatted(relation, targetType);
+
+    Session session = socialRepository.neo4jDriver.session();
+    return session.executeRead(
+        tx -> {
+          final Result result =
+              session.run(query, Values.parameters("srcId", srcId, "targetId", targetId));
+          return result.single().get("relationExist").asBoolean();
+        });
   }
 }

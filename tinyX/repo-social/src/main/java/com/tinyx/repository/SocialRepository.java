@@ -1,6 +1,5 @@
 package com.tinyx.repository;
 
-import com.tinyx.controller.UserSubscriber;
 import com.tinyx.repository.entity.PostEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,7 +15,7 @@ import org.neo4j.driver.*;
 public class SocialRepository {
   @Inject Driver neo4jDriver;
 
-  Logger log = Logger.getLogger(UserSubscriber.class);
+  @Inject Logger log;
 
   protected List<UUID> readUUID(final String query, final Value parameter) {
     try (Session session = neo4jDriver.session()) {

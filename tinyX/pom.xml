@@ -34,6 +34,7 @@
     <module>repo-post</module>
     <module>repo-social</module>
     <module>srvc-user</module>
+    <module>testsuite</module>
   </modules>
   <dependencyManagement>
     <dependencies>

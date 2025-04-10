@@ -1,12 +1,15 @@
 package com.tinyx.repository;
 
+import com.mongodb.client.model.Filters;
 import com.tinyx.post.entity.PostEntity;
 import com.tinyx.post.enumeration.PostType;
 import io.quarkus.mongodb.panache.PanacheMongoRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.bson.conversions.Bson;
 
 @ApplicationScoped
 public class PostServiceRepository implements PanacheMongoRepositoryBase<PostEntity, UUID> {
@@ -31,16 +34,28 @@ public class PostServiceRepository implements PanacheMongoRepositoryBase<PostEnt
     return findByIdOptional(postId);
   }
 
+  private List<PostEntity> find(Bson filter) {
+    return mongoCollection().find(filter).into(new ArrayList<>());
+  }
+
   public List<PostEntity> findPosts(List<UUID> postIds) {
-    return list("_id in ?1", postIds);
+    return find(Filters.in("_id", postIds));
   }
 
   public List<PostEntity> findPosts(List<UUID> postIds, List<UUID> blockedUser) {
-    return list("_id in ?1 and userId not in ?2", postIds, blockedUser);
+    Bson filters =
+        Filters.and(Filters.in("_id", postIds), Filters.not(Filters.in("userId", blockedUser)));
+
+    return find(filters);
   }
 
   public List<PostEntity> findPostsReply(List<UUID> postIds, List<UUID> blockedUsers) {
-    return list(
-        "_id in ?1 and postType = ?2 and userId not in ?3", postIds, PostType.REPLY, blockedUsers);
+    Bson filters =
+        Filters.and(
+            Filters.in("_id", postIds),
+            Filters.eq("postType", PostType.REPLY),
+            Filters.not(Filters.in("userId", blockedUsers)));
+
+    return find(filters);
   }
 }

@@ -1,5 +1,9 @@
 package com.tinyx.controller;
 
+import com.tinyx.ErrorCodes;
+import com.tinyx.service.RelationsCommandService;
+import com.tinyx.service.RelationsQueryService;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,26 +20,31 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SocialController {
 
+  @Inject RelationsCommandService commandService;
+
+  @Inject RelationsQueryService queryService;
+
   /**
    * Like a post.
    *
    * @param userId the ID of the user liking the post
    * @param postId the ID of the post to be liked
-   * @return Response indicating the result of the operation
+   * @return Response indicating the result of the operation (Number of likes)
    */
   @POST
   @Path("/like/{postId}")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
-    @APIResponse(
-        responseCode = "400",
-        description = "Bad user / Cannot like an already liked post"),
+    @APIResponse(responseCode = "400", description = "Bad user"),
     @APIResponse(responseCode = "403", description = "Cannot like a blocked user post"),
+    @APIResponse(responseCode = "409", description = "Post already liked"),
     @APIResponse(responseCode = "404", description = "Post/User does not exist")
   })
   public Response postLikePostEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    if (userId == null) ErrorCodes.WRONG_UUID.throwError("userId");
+
+    return Response.ok(commandService.likePost(userId, postId)).build();
   }
 
   /**
@@ -49,15 +58,16 @@ public class SocialController {
   @Path("/like/{postId}")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
-    @APIResponse(
-        responseCode = "400",
-        description = "Bad user / Cannot unlike an already unliked post"),
+    @APIResponse(responseCode = "400", description = "Bad user"),
     @APIResponse(responseCode = "403", description = "Cannot unlike a blocked post user"),
+    @APIResponse(responseCode = "204", description = "Post is not liked"),
     @APIResponse(responseCode = "404", description = "Post/User does not exist")
   })
   public Response deleteLikePostEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    if (userId == null) return Response.status(Response.Status.BAD_REQUEST).build();
+
+    return Response.ok(commandService.unlikePost(userId, postId)).build();
   }
 
   /**
@@ -71,15 +81,17 @@ public class SocialController {
   @Path("/follow/{targetUserId}")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
-    @APIResponse(
-        responseCode = "400",
-        description = "Bad User Id / Cannot follow an already followed user"),
+    @APIResponse(responseCode = "400", description = "Bad User Id"),
+    @APIResponse(responseCode = "409", description = "Users already followed"),
     @APIResponse(responseCode = "403", description = "Cannot follow an blocked user"),
     @APIResponse(responseCode = "404", description = "Target/User does not exist")
   })
   public Response postFollowTargetList(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    if (userId == null) return Response.status(Response.Status.BAD_REQUEST).build();
+
+    commandService.followUser(userId, targetUserId);
+    return Response.ok().build();
   }
 
   /**
@@ -93,14 +105,16 @@ public class SocialController {
   @Path("/follow/{targetUserId}")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
-    @APIResponse(
-        responseCode = "400",
-        description = "Bad User Id / Cannot unfollow an unfollowed user"),
+    @APIResponse(responseCode = "400", description = "Bad User Id"),
+    @APIResponse(responseCode = "204", description = "User is not followed"),
     @APIResponse(responseCode = "404", description = "Target/User does not exist")
   })
   public Response deleteFollowTargetEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    if (userId == null) return Response.status(Response.Status.BAD_REQUEST).build();
+
+    commandService.unfollowUser(userId, targetUserId);
+    return Response.ok().build();
   }
 
   /**
@@ -115,12 +129,15 @@ public class SocialController {
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad user ID / Bad post format"),
-    @APIResponse(responseCode = "403", description = "Target user already blocked"),
+    @APIResponse(responseCode = "409", description = "Target user already blocked"),
     @APIResponse(responseCode = "404", description = "Target/User does not exist")
   })
   public Response postBlockTargetEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    if (userId == null) return Response.status(Response.Status.BAD_REQUEST).build();
+
+    commandService.blockUser(userId, targetUserId);
+    return Response.ok().build();
   }
 
   /**
@@ -134,19 +151,23 @@ public class SocialController {
   @Path("/block/{targetUserId}")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
-    @APIResponse(responseCode = "400", description = "Bad user ID / Bad delete format"),
+    @APIResponse(responseCode = "204", description = "No block relations"),
+    @APIResponse(responseCode = "400", description = "Bad user ID"),
     @APIResponse(responseCode = "404", description = "Target/User does not exist")
   })
   public Response deleteBlockTargetEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    if (userId == null) return Response.status(Response.Status.BAD_REQUEST).build();
+
+    commandService.unblockUser(userId, targetUserId);
+    return Response.ok().build();
   }
 
   /**
    * Get the list of userID who liked a post.
    *
    * @param userId the ID of the user requesting the list
-   * @param targetUserId the ID of the user whose post likers are being requested
+   * @param targetPostId the ID of the user whose post likers are being requested
    * @return List of userIDs who liked the post
    */
   @GET
@@ -158,8 +179,9 @@ public class SocialController {
     @APIResponse(responseCode = "404", description = "Post/Target user does not exist")
   })
   public Response getTargetLikersEndpoint(
-      @HeaderParam("X-User") UUID userId, @PathParam("targetPostId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+      @HeaderParam("X-User") UUID userId, @PathParam("targetPostId") UUID targetPostId) {
+
+    return Response.ok(queryService.getLikers(targetPostId, userId)).build();
   }
 
   /**
@@ -179,7 +201,8 @@ public class SocialController {
   })
   public Response getTargetLikedPostsEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+
+    return Response.ok(queryService.getLikedPost(targetUserId, userId)).build();
   }
 
   /**
@@ -199,7 +222,8 @@ public class SocialController {
   })
   public Response getTargetFollowsEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+
+    return Response.ok(queryService.getUserFollows(targetUserId, userId)).build();
   }
 
   /**
@@ -219,7 +243,8 @@ public class SocialController {
   })
   public Response getTargetFollowersEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+
+    return Response.ok(queryService.getFollowers(targetUserId, userId)).build();
   }
 
   /**
@@ -239,7 +264,8 @@ public class SocialController {
   })
   public Response getTargetBlockListEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+
+    return Response.ok(queryService.getBlockedUsers(targetUserId, userId)).build();
   }
 
   /**
@@ -259,6 +285,7 @@ public class SocialController {
   })
   public Response getTargetBlockByEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
-    return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+
+    return Response.ok(queryService.getTargetBlock(targetUserId, userId)).build();
   }
 }

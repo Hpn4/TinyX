@@ -5,10 +5,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
+
 import java.util.UUID;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Values;
+
 
 @ApplicationScoped
 public class RelationsRepository {
@@ -118,4 +120,5 @@ public class RelationsRepository {
           return result.single().get("relationExist").asBoolean();
         });
   }
+
 }

@@ -2,6 +2,7 @@ package com.tinyx.repository;
 
 import com.tinyx.post.contracts.PostContract;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -18,5 +19,5 @@ public interface UserTimelineRestClient {
   @Path("/timeline/users")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  List<PostContract> GetUsersTimeline(List<UUID> userIds);
+  List<PostContract> GetUsersTimeline(@HeaderParam("X-User") UUID userId, List<UUID> userIds);
 }

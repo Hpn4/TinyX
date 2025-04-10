@@ -28,6 +28,7 @@ public enum ErrorCodes {
   MEDIA_NOT_FOUND(Status.NOT_FOUND, "Media %s was not found"),
   MEDIA_BAD_ID(Status.BAD_REQUEST, "Null media ID"),
   UNREACHABLE(Status.SERVICE_UNAVAILABLE, "%s is unreachable"),
+  SEARCH_NO_QUERY(Status.BAD_REQUEST, "No query provided"),
   MEDIA_BAD_STREAM(Status.BAD_REQUEST, "Media stream could not be resolved");
 
   private final Status status;

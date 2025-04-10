@@ -72,10 +72,11 @@ public class RepoSocialTests {
     List<UUID> postIds = new ArrayList<>();
     postIds.add(uniquepost);
     redisUtils.PostMany(RedisChannel.POST, postQueryList, PostQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     assertTrue(socialRepository.isNodeThere(postIds, "Post") == 1);
     PostQuery deleteQuery = new PostQuery(PostQuery.Operation.DELETE, pc);
     redisUtils.PostOne(RedisChannel.POST, deleteQuery, PostQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertTrue(socialRepository.isNodeThere(postIds, "Post") == 0);
   }
 
@@ -99,6 +100,7 @@ public class RepoSocialTests {
       posts.add(new PostQuery(PostQuery.Operation.CREATE, pc));
     }
     redisUtils.PostMany(RedisChannel.POST, posts, PostQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertTrue(socialRepository.isNodeThere(idToCreate, "Post") == idToCreate.size());
     List<PostQuery> postsToDelete = new ArrayList<>(n);
     for (var i = 0; i < n; i++) {
@@ -115,6 +117,7 @@ public class RepoSocialTests {
     }
 
     redisUtils.PostMany(RedisChannel.POST, postsToDelete, PostQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertTrue(socialRepository.isNodeThere(idToCreate, "Post") == 0);
   }
 
@@ -130,6 +133,7 @@ public class RepoSocialTests {
     }
 
     redisUtils.PostMany(RedisChannel.USER, userQueryList, UserQuery.class);
+    Thread.sleep(REDIS_DELAY);
     List<UUID> idToCreate = new ArrayList<>();
     idToCreate.add(uniqueUser);
     assertTrue(socialRepository.isNodeThere(idToCreate, "User") == 1);
@@ -151,6 +155,7 @@ public class RepoSocialTests {
       users.add(uq);
     }
     redisUtils.PostMany(RedisChannel.USER, users, UserQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertTrue(socialRepository.isNodeThere(idToCreate, "User") == idToCreate.size());
   }
 
@@ -164,7 +169,7 @@ public class RepoSocialTests {
       users.add(uq);
     }
     redisUtils.PostMany(RedisChannel.USER, users, UserQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     UserRelationsQuery urq =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.BLOCK,
@@ -172,6 +177,7 @@ public class RepoSocialTests {
             users.get(1).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, urq, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertTrue(
         relationsRepository.isThereRelation(
             "BLOCK", users.get(0).user.id, users.get(1).user.id, "User"));
@@ -183,6 +189,7 @@ public class RepoSocialTests {
             users.get(1).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, deleturq, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(
         relationsRepository.isThereRelation(
             "BLOCK", users.get(0).user.id, users.get(1).user.id, "User"));
@@ -194,18 +201,20 @@ public class RepoSocialTests {
         new UserContract(UUID.randomUUID(), userTestUtils.RandomUsername(), ZonedDateTime.now());
     UserQuery userQuery = new UserQuery(UserQuery.Operation.CREATE, userContract);
     redisUtils.PostOne(RedisChannel.USER, userQuery, UserQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     UUID randomUUID = UUID.randomUUID();
     UserRelationsQuery userRelationsQuery1 =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.BLOCK, userContract.id, randomUUID, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, userRelationsQuery1, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(relationsRepository.isThereRelation("BLOCK", userContract.id, randomUUID, "User"));
 
     UserRelationsQuery userRelationsQuery2 =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.BLOCK, randomUUID, userContract.id, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, userRelationsQuery2, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(relationsRepository.isThereRelation("BLOCK", randomUUID, userContract.id, "User"));
   }
 
@@ -219,7 +228,7 @@ public class RepoSocialTests {
       users.add(uq);
     }
     redisUtils.PostMany(RedisChannel.USER, users, UserQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     UserRelationsQuery urq =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.FOLLOW,
@@ -227,6 +236,7 @@ public class RepoSocialTests {
             users.get(1).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, urq, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertTrue(
         relationsRepository.isThereRelation(
             "FOLLOW", users.get(0).user.id, users.get(1).user.id, "User"));
@@ -238,6 +248,7 @@ public class RepoSocialTests {
             users.get(1).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, deleturq, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(
         relationsRepository.isThereRelation(
             "FOLLOW", users.get(0).user.id, users.get(1).user.id, "User"));
@@ -254,7 +265,7 @@ public class RepoSocialTests {
     }
 
     redisUtils.PostMany(RedisChannel.USER, users, UserQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     UUID randomUUID = UUID.randomUUID();
     UserRelationsQuery userRelationsQuery1 =
         new UserRelationsQuery(
@@ -263,6 +274,7 @@ public class RepoSocialTests {
             randomUUID,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, userRelationsQuery1, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(
         relationsRepository.isThereRelation("FOLLOW", users.get(0).user.id, randomUUID, "User"));
 
@@ -273,6 +285,7 @@ public class RepoSocialTests {
             users.get(0).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, userRelationsQuery2, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(
         relationsRepository.isThereRelation("FOLLOW", randomUUID, users.get(0).user.id, "User"));
 
@@ -283,7 +296,7 @@ public class RepoSocialTests {
             users.get(1).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, blockUserRelationsQuery, UserRelationsQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     UserRelationsQuery followWhileBlocked =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.FOLLOW,
@@ -291,6 +304,7 @@ public class RepoSocialTests {
             users.get(1).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, followWhileBlocked, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(
         relationsRepository.isThereRelation(
             "FOLLOW", users.get(0).user.id, users.get(1).user.id, "User"));
@@ -302,6 +316,7 @@ public class RepoSocialTests {
             users.get(0).user.id,
             ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, followWhileBlocked2, UserRelationsQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(
         relationsRepository.isThereRelation(
             "FOLLOW", users.get(1).user.id, users.get(0).user.id, "User"));
@@ -313,7 +328,7 @@ public class RepoSocialTests {
         new UserContract(UUID.randomUUID(), userTestUtils.RandomUsername(), ZonedDateTime.now());
     UserQuery uq = new UserQuery(UserQuery.Operation.CREATE, uc);
     redisUtils.PostOne(RedisChannel.USER, uq, UserQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     PostContract pc =
         new PostContract(
             UUID.randomUUID(),
@@ -327,12 +342,13 @@ public class RepoSocialTests {
     LikePostQuery lpq =
         new LikePostQuery(LikePostQuery.Operation.LIKE, uc.id, pc.id, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.LIKE, lpq, LikePostQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     assertTrue(relationsRepository.isThereRelation("LIKE", uc.id, pc.id, "Post"));
 
     LikePostQuery dislike =
         new LikePostQuery(LikePostQuery.Operation.UNLIKE, uc.id, pc.id, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, dislike, LikePostQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(relationsRepository.isThereRelation("LIKE", uc.id, pc.id, "Post"));
   }
 
@@ -343,12 +359,12 @@ public class RepoSocialTests {
         new UserContract(UUID.randomUUID(), userTestUtils.RandomUsername(), ZonedDateTime.now());
     UserQuery uq = new UserQuery(UserQuery.Operation.CREATE, uc);
     redisUtils.PostOne(RedisChannel.USER, uq, UserQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     UserContract uc2 =
         new UserContract(UUID.randomUUID(), userTestUtils.RandomUsername(), ZonedDateTime.now());
     UserQuery uq2 = new UserQuery(UserQuery.Operation.CREATE, uc2);
     redisUtils.PostOne(RedisChannel.USER, uq2, UserQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     PostContract pc =
         new PostContract(
             UUID.randomUUID(),
@@ -359,26 +375,29 @@ public class RepoSocialTests {
             UUID.randomUUID());
     PostQuery pq = new PostQuery(PostQuery.Operation.CREATE, pc);
     redisUtils.PostOne(RedisChannel.POST, pq, PostQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     UUID randomUUID = UUID.randomUUID();
     LikePostQuery likePostQuery1 =
         new LikePostQuery(LikePostQuery.Operation.LIKE, randomUUID, pc.id, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.LIKE, likePostQuery1, LikePostQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(relationsRepository.isThereRelation("LIKE", randomUUID, pc.id, "Post"));
 
     LikePostQuery likePostQuery2 =
         new LikePostQuery(LikePostQuery.Operation.LIKE, uc.id, randomUUID, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.LIKE, likePostQuery2, LikePostQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(relationsRepository.isThereRelation("LIKE", uc.id, randomUUID, "Post"));
 
     UserRelationsQuery blockUserRelationsQuery =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.BLOCK, uc.id, uc2.id, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, blockUserRelationsQuery, UserRelationsQuery.class);
-
+    Thread.sleep(REDIS_DELAY);
     LikePostQuery likePostQueryWhileBlocked =
         new LikePostQuery(LikePostQuery.Operation.LIKE, uc.id, pc.id, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.LIKE, likePostQueryWhileBlocked, LikePostQuery.class);
+    Thread.sleep(REDIS_DELAY);
     assertFalse(relationsRepository.isThereRelation("LIKE", uc.id, pc.id, "Post"));
   }
 }

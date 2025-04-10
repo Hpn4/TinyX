@@ -1,90 +1,93 @@
 package com.tinyx;
 
-import com.tinyx.post.contracts.PostContract;
-import com.tinyx.redis.PostQuery;
-import com.tinyx.redis.UserQuery;
+import com.tinyx.post.PostTestUtils;
+import com.tinyx.redis.*;
 import com.tinyx.redis.stream.RedisChannel;
-import com.tinyx.redis.stream.RedisPublisherFactory;
-import com.tinyx.user.contracts.UserContract;
-import io.quarkus.runtime.Startup;
-import io.quarkus.scheduler.Scheduled;
-import jakarta.enterprise.context.ApplicationScoped;
+import com.tinyx.repository.SocialTestRepository;
+import com.tinyx.user.UserTestUtils;
+import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.jboss.logging.Logger;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@ApplicationScoped
-@Startup
+@QuarkusTest
 public class TestStream {
 
-  @Inject RedisPublisherFactory factory;
+  @Inject RedisUtils redisUtils;
 
-  Logger logger = Logger.getLogger(TestStream.class);
+  @Inject UserTestUtils userTestUtils;
 
-  UUID unique = UUID.randomUUID();
-  UUID uniquepost = UUID.randomUUID();
-  UUID second = UUID.randomUUID();
+  @Inject PostTestUtils postTestUtils;
 
-  @Scheduled(every = "10s")
-  public void publish() {
-    var user = factory.<UserQuery>createPublisher();
+  @Inject SocialTestRepository repo;
 
-    UserContract contract = new UserContract(unique, "bro", ZonedDateTime.now());
-    UserQuery q = new UserQuery(UserQuery.Operation.CREATE, contract);
+  @Inject Logger log;
 
-    // UserContract secondContract = new UserContract(second, "dude", LocalDate.now());
-    // UserQuery q2 = new UserQuery(UserQuery.Operation.CREATE, secondContract);
-    var post = factory.<PostQuery>createPublisher();
+  private List<UUID> createUsers(int count) throws InterruptedException {
+    List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(count);
+    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
-    PostContract pc =
-        new PostContract(
-            uniquepost,
-            contract.id,
-            "sup bro",
-            ZonedDateTime.now(),
-            UUID.randomUUID(),
-            UUID.randomUUID());
-    PostQuery pq = new PostQuery(PostQuery.Operation.CREATE, pc);
+    List<UUID> expected = userQueries.stream().map(q -> q.user.id).sorted().toList();
+    List<UUID> results = repo.getAllUsers();
 
-    /*PostContract delpc = new PostContract(pc.id,contract.id,"nop bro",LocalDate.now(),UUID.randomUUID(),UUID.randomUUID());
-    PostQuery delpq = new PostQuery(PostQuery.Operation.DELETE, delpc);*/
+    Assertions.assertEquals(expected, results);
 
-    /*  var like = factory.<LikePostQuery>createPublisher();
+    return expected;
+  }
 
-        LikePostQuery lpq = new LikePostQuery(LikePostQuery.Operation.LIKE, unique, uniquepost, ZonedDateTime.now());
-        LikePostQuery unlpq = new LikePostQuery(LikePostQuery.Operation.UNLIKE, unique, uniquepost,ZonedDateTime.now());
+  @Test
+  public void createUsers() throws InterruptedException {
+    repo.deleteAllData();
 
-        var realtion = factory.<UserRelationsQuery>createPublisher();
+    createUsers(10);
 
-        UserRelationsQuery blurq =
-            new UserRelationsQuery(UserRelationsQuery.Operation.BLOCK, unique, UUID.randomUUID(),ZonedDateTime.now());
-        UserRelationsQuery unblurq =
-            new UserRelationsQuery(UserRelationsQuery.Operation.UNBLOCK, unique, second,ZonedDateTime.now());
+    repo.deleteAllData();
+    Assertions.assertNull(repo.getAllUsers());
+  }
 
-        UserRelationsQuery folurq =
-            new UserRelationsQuery(UserRelationsQuery.Operation.FOLLOW, unique, UUID.randomUUID(),ZonedDateTime.now());
-        UserRelationsQuery unfolurq =
-            new UserRelationsQuery(UserRelationsQuery.Operation.UNFOLLOW, unique, second,ZonedDateTime.now());
-    */
-    for (var i = 0; i < 10; i++) {
-      user.publishStream(RedisChannel.USER, q, UserQuery.class);
-      //  user.publishStream(RedisChannel.USER, q2, UserQuery.class);
-      post.publishStream(RedisChannel.POST, pq, PostQuery.class);
-      // post.publishStream(RedisChannel.POST,delpq, PostQuery.class);
-      // like.publishStream(RedisChannel.SOCIAL,lpq,LikePostQuery.class);
-      /// like.publishStream(RedisChannel.SOCIAL,unlpq, LikePostQuery.class);
-      // realtion.publishStream(RedisChannel.SOCIAL, folurq, UserRelationsQuery.class);
-      //  realtion.publishStream(RedisChannel.SOCIAL,unfolurq,UserRelationsQuery.class);
+  @Test
+  public void createPosts() throws InterruptedException {
+    repo.deleteAllData();
 
-    }
+    List<PostQuery> postQueries = postTestUtils.randomPostQueries(10);
+    redisUtils.PostManyThenWait(RedisChannel.POST, postQueries, PostQuery.class);
 
-    logger.info("Published 10x " + contract.id.toString());
+    List<UUID> expected = postQueries.stream().map(q -> q.post.id).sorted().toList();
+    List<UUID> results = repo.getAllPosts();
 
-    /* var post = factory.<PostQuery>createPublisher();
+    Assertions.assertEquals(expected, results);
 
-    PostContract pc = new PostContract(UUID.randomUUID(),contract.id,"sup bro",LocalDate.now(),UUID.randomUUID(),UUID.randomUUID());
-    PostQuery pq = new PostQuery(PostQuery.Operation.CREATE, pc);*/
+    repo.deleteAllData();
+    Assertions.assertNull(repo.getAllPosts());
+  }
 
+  @Test
+  public void createFollow() throws InterruptedException {
+    repo.deleteAllData();
+
+    List<UUID> users = createUsers(2);
+
+    // Create a like between the two users
+    UserRelationsQuery followQuery =
+        new UserRelationsQuery(
+            UserRelationsQuery.Operation.FOLLOW, users.get(0), users.get(1), ZonedDateTime.now());
+    redisUtils.PostOne(RedisChannel.SOCIAL, followQuery, UserRelationsQuery.class);
+    redisUtils.WaitDelay();
+
+    // Test that the like exists
+    List<UUID> result = repo.getFollow(users.get(0)); // 0 -FOLLOW-> 1
+    Assertions.assertEquals(1, result.size());
+    Assertions.assertEquals(users.get(1), result.get(0));
+
+    result = repo.getFollowers(users.get(1)); // 0 -FOLLOW-> 1
+    Assertions.assertEquals(1, result.size());
+    Assertions.assertEquals(users.get(0), result.get(0));
+
+    repo.deleteAllData();
+    Assertions.assertNull(repo.getAllPosts());
   }
 }

@@ -33,6 +33,7 @@
     <module>repo-media</module>
     <module>repo-post</module>
     <module>repo-social</module>
+    <module>repo-search</module>
     <module>srvc-user</module>
     <module>testsuite</module>
   </modules>

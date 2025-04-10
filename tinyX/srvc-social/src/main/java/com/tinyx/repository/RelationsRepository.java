@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.UUID;
-import org.neo4j.driver.Result;
+import org.neo4j.driver.Record;
 
 @ApplicationScoped
 public class RelationsRepository {
@@ -12,8 +12,8 @@ public class RelationsRepository {
   @Inject LookupRepository lookupRepository;
 
   private List<UUID> getResultAsList(final String cipher) {
-    final Result result = lookupRepository.executeRead(cipher);
-    if (result == null || !result.hasNext()) return List.of();
+    final List<Record> result = lookupRepository.executeRead(cipher);
+    if (result == null) return List.of();
 
     return result.stream().map(rec -> UUID.fromString(rec.get("id").asString())).toList();
   }
@@ -29,8 +29,8 @@ public class RelationsRepository {
   public List<UUID> getLikers(final UUID postId, final UUID userId) {
     final String cipher =
         """
-        MATCH (u:User)-[:LIKE]->(p:Post {id: %s})
-        WHERE NOT (:User {id: %s} )-[:BLOCKED]->(u)
+        MATCH (u:User)-[:LIKE]->(p:Post {id: "%s"})
+        WHERE NOT (:User {id: "%s"} )-[:BLOCKED]->(u)
         RETURN u.id as id
         """
             .formatted(postId, userId);
@@ -49,8 +49,8 @@ public class RelationsRepository {
   public List<UUID> getLikedPosts(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (u:User {id: %s})-[:LIKE]->(p:Post)
-        WHERE NOT (:User {id: %s})-[:BLOCKED]->(:User {id : p.authorId})
+        MATCH (u:User {id: "%s"})-[:LIKE]->(p:Post)
+        WHERE NOT (:User {id: "%s"})-[:BLOCKED]->(:User {id : p.authorId})
         RETURN p.id as id
         """
             .formatted(targetId, userId);
@@ -69,8 +69,8 @@ public class RelationsRepository {
   public List<UUID> getUserFollow(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (u:User {id: %s})-[:FOLLOW]->(v:User)
-        WHERE NOT (:User {id: %s})-[:BLOCKED]->(v)
+        MATCH (u:User {id: "%s"})-[:FOLLOW]->(v:User)
+        WHERE NOT (:User {id: "%s"})-[:BLOCKED]->(v)
         RETURN v.id as id
         """
             .formatted(targetId, userId);
@@ -89,8 +89,8 @@ public class RelationsRepository {
   public List<UUID> getFollowers(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (u:User)-[:FOLLOW]->(v:User {id: %s})
-        WHERE NOT (:User {id: %s})-[:BLOCKED]->(u)
+        MATCH (u:User)-[:FOLLOW]->(v:User {id: "%s"})
+        WHERE NOT (:User {id: "%s"})-[:BLOCKED]->(u)
         RETURN u.id as id"""
             .formatted(targetId, userId);
 
@@ -108,8 +108,8 @@ public class RelationsRepository {
   public List<UUID> getBlockedUsers(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (u:User {id: %s})-[:BLOCK]->(v:User)
-        WHERE NOT (:User {id: %s} )-[:BLOCKED]->(v)
+        MATCH (u:User {id: "%s"})-[:BLOCK]->(v:User)
+        WHERE NOT (:User {id: "%s"} )-[:BLOCKED]->(v)
         RETURN v.id as id"""
             .formatted(targetId, userId);
 
@@ -127,8 +127,8 @@ public class RelationsRepository {
   public List<UUID> getTargetBlock(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (u:User)-[:BLOCK]->(v:User {id: %s}) "
-        WHERE NOT (:User {id: %s} )-[:BLOCKED]->(u)"
+        MATCH (u:User)-[:BLOCK]->(v:User {id: "%s"}) "
+        WHERE NOT (:User {id: "%s"} )-[:BLOCKED]->(u)"
         RETURN u.id as id"""
             .formatted(targetId, userId);
 

@@ -1,6 +1,7 @@
 image: maven:latest
 
 stages:
+  - deploy
   - lint
   - build-common
   - compile
@@ -10,14 +11,44 @@ cache:
   paths:
     - $CI_PROJECT_DIR/.m2/repository/
 
+workflow:
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^build-.+$/'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
 variables:
   MAVEN_CLI_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  DOCKER_CONFIG: "/kaniko/.docker/"
+
+deploy:
+  stage: deploy
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^build-.+$/
+  parallel:
+    matrix:
+      - SERVICE: ["repo-media", "repo-search", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  script:
+    - echo "${CI_COMMIT_TAG#build-}"
+    - mkdir -p /kaniko/.docker
+    - >
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}"
+      > /kaniko/.docker/config.json
+    - >
+      /kaniko/executor
+      --context "tinyX"
+      --dockerfile "tinyX/$SERVICE/Dockerfile"
+      --destination "$CI_REGISTRY_IMAGE/$SERVICE:${CI_COMMIT_TAG#build-}"
 
 lint:
   stage: lint
   parallel:
     matrix:
-      - SERVICE: ["common", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["common", "repo-search", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
   script:
     - cd tinyX
     - mvn -pl $SERVICE $MAVEN_CLI_OPTS spotless:check
@@ -27,6 +58,8 @@ build-common:
   script:
     - cd tinyX
     - mvn -pl common $MAVEN_CLI_OPTS clean install -DskipTests
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
   needs:
     - lint
   artifacts:
@@ -38,7 +71,9 @@ compile:
   stage: compile
   parallel:
     matrix:
-      - SERVICE: ["repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["common", "repo-search", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
   needs:
     - build-common
   script:
@@ -68,7 +103,9 @@ test:
     NEO4J_CONNECTION_STRING: "bolt://neo4j:7687"
   parallel:
     matrix:
-      - SERVICE: ["repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+      - SERVICE: ["common", "repo-search", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
   needs:
     - compile
   script:

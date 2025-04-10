@@ -30,7 +30,12 @@ public class PostTestUtils {
     for (int i = 0; i < n; i++) {
       posts.add(
           new PostContract(
-              UUID.randomUUID(), null, randomContent(), ZonedDateTime.now(), null, null));
+              UUID.randomUUID(),
+              UUID.randomUUID(),
+              randomContent(),
+              ZonedDateTime.now(),
+              null,
+              null));
     }
 
     return posts;

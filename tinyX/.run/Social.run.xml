@@ -25,7 +25,7 @@
               <list />
             </option>
             <option name="resolveToWorkspace" value="false" />
-            <option name="workingDirPath" value="$PROJECT_DIR$/repo-social" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/srvc-social" />
           </MavenRunnerParameters>
         </option>
       </MavenSettings>

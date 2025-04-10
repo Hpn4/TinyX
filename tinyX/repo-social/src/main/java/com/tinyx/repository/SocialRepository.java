@@ -111,7 +111,6 @@ public class SocialRepository {
     return readUUID(query, Values.parameters("authId", authorId, "likerId", likerId));
   }
 
-
   public int isNodeThere(List<UUID> ids, String nodeName) {
     final String query =
         """
@@ -135,5 +134,4 @@ public class SocialRepository {
             })
         .size();
   }
-
 }

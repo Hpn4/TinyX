@@ -1,12 +1,12 @@
 package com.tinyx;
 
-
 import static org.wildfly.common.Assert.assertFalse;
 import static org.wildfly.common.Assert.assertTrue;
 
 import com.tinyx.post.PostTestUtils;
 import com.tinyx.post.contracts.PostContract;
 import com.tinyx.redis.*;
+import com.tinyx.redis.RedisUtils;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.repository.RelationsRepository;
 import com.tinyx.repository.SocialRepository;
@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import com.tinyx.redis.RedisUtils;
-
 
 /**
  * Implements tests regarding the repo-post service. In the future when more tests are added, this
@@ -37,9 +35,7 @@ public class RepoSocialTests {
 
   @Inject UserTestUtils userTestUtils;
 
-
   @Inject RelationsRepository relationsRepository;
-
 
   @Inject SocialRepository socialRepository;
 
@@ -52,7 +48,6 @@ public class RepoSocialTests {
   // }
 
   private UUID uniquepost = UUID.randomUUID();
-
 
   private UUID uniqueUser = UUID.randomUUID();
 
@@ -385,6 +380,5 @@ public class RepoSocialTests {
         new LikePostQuery(LikePostQuery.Operation.LIKE, uc.id, pc.id, ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.LIKE, likePostQueryWhileBlocked, LikePostQuery.class);
     assertFalse(relationsRepository.isThereRelation("LIKE", uc.id, pc.id, "Post"));
-
   }
 }

@@ -98,7 +98,7 @@ test:
       command:
         - /bin/bash
         - -c
-        - echo -Xms256m >> /usr/share/elasticsearch/config/jvm.options && echo -Xmx256m >> /usr/share/elasticsearch/config/jvm.options && /usr/local/bin/docker-entrypoint.sh elasticsearch -Ediscovery.type=single-node
+        - echo -Xms512m >> /usr/share/elasticsearch/config/jvm.options && echo -Xmx512m >> /usr/share/elasticsearch/config/jvm.options && /usr/local/bin/docker-entrypoint.sh elasticsearch -Ediscovery.type=single-node
   variables:
     MONGO_INITDB_ROOT_USERNAME: admin
     MONGO_INITDB_ROOT_PASSWORD: admin

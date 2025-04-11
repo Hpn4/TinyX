@@ -117,5 +117,6 @@ test:
   needs:
     - compile
   script:
+    - curl -f http://elastic:9200 || (echo "Elasticsearch not reachable" && exit 1)
     - cd tinyX
     - mvn -pl $SERVICE $MAVEN_CLI_OPTS test -am

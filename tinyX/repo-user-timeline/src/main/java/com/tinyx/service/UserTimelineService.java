@@ -61,11 +61,11 @@ public class UserTimelineService {
     Map<UUID, List<UUID>> entriesToRemovePerUser = new HashMap<>();
 
     for (UserRelationsQuery q : data) {
-      List<UUID> blockedUerPosts = new ArrayList<>();
+      List<UUID> blockedUserPosts = new ArrayList<>();
 
       try {
         // Get posts of the blocked user
-        blockedUerPosts =
+        blockedUserPosts =
             postRestClient.getUserPosts(q.targetUserId, q.targetUserId).stream()
                 .map(p -> p.id)
                 .toList();
@@ -79,7 +79,7 @@ public class UserTimelineService {
 
       // We then remove all posts of the blocked user (`targetUserId`) from the `srcUserId` timeline
       entriesToRemovePerUser.computeIfAbsent(q.srcUserId, e -> new ArrayList<>());
-      entriesToRemovePerUser.get(q.srcUserId).addAll(blockedUerPosts);
+      entriesToRemovePerUser.get(q.srcUserId).addAll(blockedUserPosts);
     }
 
     if (!entriesToRemovePerUser.isEmpty()) repository.removeForUsers(entriesToRemovePerUser);

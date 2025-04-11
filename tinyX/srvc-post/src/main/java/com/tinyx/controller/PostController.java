@@ -67,7 +67,7 @@ public class PostController {
     @APIResponse(responseCode = "404", description = "A post ID does not link to an existing post")
   })
   public Response queryPostsList(@HeaderParam("X-User") UUID userId, List<UUID> postIds) {
-    return Response.ok(postService.GetAllPost(postIds, userId)).build();
+    return Response.ok(postService.getAllPost(postIds, userId)).build();
   }
 
   @GET
@@ -80,7 +80,7 @@ public class PostController {
   })
   public Response queryUserPostsEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("authorId") UUID authorId) {
-    return Response.ok(postService.GetAllPostsFromUser(authorId, userId)).build();
+    return Response.ok(postService.getAllPostsFromUser(authorId, userId)).build();
   }
 
   @GET
@@ -93,7 +93,7 @@ public class PostController {
   })
   public Response queryPostEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
-    return Response.ok(postService.GetPostById(postId, userId)).build();
+    return Response.ok(postService.getPostById(postId, userId)).build();
   }
 
   @GET
@@ -106,6 +106,6 @@ public class PostController {
   })
   public Response queryPostRepliesEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
-    return Response.ok(postService.GetRepliesByPostId(postId, userId)).build();
+    return Response.ok(postService.getRepliesByPostId(postId, userId)).build();
   }
 }

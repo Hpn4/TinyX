@@ -10,7 +10,6 @@ import com.tinyx.repository.SearchTestRepository;
 import com.tinyx.search.entity.SearchPostEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +28,14 @@ public class PostSearchTest {
   @Inject PostTestUtils postTestUtils;
 
   @Inject SearchTestRepository searchTestRepository;
-  @Inject
-  ElasticsearchClient esClient;
+  @Inject ElasticsearchClient esClient;
 
   @BeforeAll
   void setupIndex() throws IOException {
     boolean exists = esClient.indices().exists(e -> e.index("posts")).value();
 
     if (!exists) {
-      var request = new CreateIndexRequest.Builder()
-              .index("posts")
-              .build();
+      var request = new CreateIndexRequest.Builder().index("posts").build();
 
       esClient.indices().create(request);
     }

@@ -11,14 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.bson.Document;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class UserTimelineRepository
     implements PanacheMongoRepositoryBase<UserTimelineEntity, UUID> {
 
-  @ConfigProperty(name = "tinyx.srvc-user-timeline.collection")
-  String collectionName;
+  private static final String collectionName = "UserTimeline";
 
   /**
    * Retrieves and merges the post UUIDs from the specified users' timelines. The resulting list is

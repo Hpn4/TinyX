@@ -53,13 +53,13 @@ public class RelationsSubscriber extends RedisStreamReader<UserRelationsQuery> {
   }
 
   /* Mandatory stuff, timing might be put inside the application properties to be cleaner */
-  @Scheduled(every = "10m")
+  @Scheduled(every = "{tinyx.redis-stream.trim.every}")
   @Override
   protected void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "1s")
+  @Scheduled(every = "{tinyx.redis-stream.claim.every}")
   @Override
   protected void claimPendingMessages() {
     super.claimPendingMessages();

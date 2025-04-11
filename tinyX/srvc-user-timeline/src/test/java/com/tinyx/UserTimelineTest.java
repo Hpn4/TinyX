@@ -43,6 +43,8 @@ public class UserTimelineTest {
 
   @Test
   public void singleUserTimeline() {
+    userTimelineRepository.deleteAll();
+
     // A user with 1000 posts with random dates
     UserTimelineEntity user = timelineTestUtils.addAndFillUser(1000);
     timelineTestUtils.sortTimeline(List.of(user));

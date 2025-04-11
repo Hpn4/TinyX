@@ -54,11 +54,11 @@ public class UserService {
     return userConverter.convertUser(newUser);
   }
 
-  public LightUserContract getUserByName(String username) {
+  public LightUserContract getUserByName(String userName) {
     UserEntity user =
         userRepository
-            .findByName(username)
-            .orElseThrow(ErrorCodes.USER_NOT_FOUND.asSupplier(username));
+            .findByName(userName)
+            .orElseThrow(ErrorCodes.USER_NOT_FOUND.asSupplier(userName));
     return userEntityToLightContractConverter.convertUser(user);
   }
 

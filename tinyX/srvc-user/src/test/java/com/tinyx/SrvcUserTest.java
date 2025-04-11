@@ -69,11 +69,11 @@ public class SrvcUserTest {
       @Test
       void testAddUser_Duplicate() {
         users.forEach(
-            username -> {
+            userName -> {
               given()
                   .contentType("application/json")
                   .when()
-                  .post("/user/create/" + username)
+                  .post("/user/create/" + userName)
                   .then()
                   .statusCode(409);
             });
@@ -82,11 +82,11 @@ public class SrvcUserTest {
       @Test
       void testGetUserByName_Success() {
         users.forEach(
-            username -> {
+            userName -> {
               given()
                   .contentType("application/json")
                   .when()
-                  .get("/user/get/username/" + username)
+                  .get("/user/get/username/" + userName)
                   .then()
                   .statusCode(200);
             });

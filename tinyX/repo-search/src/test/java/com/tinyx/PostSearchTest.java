@@ -1,5 +1,7 @@
 package com.tinyx;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import com.tinyx.post.PostTestUtils;
 import com.tinyx.redis.PostQuery;
 import com.tinyx.redis.RedisUtils;
@@ -8,13 +10,18 @@ import com.tinyx.repository.SearchTestRepository;
 import com.tinyx.search.entity.SearchPostEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @QuarkusTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PostSearchTest {
 
   @Inject RedisUtils redisUtils;
@@ -22,6 +29,21 @@ public class PostSearchTest {
   @Inject PostTestUtils postTestUtils;
 
   @Inject SearchTestRepository searchTestRepository;
+  @Inject
+  ElasticsearchClient esClient;
+
+  @BeforeAll
+  void setupIndex() throws IOException {
+    boolean exists = esClient.indices().exists(e -> e.index("posts")).value();
+
+    if (!exists) {
+      var request = new CreateIndexRequest.Builder()
+              .index("posts")
+              .build();
+
+      esClient.indices().create(request);
+    }
+  }
 
   @Test
   public void createPosts() throws InterruptedException {

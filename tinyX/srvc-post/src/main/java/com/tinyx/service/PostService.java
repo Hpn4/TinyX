@@ -63,9 +63,22 @@ public class PostService {
     try {
       return userRestClient.getUserById(userId).readEntity(UserContract.class);
     } catch (ClientWebApplicationException e) {
-      ErrorCodes.USER_NOT_FOUND.throwError(userId);
+      if (e.getResponse().getStatus() == 404) {
+        ErrorCodes.USER_NOT_FOUND.throwError(userId);
+      } else {
+        ErrorCodes.WRONG_UUID.throwError(userId);
+      }
     }
     return null;
+  }
+
+  private void isUserOrPostExist(UUID userId, UUID postId) {
+    if (userId == null) {
+      ErrorCodes.WRONG_UUID.throwError("userId");
+    }
+    if (postId == null) {
+      ErrorCodes.WRONG_UUID.throwError("postId");
+    }
   }
 
   /**
@@ -75,8 +88,16 @@ public class PostService {
    * @param post: http contract from controller
    */
   public void newPost(UUID userUUID, CreatePostRequest post) {
-    if (userUUID == null || post == null || post.content.length() > 160) {
+    if (userUUID == null || post == null || post.content == null || post.content.length() > 160) {
       ErrorCodes.BAD_POST_FORMAT.throwError();
+    }
+    if (post.postType == PostType.REPLY || post.postType == PostType.REPOST) {
+      if (post.parentId == null) {
+        ErrorCodes.BAD_POST_FORMAT.throwError();
+      }
+      if (post.postType == PostType.REPOST && post.mediaId != null && !post.content.isBlank()) {
+        ErrorCodes.BAD_POST_FORMAT.throwError();
+      }
     }
 
     UserContract user = getUser(userUUID);
@@ -86,17 +107,11 @@ public class PostService {
     }
 
     if (post.postType == PostType.REPLY || post.postType == PostType.REPOST) {
-      if (post.parentId == null) {
-        ErrorCodes.BAD_POST_FORMAT.throwError();
-      }
       if (!postServiceRepository.existPost(post.parentId)) {
         ErrorCodes.POST_NOT_FOUND.throwError(post.parentId);
       }
       if (isParentPostAuthorBlocked(user, post)) {
         ErrorCodes.BLOCKED_USER_POST.throwError();
-      }
-      if (post.postType == PostType.REPOST && post.mediaId != null && !post.content.isBlank()) {
-        ErrorCodes.BAD_POST_FORMAT.throwError();
       }
     }
 
@@ -113,9 +128,7 @@ public class PostService {
    * @param postUUID: ID of the post
    */
   public void deletePost(UUID userUUID, UUID postUUID) {
-    if (userUUID == null || postUUID == null) {
-      ErrorCodes.WRONG_UUID.throwError();
-    }
+    isUserOrPostExist(userUUID, postUUID);
 
     // Check if user exists
     getUser(userUUID);
@@ -139,10 +152,8 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public PostContract GetPostById(UUID postId, UUID userId) {
-    if (postId == null || userId == null) {
-      ErrorCodes.WRONG_UUID.throwError();
-    }
+  public PostContract getPostById(UUID postId, UUID userId) {
+    isUserOrPostExist(userId, postId);
 
     UserContract user = getUser(userId);
 
@@ -161,9 +172,12 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public List<PostContract> GetAllPost(List<UUID> postsIds, UUID userId) {
-    if (postsIds == null || userId == null) {
-      ErrorCodes.WRONG_UUID.throwError();
+  public List<PostContract> getAllPost(List<UUID> postsIds, UUID userId) {
+    if (userId == null) {
+      ErrorCodes.WRONG_UUID.throwError("userId");
+    }
+    if (postsIds == null) {
+      ErrorCodes.WRONG_UUID.throwError("postId");
     }
 
     UserContract user = getUser(userId);
@@ -180,9 +194,12 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public List<PostContract> GetAllPostsFromUser(UUID authorId, UUID userId) {
-    if (authorId == null || userId == null) {
-      ErrorCodes.WRONG_UUID.throwError();
+  public List<PostContract> getAllPostsFromUser(UUID authorId, UUID userId) {
+    if (userId == null) {
+      ErrorCodes.WRONG_UUID.throwError("userId");
+    }
+    if (authorId == null) {
+      ErrorCodes.WRONG_UUID.throwError("authorId");
     }
 
     UserContract user = getUser(userId);
@@ -206,10 +223,7 @@ public class PostService {
    * @param userId: user UUID
    * @return rest response
    */
-  public List<PostContract> GetRepliesByPostId(UUID postId, UUID userId) {
-    if (postId == null || userId == null) {
-      ErrorCodes.WRONG_UUID.throwError();
-    }
+  public List<PostContract> getRepliesByPostId(UUID postId, UUID userId) {
 
     List<UUID> replyIds = getPostEntity(postId).children;
 

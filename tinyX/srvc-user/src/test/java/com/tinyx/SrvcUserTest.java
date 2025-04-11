@@ -11,7 +11,9 @@ import com.tinyx.user.UserTestUtils;
 import com.tinyx.user.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.*;
 
@@ -32,7 +34,8 @@ public class SrvcUserTest {
 
   MongoCollection<UserEntity> collection;
 
-  static List<String> users;
+  static List<String> users = new ArrayList<>();
+  static List<UUID> userIds = new ArrayList<>();
 
   @BeforeAll
   static void setupAll() {
@@ -46,12 +49,18 @@ public class SrvcUserTest {
     void addUsers() throws InterruptedException {
       users.forEach(
           username -> {
-            given()
-                .contentType("application/json")
-                .when()
-                .post("/user/create/" + username)
-                .then()
-                .statusCode(200);
+            UUID id =
+                given()
+                    .contentType("application/json")
+                    .when()
+                    .post("/user/create/" + username)
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .jsonPath()
+                    .getUUID("id");
+
+            userIds.add(id);
           });
     }
 
@@ -104,37 +113,85 @@ public class SrvcUserTest {
       }
 
       @Test
-      void testGetUserById_BadRequest() {
-        given().when().get("/user/get/id/").then().statusCode(400);
+      void testGetUserById_Success() {
+        for (int i = 0; i < userIds.size(); i++) {
+          String userName =
+              given()
+                  .contentType("application/json")
+                  .when()
+                  .get("/user/get/id/" + userIds.get(i))
+                  .then()
+                  .statusCode(200)
+                  .extract()
+                  .jsonPath()
+                  .getString("userName");
+          Assertions.assertEquals(userName, users.get(i));
+        }
       }
 
-      /*
       @Test
-      void testGetUsersByIds() {
+      void testGetUserById_NotFound() {
         given()
-                .queryParam("usersId", "123e4567-e89b-12d3-a456-426614174000")
-                .queryParam("usersId", "223e4567-e89b-12d3-a456-426614174000")
-                .when().get("/user/get/id")
-                .then().statusCode(200);
+            .contentType("application/json")
+            .when()
+            .get("/user/get/id/" + UUID.randomUUID())
+            .then()
+            .statusCode(404);
       }
-      */
+
+      @Test
+      void testGetUserById_BadRequest() {
+        given().contentType("application/json").when().get("/user/get/id/").then().statusCode(400);
+      }
+
+      @Test
+      void testGetUsersByIds_Success() {
+        List<String> usernames =
+            given()
+                .queryParam("usersId", userIds)
+                .when()
+                .get("/user/get/id")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getList("userName", String.class);
+        Assertions.assertEquals(
+            users.stream().sorted().toList(), usernames.stream().sorted().toList());
+      }
+
+      @Test
+      void testGetUsersByIdsDuplicate_Success() {
+        List<String> usernames =
+            given()
+                .queryParam("usersId", userIds)
+                .queryParam("usersId", userIds)
+                .when()
+                .get("/user/get/id")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getList("userName", String.class);
+        Assertions.assertEquals(
+            users.stream().sorted().toList(), usernames.stream().sorted().toList());
+      }
+
+      @Test
+      void testGetUsersByIds_NotFound() {
+        given()
+            .contentType("application/json")
+            .queryParam("usersId", List.of(UUID.randomUUID()))
+            .when()
+            .get("/user/get/id")
+            .then()
+            .statusCode(404);
+      }
+
+      @Test
+      void testGetUsersByIds_BadRequest() {
+        given().contentType("application/json").when().get("/user/get/id").then().statusCode(400);
+      }
     }
   }
-  /*
-  @ParameterizedTest
-  @ValueSource(ints = {2, 100})
-  public void testCreateDuplicates(int n) throws InterruptedException, DuplicateKeyException {
-    List<UserQuery> originalQueries = userTestUtils.randomUserCreationQueries(1);
-    UserQuery original = originalQueries.get(0);
-
-    ArrayList<UserQuery> duplicateQueries = new ArrayList<>();
-
-    for (int i = 0; i < n; i++)
-      duplicateQueries.add(new UserQuery(original.operation, original.user));
-
-    redisUtils.PostMany(RedisChannel.USER, duplicateQueries, UserQuery.class);
-
-    mongoTestUtils.TestFind(
-            "_id", originalQueries.stream().map(q -> q.user.id).toList(), true, collection);
-  }*/
 }

@@ -43,14 +43,15 @@ public class UserService {
     DELETE
   }
 
-  public void createUser(String userName) {
+  public UserContract createUser(String userName) {
+    UserEntity newUser = new UserEntity(UUID.randomUUID(), userName, ZonedDateTime.now());
     try {
-      UserEntity newUser = new UserEntity(UUID.randomUUID(), userName, ZonedDateTime.now());
       userRepository.persist(newUser);
       userPublisher.post(newUser, UserQuery.Operation.CREATE);
     } catch (MongoWriteException e) {
       ErrorCodes.DUPLICATE_KEY.throwError(userName);
     }
+    return userConverter.convertUser(newUser);
   }
 
   public LightUserContract getUserByName(String username) {

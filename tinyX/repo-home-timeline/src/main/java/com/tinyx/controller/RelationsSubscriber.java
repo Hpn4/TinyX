@@ -48,8 +48,8 @@ public class RelationsSubscriber extends RedisStreamReader<UserRelationsQuery> {
       map.get(query.srcUserId).add(query.targetUserId);
     }
 
-    if (!followsMap.isEmpty()) service.HandleFollowsHomeTimeline(followsMap);
-    if (!unfollowsMap.isEmpty()) service.HandleUnfollowsHomeTimeline(unfollowsMap);
+    if (!followsMap.isEmpty()) service.handleFollowsHomeTimeline(followsMap);
+    if (!unfollowsMap.isEmpty()) service.handleUnfollowsHomeTimeline(unfollowsMap);
   }
 
   /* Mandatory stuff, timing might be put inside the application properties to be cleaner */

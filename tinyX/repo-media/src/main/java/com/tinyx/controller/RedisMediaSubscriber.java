@@ -61,13 +61,13 @@ public class RedisMediaSubscriber extends RedisStreamReader<PostQuery> {
     mediaService.handleDeletePost(oMap.get(PostQuery.Operation.DELETE));
   }
 
-  @Scheduled(every = "10m")
+  @Scheduled(every = "{tinyx.redis-stream.trim.every}")
   @Override
   protected void trimStream() {
     super.trimStream();
   }
 
-  @Scheduled(every = "5s")
+  @Scheduled(every = "{tinyx.redis-stream.claim.every}")
   @Override
   protected void claimPendingMessages() {
     super.claimPendingMessages();

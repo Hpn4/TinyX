@@ -5,7 +5,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
-import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
@@ -117,18 +116,5 @@ public class MediaRepository {
     GridFSFile file =
         bucket.find(Filters.and(idFilter(mediaId), Filters.size(metadataPostIdsPath, 0))).first();
     if (file != null) bucket.delete(file.getId());
-  }
-
-  // Only used for testing purposes
-  public byte[] getMedia(UUID id) {
-    try {
-      GridFSDownloadStream downloadStream = bucket.openDownloadStream(new BsonBinary(id));
-      int fileLength = (int) downloadStream.getGridFSFile().getLength();
-      byte[] bytesToWriteTo = new byte[fileLength];
-      downloadStream.read(bytesToWriteTo);
-      return bytesToWriteTo;
-    } catch (Exception e) {
-      return null;
-    }
   }
 }

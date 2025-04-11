@@ -39,7 +39,7 @@ public class UsersSubscriber extends RedisStreamReader<UserQuery> {
             .map(u -> u.user.id)
             .toList();
 
-    service.InitializeUsersHomeTimelines(filtered);
+    service.initializeUsersHomeTimelines(filtered);
   }
 
   /* Mandatory stuff, timing might be put inside the application properties to be cleaner */

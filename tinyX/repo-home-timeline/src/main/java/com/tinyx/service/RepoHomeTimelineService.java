@@ -4,6 +4,7 @@ import com.mongodb.client.model.*;
 import com.tinyx.home.entity.HomeTimelineMongoEntity;
 import com.tinyx.mongo.MongoUtils;
 import com.tinyx.repository.RepoHomeTimelineRepository;
+import com.tinyx.timeline.HomeTimelineOperation;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.*;
@@ -17,18 +18,6 @@ public class RepoHomeTimelineService {
 
   @Inject MongoUtils mongoUtils;
 
-  /**
-   * Represents the possible operations that can be done on a user in the HomeTimeline Mongo
-   * collection.
-   *
-   * <p>Can be either ADD (adding UUIDs to the timeline) or DELETE (removing UUIDs from the
-   * timeline).
-   */
-  public enum HomeTimelineOperation {
-    ADD,
-    DELETE
-  }
-
   @Inject RepoHomeTimelineRepository repository;
 
   /**
@@ -37,7 +26,7 @@ public class RepoHomeTimelineService {
    *
    * @param users The users' UUIDs to add.
    */
-  public void InitializeUsersHomeTimelines(List<UUID> users) {
+  public void initializeUsersHomeTimelines(List<UUID> users) {
     mongoUtils.Insert(
         users.stream().map(u -> new HomeTimelineMongoEntity(u, new ArrayList<>())),
         repository.mongoCollection());
@@ -51,7 +40,7 @@ public class RepoHomeTimelineService {
    *     being the list of UUIDs to add or remove from the timeline.
    * @param oper The operation to execute for each user (adding or removing from the timeline).
    */
-  public void HandleOperationsHomeTimeline(
+  public void handleOperationsHomeTimeline(
       HashMap<UUID, ArrayList<UUID>> map, HomeTimelineOperation oper) {
     ArrayList<WriteModel<HomeTimelineMongoEntity>> operations = new ArrayList<>();
 
@@ -81,8 +70,8 @@ public class RepoHomeTimelineService {
    * @param followsMap A HashMap where each key corresponds to a user that needs to be updated, the
    *     value being the list of UUIDs to add.
    */
-  public void HandleFollowsHomeTimeline(HashMap<UUID, ArrayList<UUID>> followsMap) {
-    HandleOperationsHomeTimeline(followsMap, HomeTimelineOperation.ADD);
+  public void handleFollowsHomeTimeline(HashMap<UUID, ArrayList<UUID>> followsMap) {
+    handleOperationsHomeTimeline(followsMap, HomeTimelineOperation.ADD);
   }
 
   /**
@@ -91,7 +80,7 @@ public class RepoHomeTimelineService {
    * @param unfollowsMap A HashMap where each key corresponds to a user that needs to be updated,
    *     the value being the list of UUIDs to remove.
    */
-  public void HandleUnfollowsHomeTimeline(HashMap<UUID, ArrayList<UUID>> unfollowsMap) {
-    HandleOperationsHomeTimeline(unfollowsMap, HomeTimelineOperation.DELETE);
+  public void handleUnfollowsHomeTimeline(HashMap<UUID, ArrayList<UUID>> unfollowsMap) {
+    handleOperationsHomeTimeline(unfollowsMap, HomeTimelineOperation.DELETE);
   }
 }

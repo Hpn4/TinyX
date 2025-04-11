@@ -29,6 +29,9 @@ public class MediaController {
   @Path("/media/exists/{mediaId}")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
+    @APIResponse(
+        responseCode = "400",
+        description = "Bad media Id, either null or badly formatted"),
   })
   public Boolean doesMediaExistEndpoint(@PathParam("mediaId") UUID mediaId) {
     if (mediaId == null) ErrorCodes.MEDIA_BAD_ID.throwError();

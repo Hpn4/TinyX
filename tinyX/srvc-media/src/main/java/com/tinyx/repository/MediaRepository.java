@@ -11,7 +11,9 @@ import com.tinyx.media.entity.MediaEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.io.InputStream;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.bson.BsonBinary;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -52,5 +54,22 @@ public class MediaRepository {
   public boolean exists(UUID mediaId) {
     GridFSFile file = bucket.find(Filters.eq("_id", mediaId)).first();
     return file != null;
+  }
+
+  // Only for test purposes
+  public void uploadMediaForTests(UUID mediaId, InputStream media) {
+    CompletableFuture.runAsync(
+        () -> {
+          bucket.uploadFromStream(
+              new BsonBinary(mediaId),
+              "",
+              media); // No metadata because it is not needed for the service tests.
+        });
+  }
+
+  // Only for test purposes
+  public void removeMediaForTests(UUID mediaId) {
+    GridFSFile file = bucket.find(Filters.eq("_id", mediaId)).first();
+    if (file != null) bucket.delete(file.getId());
   }
 }

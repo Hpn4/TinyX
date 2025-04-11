@@ -29,6 +29,12 @@
       <artifactId>quarkus-mongodb-client</artifactId>
     </dependency>
 
+    <!-- Messaging Queue: Redis -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-redis-client</artifactId>
+    </dependency>
+
     <!-- Logging -->
     <dependency>
       <groupId>io.quarkus</groupId>

@@ -33,12 +33,7 @@ public class UserController {
   })
   public Response createUser(@PathParam("userName") String userName) {
     if (userName.isBlank()) return Response.status(Response.Status.BAD_REQUEST).build();
-    try {
-      userService.createUser(userName);
-    } catch (WebApplicationException e) {
-      return e.getResponse();
-    }
-    return Response.ok().build();
+    return Response.ok(userService.createUser(userName)).build();
   }
 
   /**
@@ -56,7 +51,8 @@ public class UserController {
     @APIResponse(responseCode = "500", description = "Internal error")
   })
   public Response getUserByName(@PathParam("userName") String userName) {
-    if (userName == null) return Response.status(Response.Status.BAD_REQUEST).build();
+    if (userName == null || userName.isBlank())
+      return Response.status(Response.Status.BAD_REQUEST).build();
     return Response.ok(userService.getUserByName(userName)).build();
   }
 

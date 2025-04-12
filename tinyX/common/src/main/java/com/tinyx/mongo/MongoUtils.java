@@ -57,6 +57,14 @@ public class MongoUtils {
     errorHandling.putIfAbsent(BWError.MODIFICATIONS_MISSING, BWEAction.IGNORE);
   }
 
+  /**
+   * Executes a bulk write on the given Mongo collection with optional error handling.
+   *
+   * @param operations The list of write operations to perform.
+   * @param collection The Mongo collection to apply the operations to.
+   * @param errorHandling A map defining how to handle specific bulk write errors.
+   * @return Containing the result if the operation was successful (optional).
+   */
   public <T> Optional<BulkWriteResult> bulkWriteOperations(
       List<WriteModel<T>> operations,
       MongoCollection<T> collection,
@@ -107,16 +115,43 @@ public class MongoUtils {
     return Optional.of(result);
   }
 
+  /**
+   * Performs a bulk write operation on the specified collection with default error handling.
+   *
+   * @param operations The list of write operations (insert, update, delete) to execute.
+   * @param collection The MongoDB collection to apply the operations on.
+   * @param <T> The type of documents in the collection.
+   * @return Result of the bulk write if successful (optional).
+   */
   public <T> Optional<BulkWriteResult> bulkWriteOperations(
       List<WriteModel<T>> operations, MongoCollection<T> collection) {
     return bulkWriteOperations(operations, collection, new HashMap<>());
   }
 
+  /**
+   * Inserts a stream of elements into the specified collection using a bulk write operation.
+   *
+   * @param elements The stream of elements to insert.
+   * @param collection The MongoDB collection where the elements will be inserted.
+   * @param <T> The type of documents in the collection.
+   * @return An Optional containing the result of the bulk insert if successful, or empty otherwise.
+   */
   public <T> Optional<BulkWriteResult> insert(Stream<T> elements, MongoCollection<T> collection) {
     return bulkWriteOperations(
         elements.map(e -> (WriteModel<T>) new InsertOneModel<T>(e)).toList(), collection);
   }
 
+  /**
+   * Inserts a stream of elements into the specified collection using a bulk write operation
+   *
+   * @param elements The stream of elements to insert.
+   * @param collection The MongoDB collection where the elements will be inserted.
+   * @param errorHandling A map defining how specific errors should be handled during the bulk
+   *     operation.
+   * @param <T> The type of documents in the collection.
+   * @return An Optional containing the result of the bulk insert if successful, or empty if no
+   *     operation was performed.
+   */
   public <T> Optional<BulkWriteResult> insert(
       Stream<T> elements, MongoCollection<T> collection, Map<BWError, BWEAction> errorHandling) {
     return bulkWriteOperations(
@@ -125,12 +160,34 @@ public class MongoUtils {
         errorHandling);
   }
 
+  /**
+   * Removes multiple documents from the specified collection based on the provided field and
+   * values. It performs a bulk delete operation using the specified field and list of values.
+   *
+   * @param field The field in the documents to match against.
+   * @param values The list of values to match the specified field.
+   * @param collection The MongoDB collection from which to remove the documents.
+   * @param <T> The type of documents in the collection.
+   * @param <V> The type of values used to match the specified field.
+   * @return Result of the bulk delete operation if successful (optional)
+   */
   public <T, V> Optional<BulkWriteResult> Remove(
       String field, List<V> values, MongoCollection<T> collection) {
     return bulkWriteOperations(
         List.of(new DeleteManyModel<T>(Filters.in(field, values))), collection);
   }
 
+  /**
+   * Finds documents in the specified collection where the value of a specified field matches any
+   * value from a list of values.
+   *
+   * @param field The field in the documents to match against.
+   * @param values The list of values to match the specified field.
+   * @param collection The MongoDB collection to search in.
+   * @param <E> The type of documents in the collection.
+   * @param <T> The type of values used to match the specified field.
+   * @return A list of documents that match the specified field and values.
+   */
   public <E, T> List<E> find(String field, List<T> values, MongoCollection<E> collection) {
     return collection.find(Filters.in(field, values)).into(new ArrayList<>());
   }

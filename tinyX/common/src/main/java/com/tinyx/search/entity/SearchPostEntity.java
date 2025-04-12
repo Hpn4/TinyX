@@ -12,6 +12,13 @@ public class SearchPostEntity {
 
   public SearchPostEntity() {}
 
+  /**
+   * Constructs a new SearchPostEntity with the specified post ID, content, and hashtags.
+   *
+   * @param postId The unique identifier of the post.
+   * @param content The text content of the post.
+   * @param hashtags A list of hashtags associated with the post.
+   */
   public SearchPostEntity(final UUID postId, final String content, final List<String> hashtags) {
     this.postId = postId;
     this.text = content;

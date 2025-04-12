@@ -8,6 +8,13 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserContractToLightUserContractConverter {
+
+  /**
+   * Converts a UserContract to a LightUserContract.
+   *
+   * @param contract The UserContract to be converted.
+   * @return A LightUserContract containing a simplified version of the input contract.
+   */
   public LightUserContract convert(UserContract contract) {
     return new LightUserContract(contract.id, contract.userName, contract.creationDate);
   }

@@ -69,6 +69,14 @@ public class PostContract {
         + '}';
   }
 
+  /**
+   * Compares this PostContract object with another object to determine if they are equal. Two
+   * PostContract objects are considered equal if they have the same id, userId, content, parentId,
+   * and mediaId.
+   *
+   * @param o The object to compare with this PostContract.
+   * @return true if this PostContract is equal to the specified object, false otherwise.
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

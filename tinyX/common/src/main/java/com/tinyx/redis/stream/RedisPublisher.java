@@ -11,6 +11,11 @@ public class RedisPublisher<T> {
 
   private final RedisDataSource redisDataSource;
 
+  /**
+   * Constructs a new RedisPublisher instance with the given RedisDataSource.
+   *
+   * @param redisDataSource The Redis data source that manages the connection to the Redis server.
+   */
   public RedisPublisher(RedisDataSource redisDataSource) {
     this.redisDataSource = redisDataSource;
   }
@@ -20,6 +25,14 @@ public class RedisPublisher<T> {
     publisher.publish(channel.toString(), message);
   }
 
+  /**
+   * Publishes a message to a Redis stream on the specified channel.
+   *
+   * @param channel The Redis channel where the message will be published. This is the destination
+   *     stream.
+   * @param message The message to be published to the stream.
+   * @param messageClass The class type of the message being published.
+   */
   public void publishStream(RedisChannel channel, T message, Class<T> messageClass) {
     StreamCommands<String, String, T> stream = redisDataSource.stream(messageClass);
 

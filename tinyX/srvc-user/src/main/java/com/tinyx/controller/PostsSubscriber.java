@@ -24,6 +24,12 @@ public class PostsSubscriber extends RedisStreamReader<PostQuery> {
     super();
   }
 
+  /**
+   * Processes a list of post queries, categorizing them into CREATE and DELETE operations and
+   * updating the user data accordingly.
+   *
+   * @param data The list of post queries to process.
+   */
   @Override
   public void process(List<PostQuery> data) {
     HashMap<UUID, ArrayList<UUID>> createMap = new HashMap<>();

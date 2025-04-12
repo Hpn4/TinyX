@@ -24,6 +24,11 @@ public class UserSubscriber extends RedisStreamReader<UserRelationsQuery> {
     super();
   }
 
+  /**
+   * Processes a list of user relations queries (block and unblock only).
+   *
+   * @param data The list of user relations queries to process.
+   */
   @Override
   public void process(List<UserRelationsQuery> data) {
     HashMap<UUID, ArrayList<UUID>> blocksMap = new HashMap<>();

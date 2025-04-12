@@ -19,6 +19,13 @@ public class PostRepository implements PanacheMongoRepositoryBase<PostEntity, UU
 
   public PostRepository() {}
 
+  /**
+   * Adds or removes children posts to/from their respective parent posts.
+   *
+   * @param posts The list of posts to be added or removed.
+   * @param add If true, children are added, if false, they are removed.
+   * @return List of write models for updating the parent posts.
+   */
   private List<WriteModel<PostEntity>> addOrRemoveFromParents(List<PostEntity> posts, boolean add) {
     List<WriteModel<PostEntity>> writeModels = new ArrayList<>();
 
@@ -45,7 +52,7 @@ public class PostRepository implements PanacheMongoRepositoryBase<PostEntity, UU
   /**
    * Create a new post
    *
-   * @param posts post to be created
+   * @param posts List of posts to be created
    */
   public void createPost(List<PostEntity> posts) {
     List<WriteModel<PostEntity>> writeModels = new ArrayList<>();
@@ -61,7 +68,7 @@ public class PostRepository implements PanacheMongoRepositoryBase<PostEntity, UU
   /**
    * Delete a specific post
    *
-   * @param ids ids of the posts to delete
+   * @param ids IDs of the posts to delete
    */
   public void deletePost(List<UUID> ids) {
     List<PostEntity> postsToDelete = list("_id in ?1", ids);

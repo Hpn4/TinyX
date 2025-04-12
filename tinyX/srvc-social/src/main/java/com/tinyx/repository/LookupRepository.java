@@ -23,6 +23,12 @@ public class LookupRepository {
     NO_BLOCK
   };
 
+  /**
+   * Executes a read-only query on the database and returns the result as a list of records.
+   *
+   * @param query the query string to execute.
+   * @return a list of records resulting from the query (or null if error/empty).
+   */
   public List<Record> executeRead(final String query) {
     try (Session session = neo4jDriver.session()) {
       return session.executeRead(
@@ -38,6 +44,12 @@ public class LookupRepository {
     return null;
   }
 
+  /**
+   * Retrieves the number of like received by a given post.
+   *
+   * @param postId the ID of the post to get the number of likes.
+   * @return Integer of total number of likes (or 0 if error).
+   */
   public Integer getNumberOfLike(final UUID postId) {
     final String cypherQuery =
         """
@@ -52,6 +64,12 @@ public class LookupRepository {
     return result.get(0).get("likeCount").asInt();
   }
 
+  /**
+   * Retrieves the authorID for a given post.
+   *
+   * @param postId the ID of the post to retrieve the authorID from.
+   * @return UUID of the author (or null if error).
+   */
   public UUID getUserIdFromPost(final UUID postId) {
     final String cypherQuery =
         """
@@ -72,6 +90,7 @@ public class LookupRepository {
    *
    * @param userId The source user
    * @param authorId The other user
+   * @return BulkReadStatus indicating the relationship status (not found, blocked, no block).
    */
   public BulkReadStatus checkUsersExistAndNoBlock(final UUID userId, final UUID authorId) {
     final String cypherQuery =
@@ -116,11 +135,11 @@ public class LookupRepository {
   }
 
   /**
-   * Returns whether the given user already liked to post
+   * Returns whether the given user already liked a post
    *
-   * @param srcId The source user
-   * @param targetId The target post
-   * @return true if the relation exist false otherwise
+   * @param srcId The source userID
+   * @param targetId The target postID
+   * @return true if user already like, false otherwise
    */
   public boolean checkLikeExist(final UUID srcId, final UUID targetId) {
     final String cypherQuery =

@@ -11,6 +11,13 @@ public class RelationsRepository {
 
   @Inject LookupRepository lookupRepository;
 
+  /**
+   * Retrieves a list of UUIDs from the query result.
+   *
+   * @param cipher the query string to execute and retrieve the results.
+   * @return a List of UUIDs extracted from the query result (or an empty list if no results are
+   *     found).
+   */
   private List<UUID> getResultAsList(final String cipher) {
     final List<Record> result = lookupRepository.executeRead(cipher);
     if (result == null) return List.of();
@@ -119,7 +126,7 @@ public class RelationsRepository {
    * Returns the list of user UUIDs who blocked the given user. Users blocked by the authenticated
    * user are filtered out.
    *
-   * @param targetId The target user
+   * @param targetId The target user of which we want to know which users have blocked it.
    * @param userId The user used to filter out blocked users
    * @return The list of user UUIDs
    */

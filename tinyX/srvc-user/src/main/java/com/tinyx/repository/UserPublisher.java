@@ -14,6 +14,12 @@ public class UserPublisher {
 
   @Inject RedisPublisherFactory redisPublisherFactory;
 
+  /**
+   * Publishes a user query operation in Redis.
+   *
+   * @param user The user entity to be published.
+   * @param op The operation to be performed on the user.
+   */
   public void post(UserEntity user, UserQuery.Operation op) {
     UserQuery userQuery = new UserQuery();
     userQuery.user = userEntityToUserContractConverter.convert(user);

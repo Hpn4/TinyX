@@ -57,7 +57,7 @@ public class PostTestUtils {
   public List<PostEntity> getPostsEntities(
       List<PostQuery> postsQueries, MongoCollection<PostEntity> collection) {
     List<PostEntity> postsEntities =
-        mongoUtils.Find("_id", postsQueries.stream().map(p -> p.post.id).toList(), collection);
+        mongoUtils.find("_id", postsQueries.stream().map(p -> p.post.id).toList(), collection);
     return postsEntities;
   }
 

@@ -97,7 +97,7 @@ public class MediaRepository {
     }
 
     // Updating the document
-    mongoUtils.BulkWriteOperations(operations, filesCollection);
+    mongoUtils.bulkWriteOperations(operations, filesCollection);
   }
 
   /**

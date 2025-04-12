@@ -57,7 +57,7 @@ public class PostRepository implements PanacheMongoRepositoryBase<PostEntity, UU
 
     if (writeModels.isEmpty()) return;
 
-    mongoUtils.BulkWriteOperations(writeModels, mongoCollection());
+    mongoUtils.bulkWriteOperations(writeModels, mongoCollection());
   }
 
   /**
@@ -84,6 +84,6 @@ public class PostRepository implements PanacheMongoRepositoryBase<PostEntity, UU
 
     if (writeModels.isEmpty()) return;
 
-    mongoUtils.BulkWriteOperations(writeModels, mongoCollection());
+    mongoUtils.bulkWriteOperations(writeModels, mongoCollection());
   }
 }

@@ -113,6 +113,6 @@ public class UserService {
       operations.add(new UpdateOneModel<>(filter, update));
     }
 
-    mongoUtils.BulkWriteOperations(operations, userRepository.mongoCollection());
+    mongoUtils.bulkWriteOperations(operations, userRepository.mongoCollection());
   }
 }

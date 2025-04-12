@@ -25,7 +25,7 @@ public class UserTimelineRepository
    * @param userIds The list of user UUIDs
    */
   public void saveUsers(List<UUID> userIds) {
-    mongoUtils.Insert(
+    mongoUtils.insert(
         userIds.stream().map(id -> new UserTimelineEntity(id, new ArrayList<>())),
         mongoCollection());
   }
@@ -53,7 +53,7 @@ public class UserTimelineRepository
 
     if (writeModels.isEmpty()) return;
 
-    mongoUtils.BulkWriteOperations(writeModels, mongoCollection());
+    mongoUtils.bulkWriteOperations(writeModels, mongoCollection());
   }
 
   /**
@@ -76,7 +76,7 @@ public class UserTimelineRepository
 
     if (writeModels.isEmpty()) return;
 
-    mongoUtils.BulkWriteOperations(writeModels, mongoCollection());
+    mongoUtils.bulkWriteOperations(writeModels, mongoCollection());
   }
 
   /**
@@ -91,6 +91,6 @@ public class UserTimelineRepository
         new UpdateManyModel<>(
             Filters.in("posts._id", postIds), Updates.pull("posts", Filters.in("_id", postIds))));
 
-    mongoUtils.BulkWriteOperations(writeModels, mongoCollection());
+    mongoUtils.bulkWriteOperations(writeModels, mongoCollection());
   }
 }

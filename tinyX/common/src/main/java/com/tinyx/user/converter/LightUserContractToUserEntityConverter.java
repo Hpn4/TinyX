@@ -5,9 +5,9 @@ import com.tinyx.user.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class UserEntityToLightContractConverter {
+public class LightUserContractToUserEntityConverter {
 
-  public LightUserContract convert(UserEntity entity) {
-    return new LightUserContract(entity.id, entity.userName, entity.creationDate);
+  public UserEntity convert(LightUserContract contract) {
+    return new UserEntity(contract.id, contract.userName, contract.creationDate);
   }
 }

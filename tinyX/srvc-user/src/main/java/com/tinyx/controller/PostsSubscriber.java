@@ -1,5 +1,6 @@
 package com.tinyx.controller;
 
+import com.tinyx.Operation;
 import com.tinyx.redis.PostQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
@@ -38,9 +39,9 @@ public class PostsSubscriber extends RedisStreamReader<PostQuery> {
     }
 
     if (!createMap.isEmpty())
-      userService.handleMongoWriteOperation(createMap, UserService.UserOperation.ADD, "posts");
+      userService.handleUserMongoWriteOperation(createMap, Operation.ADD, "posts");
     if (!deleteMap.isEmpty())
-      userService.handleMongoWriteOperation(deleteMap, UserService.UserOperation.DELETE, "posts");
+      userService.handleUserMongoWriteOperation(deleteMap, Operation.DELETE, "posts");
   }
 
   @Inject

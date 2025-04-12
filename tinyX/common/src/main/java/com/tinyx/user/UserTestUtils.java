@@ -2,7 +2,7 @@ package com.tinyx.user;
 
 import com.tinyx.redis.UserQuery;
 import com.tinyx.redis.UserRelationsQuery;
-import com.tinyx.user.converter.UserConverter;
+import com.tinyx.user.converter.UserEntityToUserContractConverter;
 import com.tinyx.user.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,9 +15,9 @@ import java.util.UUID;
 @ApplicationScoped
 public class UserTestUtils {
 
-  @Inject UserConverter userConverter;
+  @Inject UserEntityToUserContractConverter userEntityToUserContractConverter;
 
-  public String RandomUsername() {
+  public String randomUsername() {
     return "user" + UUID.randomUUID().toString().substring(0, 8);
   }
 
@@ -25,7 +25,7 @@ public class UserTestUtils {
     ArrayList<UserEntity> users = new ArrayList<>();
 
     for (int i = 0; i < n; i++)
-      users.add(new UserEntity(UUID.randomUUID(), RandomUsername(), ZonedDateTime.now()));
+      users.add(new UserEntity(UUID.randomUUID(), randomUsername(), ZonedDateTime.now()));
 
     return users;
   }
@@ -40,7 +40,10 @@ public class UserTestUtils {
 
   public List<UserQuery> randomUserCreationQueries(int n) {
     return randomUsers(n).stream()
-        .map(u -> new UserQuery(UserQuery.Operation.CREATE, userConverter.convertUser(u)))
+        .map(
+            u ->
+                new UserQuery(
+                    UserQuery.Operation.CREATE, userEntityToUserContractConverter.convert(u)))
         .toList();
   }
 

@@ -54,16 +54,6 @@ public class RelationsRepository {
                 RETURN p.id as id
                 """
             .formatted(userId, targetId);
-
-    /*
-
-                   WITH viewer, p, p.authorId AS authorId
-               WHERE NOT EXISTS {
-                 MATCH (viewer)-[:BLOCKED]->(author:User)
-                 WHERE author.id = authorId
-               }
-    */
-
     return getResultAsList(cipher);
   }
 
@@ -117,7 +107,7 @@ public class RelationsRepository {
   public List<UUID> getBlockedUsers(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-                MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:BLOCK]->(v:User)
+               MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:BLOCK]->(v:User)
                 WHERE NOT (viewer)-[:BLOCKED]->(v)
                 RETURN v.id as id"""
             .formatted(userId, targetId);
@@ -136,7 +126,7 @@ public class RelationsRepository {
   public List<UUID> getTargetBlock(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-                MATCH (viewer:User {id: "%s"}), (u:User)-[:BLOCK]->(v:User {id: "%s"})
+               MATCH (viewer:User {id: "%s"}), (u:User)-[:BLOCK]->(v:User {id: "%s"})
                 WHERE NOT (viewer)-[:BLOCKED]->(u)
                 RETURN u.id as id"""
             .formatted(userId, targetId);

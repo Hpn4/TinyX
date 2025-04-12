@@ -93,7 +93,7 @@ test:
       alias: redis
     - name: neo4j:3.5
       alias: neo4j
-    - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/elastic
+    - name: docker.elastic.co/elasticsearch/elasticsearch:7.17.13
       alias: elastic
       command:
         - /bin/bash

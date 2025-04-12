@@ -5,10 +5,12 @@ import com.mongodb.bulk.BulkWriteError;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
+import com.tinyx.Operation;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Stream;
+import org.bson.conversions.Bson;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
@@ -131,5 +133,33 @@ public class MongoUtils {
 
   public <E, T> List<E> find(String field, List<T> values, MongoCollection<E> collection) {
     return collection.find(Filters.in(field, values)).into(new ArrayList<>());
+  }
+
+  public <T> void handleMongoWriteOperationGeneric(
+      HashMap<UUID, ArrayList<UUID>> map,
+      Operation oper,
+      String fieldName,
+      MongoCollection<T> collection) {
+
+    ArrayList<WriteModel<T>> operations = new ArrayList<>();
+
+    for (Map.Entry<UUID, ArrayList<UUID>> entry : map.entrySet()) {
+      ArrayList<UUID> values = entry.getValue();
+
+      if (values == null || values.isEmpty()) {
+        logger.warn("No elements found for " + entry.getKey() + ", unexpected behavior.");
+        continue;
+      }
+
+      Bson filter = Filters.eq("_id", entry.getKey());
+      Bson update =
+          oper == Operation.ADD
+              ? Updates.addEachToSet(fieldName, values)
+              : Updates.pullAll(fieldName, values);
+
+      operations.add(new UpdateOneModel<>(filter, update));
+    }
+
+    bulkWriteOperations(operations, collection);
   }
 }

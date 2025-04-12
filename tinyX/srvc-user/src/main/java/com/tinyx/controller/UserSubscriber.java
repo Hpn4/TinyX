@@ -1,5 +1,6 @@
 package com.tinyx.controller;
 
+import com.tinyx.Operation;
 import com.tinyx.redis.UserRelationsQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisStreamReader;
@@ -39,11 +40,9 @@ public class UserSubscriber extends RedisStreamReader<UserRelationsQuery> {
     }
 
     if (!blocksMap.isEmpty())
-      userService.handleMongoWriteOperation(
-          blocksMap, UserService.UserOperation.ADD, "blockedUsers");
+      userService.handleUserMongoWriteOperation(blocksMap, Operation.ADD, "blockedUsers");
     if (!unblocksMap.isEmpty())
-      userService.handleMongoWriteOperation(
-          unblocksMap, UserService.UserOperation.DELETE, "blockedUsers");
+      userService.handleUserMongoWriteOperation(unblocksMap, Operation.DELETE, "blockedUsers");
   }
 
   @Inject

@@ -6,9 +6,9 @@ import com.tinyx.repository.PostRestClient;
 import com.tinyx.repository.UserTimelineRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
 import java.util.*;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 @ApplicationScoped
 public class UserTimelineService {
@@ -28,9 +28,13 @@ public class UserTimelineService {
    *     requested posts.
    */
   public List<PostContract> getPostsContract(final UUID authUserId, final List<UUID> postsId) {
+    if (postsId == null || postsId.isEmpty()) return new ArrayList<>();
+
     try {
       return postRestClient.queryPostsList(authUserId, postsId);
-    } catch (WebApplicationException e) {
+    } catch (ClientWebApplicationException e) {
+      if (e.getResponse().getStatus() == 404) ErrorCodes.POSTS_NOT_FOUND.throwError();
+
       ErrorCodes.UNREACHABLE.throwError("srvc-post");
     }
 
@@ -70,15 +74,8 @@ public class UserTimelineService {
     if (count != distinctUsersIds.size()) ErrorCodes.USERS_NOT_FOUND.throwError();
 
     // We then remove the users since we don't want to include his timeline, it was just in order to
-    // run a single
-    // mongo query
+    // run a single mongo query
     distinctUsersIds.remove(userId);
-
-    System.out.println("-----------");
-    System.out.println(usersId);
-    System.out.println(distinctUsersIds);
-    System.out.println(distinctUsersIds.stream().toList());
-    System.out.println(repository.findOrderedPostsByUsers(distinctUsersIds.stream().toList()));
 
     return getPostsContract(
         userId, repository.findOrderedPostsByUsers(distinctUsersIds.stream().toList()));

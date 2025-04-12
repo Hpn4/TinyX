@@ -57,6 +57,8 @@ public class RelationsCommandService {
 
     if (blockRelations(userId, postOwnerId)) ErrorCodes.BLOCKED_USER.throwError(postOwnerId);
 
+    if (userId.equals(postOwnerId)) ErrorCodes.CANNOT_SELF_POST.throwError(userId, "like");
+
     if (lookupRepository.checkLikeExist(userId, postId))
       ErrorCodes.ALREADY_LIKED_POST.throwError(userId, postId);
 
@@ -70,6 +72,8 @@ public class RelationsCommandService {
 
     if (blockRelations(userId, postOwnerId)) ErrorCodes.BLOCKED_USER.throwError(postOwnerId);
 
+    if (userId.equals(postOwnerId)) ErrorCodes.CANNOT_SELF_POST.throwError(userId, "unlike");
+
     if (!lookupRepository.checkLikeExist(userId, postId))
       ErrorCodes.NO_LIKE.throwError(userId, postId);
 
@@ -81,6 +85,8 @@ public class RelationsCommandService {
   public void followUser(UUID userId, UUID targetUserId) {
     if (blockRelations(userId, targetUserId)) ErrorCodes.BLOCKED_USER.throwError(targetUserId);
 
+    if (userId.equals(targetUserId)) ErrorCodes.CANNOT_SELF.throwError(userId, "follow");
+
     if (lookupRepository.checkRelationsExist(userId, targetUserId, "FOLLOW"))
       ErrorCodes.ALREADY_FOLLOWED_USER.throwError(targetUserId);
 
@@ -90,6 +96,8 @@ public class RelationsCommandService {
 
   public void unfollowUser(UUID userId, UUID targetUserId) {
     if (blockRelations(userId, targetUserId)) ErrorCodes.BLOCKED_USER.throwError(targetUserId);
+
+    if (userId.equals(targetUserId)) ErrorCodes.CANNOT_SELF.throwError(userId, "unfollow");
 
     if (!lookupRepository.checkRelationsExist(userId, targetUserId, "FOLLOW"))
       ErrorCodes.NO_FOLLOWED_USER.throwError(targetUserId);
@@ -102,12 +110,16 @@ public class RelationsCommandService {
     if (blockRelations(userId, targetUserId))
       ErrorCodes.ALREADY_BLOCKED_USER.throwError(targetUserId);
 
+    if (userId.equals(targetUserId)) ErrorCodes.CANNOT_SELF.throwError(userId, "block");
+
     socialPublisher.publish(
         UserRelationsQuery.Operation.BLOCK, userId, targetUserId, ZonedDateTime.now());
   }
 
   public void unblockUser(UUID userId, UUID targetUserId) {
     if (!blockRelations(userId, targetUserId)) ErrorCodes.NO_BLOCKED_USER.throwError(targetUserId);
+
+    if (userId.equals(targetUserId)) ErrorCodes.CANNOT_SELF.throwError(userId, "unblock");
 
     socialPublisher.publish(
         UserRelationsQuery.Operation.UNBLOCK, userId, targetUserId, ZonedDateTime.now());

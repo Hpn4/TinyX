@@ -6,6 +6,7 @@ import com.tinyx.search.repository.PostServiceClient;
 import com.tinyx.search.repository.SearchRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -29,9 +30,13 @@ public class SearchService {
    *     failure
    */
   public List<PostContract> getPosts(final UUID userId, final List<UUID> postsIds) {
+    if (postsIds == null || postsIds.isEmpty()) return new ArrayList<>();
+
     try {
       return postServiceClient.queryPostsList(userId, postsIds);
     } catch (ClientWebApplicationException e) {
+      if (e.getResponse().getStatus() == 404) ErrorCodes.USERS_NOT_FOUND.throwError();
+
       ErrorCodes.UNREACHABLE.throwError("srvc-post");
     }
 

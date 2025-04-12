@@ -54,8 +54,7 @@ public class RelationsRepository {
           MATCH (target:User {id: relation.targetId})
         WHERE
           NOT (src)-[:FOLLOW]->(target) AND
-          NOT (src)-[:BLOCK]->(target) AND
-          NOT (target)-[:BLOCK]->(src)
+          NOT (src)-[:BLOCK]-(target)
         MERGE (src)-[f:FOLLOW]->(target)
           ON CREATE SET f.creation_time = relation.instant;
         """;

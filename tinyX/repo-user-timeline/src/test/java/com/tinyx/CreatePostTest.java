@@ -49,7 +49,7 @@ public class CreatePostTest {
             .peek(p -> p.post.userId = author.user.id)
             .toList();
 
-    redisUtils.PostMany(RedisChannel.POST, posts, PostQuery.class);
+    redisUtils.postMany(RedisChannel.POST, posts, PostQuery.class);
 
     return posts.stream().map(e -> e.post.id).toList();
   }
@@ -68,7 +68,7 @@ public class CreatePostTest {
                         e.post.creationDate))
             .toList();
 
-    redisUtils.PostMany(RedisChannel.LIKE, likes, LikePostQuery.class);
+    redisUtils.postMany(RedisChannel.LIKE, likes, LikePostQuery.class);
 
     return posts.stream().map(e -> e.post.id).toList();
   }
@@ -78,7 +78,7 @@ public class CreatePostTest {
   public void testPostNoUser() throws InterruptedException {
     List<PostQuery> posts = postTestUtils.randomPostQueries(10);
 
-    redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
     Assertions.assertEquals(0, userTimelineRepository.findAll().count());
 
@@ -92,14 +92,14 @@ public class CreatePostTest {
     Map<UUID, List<UUID>> entries = new HashMap<>();
 
     for (UserQuery userQuery : userQueries) {
-      redisUtils.PostOne(RedisChannel.USER, userQuery, UserQuery.class);
+      redisUtils.postOne(RedisChannel.USER, userQuery, UserQuery.class);
 
-      redisUtils.WaitDelay();
+      redisUtils.waitDelay();
 
       entries.put(userQuery.user.id, createAndPublish(userQuery, 10));
     }
 
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     checkTimeline(entries);
 
@@ -111,7 +111,7 @@ public class CreatePostTest {
   public void testLike() throws InterruptedException {
     // Create users
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(10);
-    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
     // Check is they exists
     checkUsers(userQueries);
@@ -125,7 +125,7 @@ public class CreatePostTest {
       timelines.put(userQuery.user.id, postIds);
     }
 
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     userTimelineRepository.deleteAll();
@@ -138,7 +138,7 @@ public class CreatePostTest {
   public void testUnlike() throws InterruptedException {
     // Create users
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(10);
-    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
     // Check is they exists
     checkUsers(userQueries);
@@ -153,7 +153,7 @@ public class CreatePostTest {
     }
 
     // Check if LIKED
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     // Remove some liked posts
@@ -167,11 +167,11 @@ public class CreatePostTest {
 
       LikePostQuery likePostQuery =
           new LikePostQuery(LikePostQuery.Operation.UNLIKE, user, postToUnlike, null);
-      redisUtils.PostOne(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
+      redisUtils.postOne(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
     }
 
     // Check if UNLIKE were removed
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     userTimelineRepository.deleteAll();
@@ -184,7 +184,7 @@ public class CreatePostTest {
   public void testDelete() throws InterruptedException {
     // Create users
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(10);
-    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
     // Check is they exists
     checkUsers(userQueries);
@@ -199,7 +199,7 @@ public class CreatePostTest {
     }
 
     // Check if LIKED
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     // Delete some liked posts
@@ -217,11 +217,11 @@ public class CreatePostTest {
       postQuery.post.id = postToDelete;
       postQuery.post.userId = UUID.randomUUID();
 
-      redisUtils.PostOne(RedisChannel.POST, postQuery, PostQuery.class);
+      redisUtils.postOne(RedisChannel.POST, postQuery, PostQuery.class);
     }
 
     // Check if DELETED posts were removed
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     userTimelineRepository.deleteAll();
@@ -232,7 +232,7 @@ public class CreatePostTest {
   public void testLike_2() throws InterruptedException {
     // Create users
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(2);
-    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
     // Check is they exists
     checkUsers(userQueries);
@@ -245,7 +245,7 @@ public class CreatePostTest {
     timelines.put(userA, postIds);
 
     // Check if they were create
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     // second user created some posts
@@ -254,7 +254,7 @@ public class CreatePostTest {
     timelines.put(userB, timelineB);
 
     // Check if they were created
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     // userB like some posts od userA
@@ -263,7 +263,7 @@ public class CreatePostTest {
       LikePostQuery likePostQuery =
           new LikePostQuery(LikePostQuery.Operation.LIKE, userB, postIds.get(i), null);
 
-      redisUtils.PostOne(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
+      redisUtils.postOne(RedisChannel.LIKE, likePostQuery, LikePostQuery.class);
 
       likedPosts.add(postIds.get(i));
     }
@@ -271,7 +271,7 @@ public class CreatePostTest {
     timelineB.addAll(likedPosts);
 
     // Check if LIKED
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
     checkTimeline(timelines);
 
     userTimelineRepository.deleteAll();

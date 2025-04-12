@@ -162,7 +162,7 @@ public class PostService {
     if (user.blockedUsers != null && user.blockedUsers.contains(post.userId)) {
       ErrorCodes.BLOCKED_USER_POST.throwError(userId);
     }
-    return postEntityToPostContractConverter.converter(post);
+    return postEntityToPostContractConverter.convert(post);
   }
 
   /**
@@ -182,9 +182,9 @@ public class PostService {
 
     UserContract user = getUser(userId);
 
-    return postServiceRepository.findPosts(postsIds, user.blockedUsers).stream()
-        .map(postEntityToPostContractConverter::converter)
-        .toList();
+    List<PostEntity> postEntities = postServiceRepository.findPosts(postsIds, user.blockedUsers);
+
+    return postEntityToPostContractConverter.convert(postEntities);
   }
 
   /**
@@ -213,7 +213,7 @@ public class PostService {
 
     List<PostEntity> postEntities = postServiceRepository.findPosts(author.posts);
 
-    return postEntities.stream().map(postEntityToPostContractConverter::converter).toList();
+    return postEntityToPostContractConverter.convert(postEntities);
   }
 
   /**
@@ -229,8 +229,9 @@ public class PostService {
 
     UserContract user = getUser(userId);
 
-    return postServiceRepository.findPostsReply(replyIds, user.blockedUsers).stream()
-        .map(postEntityToPostContractConverter::converter)
-        .toList();
+    List<PostEntity> postEntities =
+        postServiceRepository.findPostsReply(replyIds, user.blockedUsers);
+
+    return postEntityToPostContractConverter.convert(postEntities);
   }
 }

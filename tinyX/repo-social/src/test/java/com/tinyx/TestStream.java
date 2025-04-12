@@ -29,7 +29,7 @@ public class TestStream {
 
   private List<UUID> createUsers(int count) throws InterruptedException {
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(count);
-    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
     List<UUID> expected = userQueries.stream().map(q -> q.user.id).sorted().toList();
     List<UUID> results = repo.getAllUsers();
@@ -54,7 +54,7 @@ public class TestStream {
     repo.deleteAllData();
 
     List<PostQuery> postQueries = postTestUtils.randomPostQueries(10);
-    redisUtils.PostManyThenWait(RedisChannel.POST, postQueries, PostQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.POST, postQueries, PostQuery.class);
 
     List<UUID> expected = postQueries.stream().map(q -> q.post.id).sorted().toList();
     List<UUID> results = repo.getAllPosts();
@@ -75,8 +75,8 @@ public class TestStream {
     UserRelationsQuery followQuery =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.FOLLOW, users.get(0), users.get(1), ZonedDateTime.now());
-    redisUtils.PostOne(RedisChannel.SOCIAL, followQuery, UserRelationsQuery.class);
-    redisUtils.WaitDelay();
+    redisUtils.postOne(RedisChannel.SOCIAL, followQuery, UserRelationsQuery.class);
+    redisUtils.waitDelay();
 
     // Test that the follow exists
     List<UUID> result = repo.getFollow(users.get(0)); // 0 -FOLLOW-> 1
@@ -101,8 +101,8 @@ public class TestStream {
     UserRelationsQuery followQuery =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.BLOCK, users.get(0), users.get(1), ZonedDateTime.now());
-    redisUtils.PostOne(RedisChannel.SOCIAL, followQuery, UserRelationsQuery.class);
-    redisUtils.WaitDelay();
+    redisUtils.postOne(RedisChannel.SOCIAL, followQuery, UserRelationsQuery.class);
+    redisUtils.waitDelay();
 
     // Test that the block exists
     List<UUID> result = repo.getBlock(users.get(0)); // 0 -BLOCK-> 1

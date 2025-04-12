@@ -57,7 +57,7 @@ public class RepoHomeTimelineTests {
     for (int i = 0; i < n; i++)
       duplicateQueries.add(new UserQuery(original.operation, original.user));
 
-    redisUtils.PostMany(RedisChannel.USER, duplicateQueries, UserQuery.class);
+    redisUtils.postMany(RedisChannel.USER, duplicateQueries, UserQuery.class);
 
     mongoTestUtils.testFind(
         "_id", originalQueries.stream().map(q -> q.user.id).toList(), true, collection);
@@ -90,7 +90,7 @@ public class RepoHomeTimelineTests {
   public void testAll(int nbUsers, int nbRelations)
       throws InterruptedException, DuplicateKeyException {
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(nbUsers);
-    redisUtils.PostMany(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postMany(RedisChannel.USER, userQueries, UserQuery.class);
 
     mongoTestUtils.testFind(
         "_id", userQueries.stream().map(q -> q.user.id).toList(), true, collection);
@@ -100,7 +100,7 @@ public class RepoHomeTimelineTests {
     List<UserRelationsQuery> rQueries =
         userTestUtils.randomRelationsQueriesBetweenUsers(
             userQueries, UserRelationsQuery.Operation.FOLLOW, nbRelations);
-    redisUtils.PostMany(RedisChannel.SOCIAL, rQueries, UserRelationsQuery.class);
+    redisUtils.postMany(RedisChannel.SOCIAL, rQueries, UserRelationsQuery.class);
     Thread.sleep(REDIS_DELAY);
 
     testAllPredicate(rQueries, (e, rq) -> e.timelineIds.contains(rq.targetUserId));
@@ -108,7 +108,7 @@ public class RepoHomeTimelineTests {
     logger.info("Follows passed.");
 
     rQueries.forEach(fq -> fq.operation = UserRelationsQuery.Operation.UNFOLLOW);
-    redisUtils.PostMany(RedisChannel.SOCIAL, rQueries, UserRelationsQuery.class);
+    redisUtils.postMany(RedisChannel.SOCIAL, rQueries, UserRelationsQuery.class);
     Thread.sleep(REDIS_DELAY);
 
     testAllPredicate(rQueries, (e, rq) -> !e.timelineIds.contains(rq.targetUserId));

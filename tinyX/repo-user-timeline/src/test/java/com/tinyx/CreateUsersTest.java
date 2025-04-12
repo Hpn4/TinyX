@@ -30,7 +30,7 @@ public class CreateUsersTest {
     userQueries.add(userQueries.get(2));
     userQueries.add(userQueries.get(2));
 
-    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
     List<UUID> users = userQueries.stream().map(e -> e.user.id).distinct().toList();
     long res = userTimelineRepository.count("_id in ?1", users);
@@ -45,7 +45,7 @@ public class CreateUsersTest {
   public void testCreateUsers() throws InterruptedException {
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(100);
 
-    redisUtils.PostManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.USER, userQueries, UserQuery.class);
 
     List<UUID> users = userQueries.stream().map(e -> e.user.id).toList();
     long res = userTimelineRepository.count("_id in ?1", users);
@@ -66,15 +66,15 @@ public class CreateUsersTest {
     for (int i = 0; i < 10; i++) {
       List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(100);
 
-      redisUtils.PostMany(RedisChannel.USER, userQueries, UserQuery.class);
+      redisUtils.postMany(RedisChannel.USER, userQueries, UserQuery.class);
 
       // Wait after some data has been pushed
-      if (i % 4 == 0) redisUtils.WaitDelay();
+      if (i % 4 == 0) redisUtils.waitDelay();
 
       finals.addAll(userQueries.stream().map(e -> e.user.id).toList());
     }
 
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     long res = userTimelineRepository.count("_id in ?1", finals);
 

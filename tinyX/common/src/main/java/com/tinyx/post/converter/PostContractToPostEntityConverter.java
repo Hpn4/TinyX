@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PostContractToPostEntityConverter {
-  public PostEntity converter(PostContract contract) {
+  public PostEntity convert(PostContract contract) {
     return new PostEntity(
         contract.id,
         contract.userId,
@@ -22,7 +22,7 @@ public class PostContractToPostEntityConverter {
         new ArrayList<UUID>());
   }
 
-  public List<PostEntity> converter(List<PostContract> postsContracts) {
-    return postsContracts.stream().map(this::converter).collect(Collectors.toList());
+  public List<PostEntity> convert(List<PostContract> postsContracts) {
+    return postsContracts.stream().map(this::convert).collect(Collectors.toList());
   }
 }

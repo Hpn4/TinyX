@@ -26,12 +26,12 @@ public class PostSearchTest {
   @Test
   public void createPosts() throws InterruptedException {
     searchTestRepository.deleteAllPosts();
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     List<PostQuery> queries = postTestUtils.randomPostQueries(10);
 
-    redisUtils.PostManyThenWait(RedisChannel.POST, queries, PostQuery.class);
-    redisUtils.WaitDelay(); // Elastic seems to index async
+    redisUtils.postManyThenWait(RedisChannel.POST, queries, PostQuery.class);
+    redisUtils.waitDelay(); // Elastic seems to index async
 
     List<UUID> results = searchTestRepository.searchAllPosts().stream().sorted().toList();
     List<UUID> expected = queries.stream().map(q -> q.post.id).sorted().toList();
@@ -39,7 +39,7 @@ public class PostSearchTest {
     Assertions.assertEquals(expected, results);
 
     searchTestRepository.deleteAllPosts();
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     Assertions.assertEquals(0, searchTestRepository.searchAllPosts().size());
   }
@@ -47,14 +47,14 @@ public class PostSearchTest {
   @Test
   public void createPostHashtag() throws InterruptedException {
     searchTestRepository.deleteAllPosts();
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     PostQuery queries = postTestUtils.randomPostQueries(1).get(0);
     queries.post.content =
         "Hey a small post wyth hashtags inside #OuterWilds #min22 #VideoGame2025";
 
-    redisUtils.PostOne(RedisChannel.POST, queries, PostQuery.class);
-    redisUtils.WaitDelay(); // Elastic seems to index async
+    redisUtils.postOne(RedisChannel.POST, queries, PostQuery.class);
+    redisUtils.waitDelay(); // Elastic seems to index async
 
     // Check if it was indexed
     List<SearchPostEntity> entities = searchTestRepository.searchAllPostsEntity();
@@ -69,7 +69,7 @@ public class PostSearchTest {
     Assertions.assertEquals(expected, entity.hashtags);
 
     searchTestRepository.deleteAllPosts();
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     Assertions.assertEquals(0, searchTestRepository.searchAllPosts().size());
   }
@@ -77,13 +77,13 @@ public class PostSearchTest {
   @Test
   public void createDeletePosts() throws InterruptedException {
     searchTestRepository.deleteAllPosts();
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     // Create 10 posts
     List<PostQuery> queries = postTestUtils.randomPostQueries(10);
 
-    redisUtils.PostManyThenWait(RedisChannel.POST, queries, PostQuery.class);
-    redisUtils.WaitDelay(); // Elastic seems to index async
+    redisUtils.postManyThenWait(RedisChannel.POST, queries, PostQuery.class);
+    redisUtils.waitDelay(); // Elastic seems to index async
 
     // Check if they were indexed
     List<UUID> expected = new ArrayList<>(queries.stream().map(q -> q.post.id).sorted().toList());
@@ -94,7 +94,7 @@ public class PostSearchTest {
     // Remove some posts
     List<PostQuery> toDelete = postTestUtils.postsToDeleteQueries(queries, 5);
 
-    redisUtils.PostManyThenWait(RedisChannel.POST, toDelete, PostQuery.class);
+    redisUtils.postManyThenWait(RedisChannel.POST, toDelete, PostQuery.class);
 
     expected.removeAll(toDelete.stream().map(q -> q.post.id).sorted().toList());
     results = searchTestRepository.searchAllPosts().stream().sorted().toList();
@@ -103,7 +103,7 @@ public class PostSearchTest {
 
     // Clear the DB
     searchTestRepository.deleteAllPosts();
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     Assertions.assertEquals(0, searchTestRepository.searchAllPosts().size());
   }
@@ -111,14 +111,14 @@ public class PostSearchTest {
   @Test
   public void deletePosts() throws InterruptedException {
     searchTestRepository.deleteAllPosts();
-    redisUtils.WaitDelay();
+    redisUtils.waitDelay();
 
     // Create 10 posts
     List<PostQuery> queries =
         postTestUtils.postsToDeleteQueries(postTestUtils.randomPostQueries(10), 10);
 
-    redisUtils.PostManyThenWait(RedisChannel.POST, queries, PostQuery.class);
-    redisUtils.WaitDelay(); // Elastic seems to index async
+    redisUtils.postManyThenWait(RedisChannel.POST, queries, PostQuery.class);
+    redisUtils.waitDelay(); // Elastic seems to index async
 
     // Check if nothing
     Assertions.assertEquals(0, searchTestRepository.searchAllPosts().size());

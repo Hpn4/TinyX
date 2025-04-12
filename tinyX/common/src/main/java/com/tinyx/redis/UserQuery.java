@@ -5,7 +5,7 @@ import com.tinyx.user.contracts.UserContract;
 public class UserQuery {
   public enum Operation {
     CREATE("CREATE"),
-    UPDATE("UPDATE"), // deadcode ?
+    UPDATE("UPDATE"),
     DELETE("DELETE");
 
     private final String operation;

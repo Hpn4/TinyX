@@ -40,7 +40,7 @@ public class RepoPostRedisTests {
     @Test
     public void createMultiplePosts() throws InterruptedException {
 
-      redisUtils.PostMany(RedisChannel.POST, postsQueries, PostQuery.class);
+      redisUtils.postMany(RedisChannel.POST, postsQueries, PostQuery.class);
       Thread.sleep(REDIS_DELAY);
 
       List<PostEntity> postsEntityResults =
@@ -52,19 +52,19 @@ public class RepoPostRedisTests {
     @Test
     public void deleteMultiplePosts() throws InterruptedException {
 
-      redisUtils.PostMany(RedisChannel.POST, postsQueries, PostQuery.class);
+      redisUtils.postMany(RedisChannel.POST, postsQueries, PostQuery.class);
       Thread.sleep(REDIS_DELAY);
 
       List<PostQuery> postsToDeleteQueries =
           postTestUtils.postsToDeleteQueries(postsQueries, N_FIRST_POSTS_TO_DELETE);
 
-      redisUtils.PostMany(RedisChannel.POST, postsToDeleteQueries, PostQuery.class);
+      redisUtils.postMany(RedisChannel.POST, postsToDeleteQueries, PostQuery.class);
       Thread.sleep(REDIS_DELAY);
 
       List<PostEntity> postsEntityResults =
           postTestUtils.getPostsEntities(postsQueries, collection);
 
-      postTestUtils.assertDeletetionOfPostsSuccess(postsQueries, postsEntityResults);
+      postTestUtils.assertDeletionOfPostsSuccess(postsQueries, postsEntityResults);
     }
   }
 }

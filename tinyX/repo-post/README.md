@@ -1,7 +1,7 @@
 # **Service `repo-post`**
 
 ## Description
-`repo-post` is a microservice that manages posts within the system. He is in charge of creating and deleting posts from a MongoDB database.
+`repo-post` is a microservice that manages posts within the system. It is in charge of creating and deleting posts from a MongoDB database.
 
 ## Exposure
 **This service is not exposed externally.**  

@@ -1,6 +1,6 @@
 # Service `repo-home-timeline`
 ## Description
-This service is used to add, delete and modify user timelines of users followed by a querying user that are stocked in a MongoDB database.
+This service is used to add, delete and modify user timelines of users followed by querying users that are stocked in a MongoDB database.
 
 ## Exposure
 **This service is exposed externally.**  
@@ -8,7 +8,7 @@ You can interact with its REST API through the following Swagger interface:
 **Swagger UI:** http://localhost:8091/q/swagger-ui
 
 ## Redis Listener
-repo-home-timeline receive queries from Redis:
+`repo-home-timeline` receives queries from these Redis events:
 - Follow & unfollow
 - Create & delete user
 
@@ -46,11 +46,11 @@ TRIM_INTERVAL:10m
 CLAIM_INTERVAL:5s
 ```
 
-
 ## Database
-For each user of the database, there is a list of all the id of the users followed by this user. This list is modify depending on if the user as followed a new user or unfollow another one.
+This service references the User collection present in Mongodb. For more information, check out the [srvc-user](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/-/blob/main/tinyX/srvc-user/README.md) page.  
+For each user of the database, there is a list of all the id of the users followed by this user. This list is modified depending on if the user has followed a new user or unfollowed another one.
 
-## Structutre
+## Structure
 
 ```bash
 repo-home-timeline/

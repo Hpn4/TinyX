@@ -1,7 +1,7 @@
 # Service `repo-social`
 
 ## Summary
-`repo-social` is the service that is use to modify the Neo4j database that compile the social interactions between the users and their posts.
+`repo-social` is a service that manages the social interactions between the users and their posts directly through a database.
 
 ## Exposure
 **This service is not exposed externally.**  
@@ -50,6 +50,8 @@ TRIM_INTERVAL:10m
 CLAIM_INTERVAL:5s
 ```
 ## Database Neo4j
+As this module focuses on relations between entities, the neo4j database is a great pick as it is its speciality.
+
 ### Nodes
 
 #### User
@@ -64,10 +66,10 @@ A unique post published by a user, identified with an id and contains the id of 
 Unidirectional relation between a User and a Post, where an existing User liked an existing Post.
 
 #### FOLLOW (User->User)
-Unidirectional relation between two Users, where an existing User decide to follow another existing User.
+Unidirectional relation between two Users, where an existing User decided to follow another existing User.
 
 #### BLOCK (User->User)
-Unidirectional relation between txo Users, where an existing User decide to block another existing User.
+Unidirectional relation between txo Users, where an existing User decided to block another existing User.
 When the relation is initialized, all existing FOLLOW and LIKE relations between the two Users and their Posts are deleted.
 If there is a BLOCK relation between two Users, no LIKE or FOLLOW relations can be created between those Users and their Posts.
 

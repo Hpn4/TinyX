@@ -1,0 +1,21 @@
+---
+kind: Kustomization
+
+resources:
+  - elastic
+  - srvc-search
+  - repo-search
+
+configMapGenerator:
+  - name: search-env
+    literals:
+      - ELASTIC_INDEX=posts
+      - ELASTIC_HOST="elastic.tinyx.svc.cluster.local"
+      - ELASTIC_PORT="9200"
+      - ELASTIC_SERVICE_HOST="elastic.tinyx.svc.cluster.local"
+
+images:
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/repo-search
+    newTag: 0.3.0
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/srvc-search
+    newTag: 0.3.0

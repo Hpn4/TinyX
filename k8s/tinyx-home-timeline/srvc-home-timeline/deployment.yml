@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srvc-home-timeline
+  labels:
+    app: tinyx
+    module: srvc-home-timeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tinyx
+      module: srvc-home-timeline
+  template:
+    metadata:
+      labels:
+        app: tinyx
+        module: srvc-home-timeline
+    spec:
+      imagePullSecrets:
+        - name: tinyx-pull-secret
+      containers:
+        - name: srvc-home-timeline
+          image: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/srvc-home-timeline
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: common-env
+            - configMapRef:
+                name: srvc-home-timeline-env
+            - secretRef:
+                name: tinyx-mongodb-credentials
+          env:
+            - name: HTTP_PORT
+              value: "8080"
+          resources:
+            limits:
+              cpu: "250m" # 0.25 cpu      #Arbitrary values to eventually customize or remove completely
+              memory: "128Mi" # 128 Mega  #(These were instored to suppress an IDE warning)

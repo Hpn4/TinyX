@@ -1,0 +1,15 @@
+---
+kind: Kustomization
+
+resources:
+  - deployment.yml
+  - service.yml
+  #- middleware.yml
+  - ingress.yml
+
+configMapGenerator:
+  - name: srvc-user-env
+    literals:
+      - TRIM_INTERVAL="10m"
+      - CLAIM_INTERVAL="5s"
+      - MONGODB_COLLECTION="Users"

@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-env
+data:
+  MONGODB_DATABASE: Tinyx
+  MONGODB_HOST: "mongodb-0.mongodb.tinyx.svc.cluster.local"
+  MONGODB_PORT: "27017" # Mongodb is a dependency of every service, so its info needs to be common to all
+  REDIS_HOST: "redis.tinyx.svc.cluster.local"
+  REDIS_PORT: "6379" # Redis is a common Pod, its connection info needs to be commonly agreed on
+  # even though not all Pods will use it

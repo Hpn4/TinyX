@@ -1,0 +1,12 @@
+---
+kind: Kustomization
+
+resources:
+  - srvc-user-timeline
+  - repo-user-timeline
+
+images:
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/repo-user-timeline
+    newTag: 0.3.0
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/srvc-user-timeline
+    newTag: 0.3.0

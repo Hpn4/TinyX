@@ -132,7 +132,6 @@ public abstract class RedisStreamReader<T> {
         .item(
             () -> {
               process(payloads);
-
               return null;
             })
         .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
@@ -163,7 +162,7 @@ public abstract class RedisStreamReader<T> {
                 log.errorf(
                     "[%s][%s][%s] Error while claiming", e, STREAM, STREAM_GROUP, STREAM_CONSUMER))
         .onFailure()
-        .recoverWithItem(emptyList())
+        .recoverWithItem(e -> emptyList())
         .map(this::processMessage)
         .onFailure()
         .recoverWithItem(e -> Uni.createFrom().item(new String[0]))

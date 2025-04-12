@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 @ApplicationScoped
@@ -27,6 +28,8 @@ public class RelationsQueryService {
   @RestClient UserRestClient userRestClient;
 
   @RestClient PostRestClient postRestClient;
+
+  @Inject Logger log;
 
   private List<LightUserContract> getUsers(List<UUID> userIds) {
     if (userIds == null || userIds.isEmpty()) return new ArrayList<>();
@@ -62,7 +65,9 @@ public class RelationsQueryService {
     if (commandService.blockRelations(userId, postOwnerId))
       ErrorCodes.BLOCKED_USER.throwError(postOwnerId);
 
-    return getUsers(relationsRepository.getLikers(postId, userId));
+    List<UUID> lists = relationsRepository.getLikers(postId, userId);
+
+    return getUsers(lists);
   }
 
   public List<PostContract> getLikedPost(UUID targetId, UUID userId) {

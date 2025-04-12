@@ -1,4 +1,4 @@
-package com.tinyx.user;
+package com.tinyx.user.converter;
 
 import com.tinyx.user.contracts.UserContract;
 import com.tinyx.user.entity.UserEntity;

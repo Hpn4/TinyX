@@ -13,9 +13,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.opentest4j.AssertionFailedError;
 
 @ApplicationScoped
@@ -27,8 +30,22 @@ public class TestsUtils {
     return "user-" + UUID.randomUUID().toString();
   }
 
+  public String getRandomWord(int length) {
+    String chars = "abcdefghijklmnopqrstuvwxyz";
+    StringBuilder sb = new StringBuilder();
+    Random rand = new Random();
+
+    for (int i = 0; i < length; i++) sb.append(chars.charAt(rand.nextInt(chars.length())));
+
+    return sb.toString();
+  }
+
   public String RandomPostContent() {
-    return "content-" + UUID.randomUUID().toString();
+    StringBuilder content = new StringBuilder();
+
+    for (int i = 0; i < 10; i++) content.append(getRandomWord(10)).append(" ");
+
+    return content.toString();
   }
 
   int SLIGHT_DELAY = 100;
@@ -69,16 +86,24 @@ public class TestsUtils {
     return new CreatePostRequest(RandomPostContent(), parentId, mediaId, PostType.NONE);
   }
 
-  public List<CreatePostRequest> randomPostCreationRequests(
-      int n, boolean randomMedias, boolean randomReplies) {
+  public List<CreatePostRequest> randomPostCreationRequests(int n) {
     List<CreatePostRequest> requests = new ArrayList<>();
-    // TODO: Random medias
-    // TODO: Random replies
 
     for (int i = 0; i < n; i++) {
       requests.add(randomPostCreationRequest(null, null));
     }
     return requests;
+  }
+
+  public void assignRandomMediasToPostsRequests(
+      List<CreatePostRequest> requests, List<UUID> medias) {
+    Random random = new Random();
+
+    for (CreatePostRequest request : requests) {
+      if (random.nextBoolean()) {
+        request.mediaId = medias.get(random.nextInt(medias.size()));
+      }
+    }
   }
 
   public byte[] bytesFromStream(InputStream s) {
@@ -105,5 +130,25 @@ public class TestsUtils {
     }
 
     return medias;
+  }
+
+  public <T> T randomChoice(List<T> choices) {
+    Random random = new Random();
+    return choices.get(random.nextInt(choices.size()));
+  }
+
+  public void getException(CompletableFuture<?> future, int code) {
+    try {
+      future.join();
+      assert false : "Expected conflict exception (" + code + ") but request succeeded";
+    } catch (CompletionException e) {
+      if (e.getCause() instanceof ClientWebApplicationException) {
+        ClientWebApplicationException ce = (ClientWebApplicationException) e.getCause();
+        assert ce.getResponse().getStatus() == code
+            : "Expected " + code + ", got " + ce.getResponse().getStatus();
+      } else {
+        throw e;
+      }
+    }
   }
 }

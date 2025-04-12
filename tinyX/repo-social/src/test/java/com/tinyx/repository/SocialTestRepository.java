@@ -60,8 +60,18 @@ public class SocialTestRepository {
         "MATCH (u:User {id: \"%s\"})-[:FOLLOW]->(v:User) RETURN v.id as id".formatted(userId));
   }
 
+  public List<UUID> getBlock(final UUID userId) {
+    return getResultAsList(
+        "MATCH (u:User {id: \"%s\"})-[:BLOCK]->(v:User) RETURN v.id as id".formatted(userId));
+  }
+
   public List<UUID> getFollowers(final UUID userId) {
     return getResultAsList(
         "MATCH (u:User)-[:FOLLOW]->(v:User {id: \"%s\"}) RETURN u.id as id".formatted(userId));
+  }
+
+  public List<UUID> getBlockers(final UUID userId) {
+    return getResultAsList(
+        "MATCH (u:User)-[:BLOCK]->(v:User {id: \"%s\"}) RETURN u.id as id".formatted(userId));
   }
 }

@@ -10,6 +10,7 @@ import com.tinyx.repository.UserRepository;
 import com.tinyx.user.UserTestUtils;
 import com.tinyx.user.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,16 +142,17 @@ public class SrvcUserTest {
 
       @Test
       void testGetUserById_BadRequest() {
-        given().contentType("application/json").when().get("/user/get/id/").then().statusCode(400);
+        given().contentType("application/json").when().post("/user/get/id/").then().statusCode(400);
       }
 
       @Test
       void testGetUsersByIds_Success() {
         List<String> usernames =
             given()
-                .queryParam("usersId", userIds)
+                .contentType(ContentType.JSON)
+                .body(userIds)
                 .when()
-                .get("/user/get/id")
+                .post("/user/get/id")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -164,10 +166,11 @@ public class SrvcUserTest {
       void testGetUsersByIdsDuplicate_Success() {
         List<String> usernames =
             given()
-                .queryParam("usersId", userIds)
-                .queryParam("usersId", userIds)
+                .contentType(ContentType.JSON)
+                .body(userIds)
+                .body(userIds)
                 .when()
-                .get("/user/get/id")
+                .post("/user/get/id")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -181,16 +184,16 @@ public class SrvcUserTest {
       void testGetUsersByIds_NotFound() {
         given()
             .contentType("application/json")
-            .queryParam("usersId", List.of(UUID.randomUUID()))
+            .body(List.of(UUID.randomUUID()))
             .when()
-            .get("/user/get/id")
+            .post("/user/get/id")
             .then()
             .statusCode(404);
       }
 
       @Test
       void testGetUsersByIds_BadRequest() {
-        given().contentType("application/json").when().get("/user/get/id").then().statusCode(400);
+        given().contentType("application/json").when().post("/user/get/id").then().statusCode(400);
       }
     }
   }

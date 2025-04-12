@@ -90,16 +90,6 @@ public class SocialRepository {
     safeWrite(query, Map.of("users", userParams), "create users", ids.size());
   }
 
-  public List<UUID> getLikersId(final UUID postId) {
-    final String query =
-        """
-        MATCH (u:User)-[:LIKE]->(:Post {id: $postId})
-        RETURN u.id AS uuid
-        """;
-
-    return readUUID(query, Values.parameters("postId", postId.toString()));
-  }
-
   public List<UUID> getPostIdsFromUser(final UUID likerId, final UUID authorId) {
     final String query =
         """
@@ -107,6 +97,7 @@ public class SocialRepository {
         RETURN p.id AS uuid
         """;
 
-    return readUUID(query, Values.parameters("authId", authorId, "likerId", likerId));
+    return readUUID(
+        query, Values.parameters("authId", authorId.toString(), "likerId", likerId.toString()));
   }
 }

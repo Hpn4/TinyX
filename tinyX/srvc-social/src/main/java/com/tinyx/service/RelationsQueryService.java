@@ -5,9 +5,11 @@ import com.tinyx.post.contracts.PostContract;
 import com.tinyx.repository.PostRestClient;
 import com.tinyx.repository.RelationsRepository;
 import com.tinyx.repository.UserRestClient;
-import com.tinyx.user.contracts.UserContract;
+import com.tinyx.user.contracts.LightUserContract;
+import com.tinyx.user.converter.UserContractToLightUserContractConverter;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -15,6 +17,8 @@ import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 @ApplicationScoped
 public class RelationsQueryService {
+
+  @Inject UserContractToLightUserContractConverter lightUserConverter;
 
   @Inject RelationsRepository relationsRepository;
 
@@ -24,10 +28,14 @@ public class RelationsQueryService {
 
   @RestClient PostRestClient postRestClient;
 
-  private List<UserContract> getUsers(List<UUID> userIds) {
+  private List<LightUserContract> getUsers(List<UUID> userIds) {
+    if (userIds == null || userIds.isEmpty()) return new ArrayList<>();
+
     try {
-      return userRestClient.getUsersByIds(userIds);
+      return lightUserConverter.convert(userRestClient.getUsersByIds(userIds));
     } catch (ClientWebApplicationException e) {
+      if (e.getResponse().getStatus() == 404) ErrorCodes.USERS_NOT_FOUND.throwError();
+
       ErrorCodes.UNREACHABLE.throwError("srvc-user");
     }
 
@@ -35,16 +43,20 @@ public class RelationsQueryService {
   }
 
   private List<PostContract> getPosts(final UUID userId, final List<UUID> postsIds) {
+    if (postsIds == null || postsIds.isEmpty()) return new ArrayList<>();
+
     try {
       return postRestClient.queryPostsList(userId, postsIds);
     } catch (ClientWebApplicationException e) {
+      if (e.getResponse().getStatus() == 404) ErrorCodes.POSTS_NOT_FOUND.throwError();
+
       ErrorCodes.UNREACHABLE.throwError("srvc-ppost");
     }
 
     return null;
   }
 
-  public List<UserContract> getLikers(UUID postId, UUID userId) {
+  public List<LightUserContract> getLikers(UUID postId, UUID userId) {
     final UUID postOwnerId = commandService.getUserIdFromPost(postId);
 
     if (commandService.blockRelations(userId, postOwnerId))
@@ -59,25 +71,25 @@ public class RelationsQueryService {
     return getPosts(userId, relationsRepository.getLikedPosts(targetId, userId));
   }
 
-  public List<UserContract> getUserFollows(UUID targetId, UUID userId) {
+  public List<LightUserContract> getUserFollows(UUID targetId, UUID userId) {
     if (commandService.blockRelations(userId, userId)) ErrorCodes.BLOCKED_USER.throwError(userId);
 
     return getUsers(relationsRepository.getUserFollow(targetId, userId));
   }
 
-  public List<UserContract> getFollowers(UUID targetId, UUID userId) {
+  public List<LightUserContract> getFollowers(UUID targetId, UUID userId) {
     if (commandService.blockRelations(userId, userId)) ErrorCodes.BLOCKED_USER.throwError(userId);
 
     return getUsers(relationsRepository.getFollowers(targetId, userId));
   }
 
-  public List<UserContract> getBlockedUsers(UUID targetId, UUID userId) {
+  public List<LightUserContract> getBlockedUsers(UUID targetId, UUID userId) {
     if (commandService.blockRelations(userId, userId)) ErrorCodes.BLOCKED_USER.throwError(userId);
 
     return getUsers(relationsRepository.getBlockedUsers(targetId, userId));
   }
 
-  public List<UserContract> getTargetBlock(UUID targetId, UUID userId) {
+  public List<LightUserContract> getTargetBlock(UUID targetId, UUID userId) {
     if (commandService.blockRelations(userId, userId)) ErrorCodes.BLOCKED_USER.throwError(userId);
 
     return getUsers(relationsRepository.getTargetBlock(targetId, userId));

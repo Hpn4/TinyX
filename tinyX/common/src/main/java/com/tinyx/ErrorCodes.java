@@ -17,9 +17,12 @@ public enum ErrorCodes {
   USER_NOT_FOUND(Status.NOT_FOUND, "User %s was not found"),
   USERS_NOT_FOUND(Status.NOT_FOUND, "One or multiple users were not found"),
   POST_NOT_FOUND(Status.NOT_FOUND, "Post %s was not found"),
+  POSTS_NOT_FOUND(Status.NOT_FOUND, "One or multiple were not found"),
   MEDIA_NOT_FOUND(Status.NOT_FOUND, "Media %s was not found"),
 
   ALREADY_BLOCKED_USER(Status.CONFLICT, "User %s is already blocked"),
+  CANNOT_SELF(Status.CONFLICT, "User %s cannot %s itself"),
+  CANNOT_SELF_POST(Status.CONFLICT, "User %s cannot %s its own post"),
   ALREADY_FOLLOWED_USER(Status.CONFLICT, "User %s is already followed"),
   ALREADY_LIKED_POST(Status.CONFLICT, "User %s has already liked post %s"),
   DUPLICATE_KEY(Status.CONFLICT, "A user with the username %s already exists"),

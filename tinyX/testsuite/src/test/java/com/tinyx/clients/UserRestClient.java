@@ -25,8 +25,7 @@ public interface UserRestClient {
   @Path("/get/id/{userId}")
   public CompletionStage<UserContract> getUserById(@PathParam("userId") UUID userId);
 
-  @GET
+  @POST
   @Path("/get/id")
-  public CompletionStage<List<UserContract>> getUsersByIds(
-      @QueryParam("usersId") List<UUID> usersId);
+  public CompletionStage<List<UserContract>> getUsersByIds(List<UUID> usersId);
 }

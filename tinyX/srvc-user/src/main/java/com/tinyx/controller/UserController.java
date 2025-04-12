@@ -81,7 +81,7 @@ public class UserController {
    * @param usersId IDs of users.
    * @return accounts, if previously created
    */
-  @GET
+  @POST
   @Path("/get/id")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
@@ -89,8 +89,9 @@ public class UserController {
     @APIResponse(responseCode = "404", description = "users do not exists"),
     @APIResponse(responseCode = "500", description = "Internal error")
   })
-  public Response getUsersByIds(@QueryParam("usersId") List<UUID> usersId) {
-    if (usersId.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+  public Response getUsersByIds(List<UUID> usersId) {
+    if (usersId == null || usersId.isEmpty())
+      return Response.status(Response.Status.BAD_REQUEST).build();
     return Response.ok(userService.getUsersById(usersId)).build();
   }
 }

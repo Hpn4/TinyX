@@ -38,7 +38,8 @@ public class SocialController {
     @APIResponse(responseCode = "400", description = "Bad user"),
     @APIResponse(responseCode = "403", description = "Cannot like a blocked user post"),
     @APIResponse(responseCode = "409", description = "Post already liked"),
-    @APIResponse(responseCode = "404", description = "Post/User does not exist")
+    @APIResponse(responseCode = "404", description = "Post/User does not exist"),
+    @APIResponse(responseCode = "409", description = "Cannot like an owned post")
   })
   public Response postLikePostEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
@@ -61,7 +62,8 @@ public class SocialController {
     @APIResponse(responseCode = "400", description = "Bad user"),
     @APIResponse(responseCode = "403", description = "Cannot unlike a blocked post user"),
     @APIResponse(responseCode = "204", description = "Post is not liked"),
-    @APIResponse(responseCode = "404", description = "Post/User does not exist")
+    @APIResponse(responseCode = "404", description = "Post/User does not exist"),
+    @APIResponse(responseCode = "409", description = "Cannot unlike an owned post")
   })
   public Response deleteLikePostEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("postId") UUID postId) {
@@ -84,7 +86,8 @@ public class SocialController {
     @APIResponse(responseCode = "400", description = "Bad User Id"),
     @APIResponse(responseCode = "409", description = "Users already followed"),
     @APIResponse(responseCode = "403", description = "Cannot follow an blocked user"),
-    @APIResponse(responseCode = "404", description = "Target/User does not exist")
+    @APIResponse(responseCode = "404", description = "Target/User does not exist"),
+    @APIResponse(responseCode = "409", description = "Cannot follow ourself")
   })
   public Response postFollowTargetList(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
@@ -107,7 +110,8 @@ public class SocialController {
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad User Id"),
     @APIResponse(responseCode = "204", description = "User is not followed"),
-    @APIResponse(responseCode = "404", description = "Target/User does not exist")
+    @APIResponse(responseCode = "404", description = "Target/User does not exist"),
+    @APIResponse(responseCode = "409", description = "Cannot unfollow ourself")
   })
   public Response deleteFollowTargetEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
@@ -130,7 +134,8 @@ public class SocialController {
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Bad user ID / Bad post format"),
     @APIResponse(responseCode = "409", description = "Target user already blocked"),
-    @APIResponse(responseCode = "404", description = "Target/User does not exist")
+    @APIResponse(responseCode = "404", description = "Target/User does not exist"),
+    @APIResponse(responseCode = "409", description = "Cannot block ourself")
   })
   public Response postBlockTargetEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {
@@ -153,7 +158,8 @@ public class SocialController {
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "204", description = "No block relations"),
     @APIResponse(responseCode = "400", description = "Bad user ID"),
-    @APIResponse(responseCode = "404", description = "Target/User does not exist")
+    @APIResponse(responseCode = "404", description = "Target/User does not exist"),
+    @APIResponse(responseCode = "409", description = "Cannot unblock ourself")
   })
   public Response deleteBlockTargetEndpoint(
       @HeaderParam("X-User") UUID userId, @PathParam("targetUserId") UUID targetUserId) {

@@ -6,6 +6,7 @@ import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.redis.datasource.stream.*;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.smallrye.mutiny.subscription.Cancellable;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -59,6 +60,15 @@ public abstract class RedisStreamReader<T> {
             .recoverWithNull()
             .map(v -> stream.xgroupCreateConsumer(STREAM, STREAM_GROUP, STREAM_CONSUMER))
             .map(v -> createStreamListener())
+            .onCancellation()
+            .invoke(
+                () ->
+                    stream
+                        .xgroupDelConsumer(STREAM, STREAM_GROUP, STREAM_CONSUMER)
+                        .onFailure()
+                        .invoke(log::error)
+                        .subscribe()
+                        .with(cancellable -> {}))
             .subscribe()
             .with(cancellable -> consumer = cancellable);
   }
@@ -66,16 +76,6 @@ public abstract class RedisStreamReader<T> {
   @PreDestroy
   public void destroy() {
     consumer.cancel();
-    stream
-        .xgroupDelConsumer(STREAM, STREAM_GROUP, STREAM_CONSUMER)
-        .onFailure()
-        .invoke(log::error)
-        .subscribe()
-        .with(
-            unack ->
-                log.infof(
-                    "[%s][%s][%s] Deleted with %d unacknowledged messages",
-                    STREAM, STREAM_GROUP, STREAM_CONSUMER, unack));
   }
 
   private Cancellable createStreamListener() {
@@ -104,8 +104,10 @@ public abstract class RedisStreamReader<T> {
         .recoverWithItem(
             e -> {
               log.error("Cannot process message", e);
-              return new String[0];
+              return Uni.createFrom().item(new String[0]);
             })
+        .onItem()
+        .transformToUniAndConcatenate(Function.identity())
         .map(this::acknowledge)
         .onItem()
         .transformToUniAndConcatenate(Function.identity())
@@ -115,8 +117,8 @@ public abstract class RedisStreamReader<T> {
 
   public abstract void process(List<T> data);
 
-  private String[] processMessage(List<StreamMessage<String, String, T>> messages) {
-    if (messages == null || messages.isEmpty()) return new String[0];
+  private Uni<String[]> processMessage(List<StreamMessage<String, String, T>> messages) {
+    if (messages == null || messages.isEmpty()) return Uni.createFrom().item(new String[0]);
 
     List<String> messageIds = new ArrayList<>();
     List<T> payloads = new ArrayList<>();
@@ -126,9 +128,15 @@ public abstract class RedisStreamReader<T> {
       payloads.add(message.payload().get(RedisPublisher.STREAM_KEY));
     }
 
-    process(payloads);
+    return Uni.createFrom()
+        .item(
+            () -> {
+              process(payloads);
 
-    return messageIds.toArray(String[]::new);
+              return null;
+            })
+        .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+        .replaceWith(messageIds.toArray(String[]::new));
   }
 
   private Uni<Integer> acknowledge(String[] ids) {
@@ -158,7 +166,9 @@ public abstract class RedisStreamReader<T> {
         .recoverWithItem(emptyList())
         .map(this::processMessage)
         .onFailure()
-        .recoverWithItem(e -> new String[0])
+        .recoverWithItem(e -> Uni.createFrom().item(new String[0]))
+        .onItem()
+        .transformToUni(Function.identity())
         .map(this::acknowledge)
         .onItem()
         .transformToUni(Function.identity())

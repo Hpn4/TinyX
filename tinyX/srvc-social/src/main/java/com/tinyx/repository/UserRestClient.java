@@ -9,7 +9,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @RegisterRestClient(configKey = "user-client")
 @Path("/user")
 public interface UserRestClient {
-  @GET
+  @POST
   @Path("/get/id")
-  List<UserContract> getUsersByIds(@QueryParam("usersId") List<UUID> usersId);
+  List<UserContract> getUsersByIds(List<UUID> usersId);
 }

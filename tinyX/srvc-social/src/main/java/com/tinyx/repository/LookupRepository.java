@@ -78,9 +78,9 @@ public class LookupRepository {
         """
         MATCH (user:User {id: "%s"})
         MATCH (target:User {id: "%s"})
-        OPTIONAL MATCH (user)-[:BLOCK]-(target)
+        OPTIONAL MATCH (user)-[r:BLOCK]->(target)
         RETURN
-          author IS NOT NULL AS isBlocked
+          r IS NOT NULL AS isBlocked
         """
             .formatted(userId, authorId);
 
@@ -125,9 +125,9 @@ public class LookupRepository {
   public boolean checkLikeExist(final UUID srcId, final UUID targetId) {
     final String cypherQuery =
         """
-                MATCH (user:User {id: "%s"})-[:LIKE]->(target:Post {id: "%s"})
-                RETURN true
-                """
+        MATCH (user:User {id: "%s"})-[:LIKE]->(target:Post {id: "%s"})
+        RETURN true
+        """
             .formatted(srcId, targetId);
 
     final List<Record> result = executeRead(cypherQuery);

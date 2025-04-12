@@ -71,19 +71,45 @@ public class TestStream {
 
     List<UUID> users = createUsers(2);
 
-    // Create a like between the two users
+    // Create a follow between the two users
     UserRelationsQuery followQuery =
         new UserRelationsQuery(
             UserRelationsQuery.Operation.FOLLOW, users.get(0), users.get(1), ZonedDateTime.now());
     redisUtils.PostOne(RedisChannel.SOCIAL, followQuery, UserRelationsQuery.class);
     redisUtils.WaitDelay();
 
-    // Test that the like exists
+    // Test that the follow exists
     List<UUID> result = repo.getFollow(users.get(0)); // 0 -FOLLOW-> 1
     Assertions.assertEquals(1, result.size());
     Assertions.assertEquals(users.get(1), result.get(0));
 
     result = repo.getFollowers(users.get(1)); // 0 -FOLLOW-> 1
+    Assertions.assertEquals(1, result.size());
+    Assertions.assertEquals(users.get(0), result.get(0));
+
+    repo.deleteAllData();
+    Assertions.assertNull(repo.getAllPosts());
+  }
+
+  @Test
+  public void createBlock() throws InterruptedException {
+    repo.deleteAllData();
+
+    List<UUID> users = createUsers(2);
+
+    // Create a block between the two users
+    UserRelationsQuery followQuery =
+        new UserRelationsQuery(
+            UserRelationsQuery.Operation.BLOCK, users.get(0), users.get(1), ZonedDateTime.now());
+    redisUtils.PostOne(RedisChannel.SOCIAL, followQuery, UserRelationsQuery.class);
+    redisUtils.WaitDelay();
+
+    // Test that the block exists
+    List<UUID> result = repo.getBlock(users.get(0)); // 0 -BLOCK-> 1
+    Assertions.assertEquals(1, result.size());
+    Assertions.assertEquals(users.get(1), result.get(0));
+
+    result = repo.getBlockers(users.get(1)); // 0 -BLOCK-> 1
     Assertions.assertEquals(1, result.size());
     Assertions.assertEquals(users.get(0), result.get(0));
 

@@ -43,14 +43,6 @@ public class SocialService {
   public void deletePosts(List<PostQuery> queries) {
     List<PostEntity> postsEntities = postQueryToPostEntityConverter.convert(queries);
 
-    // Publish an unlike messages for each like relations linked to the post we want to delete
-    for (PostEntity postEntity : postsEntities) {
-      List<UUID> userIds = socialRepository.getLikersId(postEntity.id);
-      for (UUID userId : userIds) {
-        unlikePublisher.publish(userId, postEntity.id);
-      }
-    }
-
     // Delete the post and all his likes relations
     socialRepository.deletePosts(postsEntities);
   }

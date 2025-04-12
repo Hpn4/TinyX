@@ -38,7 +38,7 @@ public class ChargeTest {
   static List<UUID> createdMedias = Collections.synchronizedList(new ArrayList<>());
 
   @ParameterizedTest
-  @ValueSource(ints = {10, 100})
+  @ValueSource(ints = {100, 1000, 10000})
   public void testCharge(int numberOfUsers) {
     ArrayList<CompletableFuture<?>> stages = new ArrayList<>();
     testingUsers.put(numberOfUsers, Collections.synchronizedList(new ArrayList<>()));
@@ -98,14 +98,9 @@ public class ChargeTest {
               .toCompletableFuture());
     }
     testUtils.waitForFutures(stages);
-    /*stages = new ArrayList<>();
+    stages = new ArrayList<>();
     for (var post : postContracts) {
-      //stages.add(postClient.deletePostEndpoint(post.userId, post.id).toCompletableFuture());
-    }*/
-
-    // TODO Add a lot of like
-    // TODO add a lot of blocked user
-    // TODO add replies and repost
-    // TODO add media
+      stages.add(postClient.deletePostEndpoint(post.userId, post.id).toCompletableFuture());
+    }
   }
 }

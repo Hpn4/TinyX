@@ -1,7 +1,7 @@
 # **Service `srvc-user-timeline`**
 
 ## Description
-`srvc-user-timeline` is a microservice that manages user's timeline the system. He is in charge of creating the timeline for one or more users.
+`srvc-user-timeline` is a microservice that manages user's timeline in the system. It is in charge of getting information about the timeline of one or more users.
 
 ## Exposure
 **This service is exposed externally.**  

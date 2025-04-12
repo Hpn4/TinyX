@@ -21,6 +21,12 @@ public class HomeTimelineController {
 
   @Inject Logger logger;
 
+  /**
+   * The endpoint get the timeline (a list of post) of a specific user.
+   *
+   * @param userId id of the user. Retrieved by the header parameter X-User
+   * @return the list of post shaping the user timeline.
+   */
   @GET
   @Path("/timeline/home")
   @APIResponses({

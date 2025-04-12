@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 import java.util.UUID;
 
+/** Read from a redis stream of UserQuery */
 @Startup
 @ApplicationScoped
 public class UserSubscriber extends RedisStreamReader<UserQuery> {
@@ -26,6 +27,11 @@ public class UserSubscriber extends RedisStreamReader<UserQuery> {
     super(ds, UserQuery.class, "repo-social", RedisChannel.USER);
   }
 
+  /**
+   * Catches user queries and handle the creation of user in the neo4j database
+   *
+   * @param data user queries to handle
+   */
   @Override
   public void process(List<UserQuery> data) {
     List<UUID> users =

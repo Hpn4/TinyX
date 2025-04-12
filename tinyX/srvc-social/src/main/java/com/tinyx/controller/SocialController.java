@@ -173,8 +173,8 @@ public class SocialController {
    * Get the list of userID who liked a post.
    *
    * @param userId the ID of the user requesting the list
-   * @param targetPostId the ID of the user whose post likers are being requested
-   * @return List of userIDs who liked the post
+   * @param targetPostId the ID of the post whose post likers are being requested
+   * @return Response with the list of userIDs who liked the post
    */
   @GET
   @Path("/posts/{targetPostId}/likers")
@@ -195,7 +195,7 @@ public class SocialController {
    *
    * @param userId the ID of the user requesting the list
    * @param targetUserId the ID of the user whose liked posts are being requested
-   * @return List of postIDs liked by the user
+   * @return Response with the list of postIDs liked by the user
    */
   @GET
   @Path("/users/{targetUserId}/liked_posts")
@@ -216,7 +216,7 @@ public class SocialController {
    *
    * @param userId the ID of the user requesting the list
    * @param targetUserId the ID of the user whose follows are being requested
-   * @return List of usersId followed by a user
+   * @return Response with the list of usersId followed by a user
    */
   @GET
   @Path("/users/{targetUserId}/follows")
@@ -237,7 +237,7 @@ public class SocialController {
    *
    * @param userId the ID of the user requesting the list
    * @param targetUserId the ID of the user whose followers are being requested
-   * @return List of usersId following the user
+   * @return Response with the list of usersId following the user
    */
   @GET
   @Path("/users/{targetUserId}/followers")
@@ -258,7 +258,7 @@ public class SocialController {
    *
    * @param userId the ID of the user requesting the list
    * @param targetUserId the ID of the user whose block list is being requested
-   * @return List of usersId blocked by a user
+   * @return Response with the list of usersId blocked by the user
    */
   @GET
   @Path("/users/{targetUserId}/block_list")
@@ -275,11 +275,11 @@ public class SocialController {
   }
 
   /**
-   * Get the list of users who blocked a user.
+   * Get the list of usersID who blocked a user.
    *
    * @param userId the ID of the user requesting the list
    * @param targetUserId the ID of the user who is blocked by others
-   * @return List of usersId who blocked the user
+   * @return Response with the list of usersId who blocked the user
    */
   @GET
   @Path("/users/{targetUserId}/blocked_by")

@@ -11,6 +11,13 @@ public class RelationsRepository {
 
   @Inject SocialRepository socialRepository;
 
+  /**
+   * Take a Neo4j query and a list of relation on which to apply it in order to create relations in
+   * the Neo4j database
+   *
+   * @param query Query to use in order to create relations
+   * @param relations list fo relation to create
+   */
   private void createRelations(final String query, final List<SocialRelationEntity> relations) {
     final List<Map<String, String>> relationParams =
         relations.stream()
@@ -29,6 +36,11 @@ public class RelationsRepository {
         query, Map.of("relations", relationParams), "create relations", relations.size());
   }
 
+  /**
+   * Create the Neo4j query necessary to create LIKE relations.
+   *
+   * @param relations list of LIKE relations to create
+   */
   public void createLikeRelations(final List<SocialRelationEntity> relations) {
     final String query =
         """
@@ -46,6 +58,11 @@ public class RelationsRepository {
     createRelations(query, relations);
   }
 
+  /**
+   * Create the Neo4j query necessary to create FOLLOW relations.
+   *
+   * @param relations list of FOLLOW relations to create
+   */
   public void createFollowRelations(final List<SocialRelationEntity> relations) {
     final String query =
         """
@@ -62,6 +79,11 @@ public class RelationsRepository {
     createRelations(query, relations);
   }
 
+  /**
+   * Create the Neo4j query necessary to create BLOCK relations.
+   *
+   * @param relations list of BLOCK relations to create
+   */
   public void createBlockRelations(final List<SocialRelationEntity> relations) {
     final String query =
         """
@@ -77,6 +99,14 @@ public class RelationsRepository {
     createRelations(query, relations);
   }
 
+  /**
+   * Create a Neo4j query in order to delete multiple relations from the database
+   *
+   * @param relations Relations to delete
+   * @param relation type of relations to delete
+   * @param type1 type of the first node of the relations to delete
+   * @param type2 type of the second node of the relations to delete
+   */
   public void deleteRelations(
       final List<SocialRelationEntity> relations,
       final String relation,

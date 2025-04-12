@@ -13,6 +13,12 @@ public class HomeTimelineMongoEntity extends PanacheMongoEntityBase {
 
   public HomeTimelineMongoEntity() {}
 
+  /**
+   * Constructs a new HomeTimelineMongoEntity with the given user ID and timeline IDs.
+   *
+   * @param userId The ID of the user for whom the timeline is created.
+   * @param timelineIds The list of UUIDs representing the posts in the user's timeline.
+   */
   public HomeTimelineMongoEntity(UUID userId, List<UUID> timelineIds) {
     this.userId = userId;
     this.timelineIds = timelineIds;

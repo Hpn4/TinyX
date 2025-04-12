@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Read from a redis stream of LikePostQuery */
 @Startup
 @ApplicationScoped
 public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
@@ -26,6 +27,12 @@ public class LikeSubscriber extends RedisStreamReader<LikePostQuery> {
     super(ds, LikePostQuery.class, "repo-social", RedisChannel.LIKE);
   }
 
+  /**
+   * Catches LikePost queries me to keep track of which user has liked which post, it can also
+   * delete those relations.
+   *
+   * @param queries The LikePost queries to handle.
+   */
   @Override
   public void process(List<LikePostQuery> queries) {
     List<LikePostQuery> likes = new ArrayList<>();

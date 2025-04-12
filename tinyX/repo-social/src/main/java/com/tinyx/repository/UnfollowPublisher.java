@@ -12,6 +12,12 @@ public class UnfollowPublisher {
 
   @Inject RedisPublisherFactory redisPublisherFactory;
 
+  /**
+   * publish request to unfollow users
+   *
+   * @param srcUserId the user that unfollow
+   * @param dstUserId the user that will be unfollow
+   */
   public void publish(UUID srcUserId, UUID dstUserId) {
     UserRelationsQuery unfollowQuery =
         new UserRelationsQuery(UserRelationsQuery.Operation.UNFOLLOW, srcUserId, dstUserId, null);

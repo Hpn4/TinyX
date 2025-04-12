@@ -21,6 +21,12 @@ public class MediaEntity {
    */
   public InputStream data;
 
+  /**
+   * Constructs a new MediaEntity with the specified ID and media data stream.
+   *
+   * @param id mediaID.
+   * @param media The InputStream containing the media data.
+   */
   public MediaEntity(UUID id, InputStream media) {
     this.id = id;
     this.data = media;

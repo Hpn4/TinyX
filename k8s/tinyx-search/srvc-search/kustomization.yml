@@ -1,0 +1,15 @@
+---
+kind: Kustomization
+
+resources:
+  - deployment.yml
+  - service.yml
+  - ingress.yml
+
+configMapGenerator:
+  - name: srvc-search-env
+    literals:
+      - TRIM_INTERVAL="10m" # Are these needed ?
+      - CLAIM_INTERVAL="5s"
+      - REST_HOST="srvc-post-service.tinyx.svc.cluster.local"
+      - REST_PORT="8080"

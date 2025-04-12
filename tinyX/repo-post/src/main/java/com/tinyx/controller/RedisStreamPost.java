@@ -33,6 +33,11 @@ public class RedisStreamPost extends RedisStreamReader<PostQuery> {
     super(ds, PostQuery.class, "repo-post", RedisChannel.POST);
   }
 
+  /**
+   * Processes a list of create and delete posts.
+   *
+   * @param data The list of PostQuery objects to be processed.
+   */
   @Override
   public void process(List<PostQuery> data) {
     List<PostContract> createPosts = new ArrayList<>();

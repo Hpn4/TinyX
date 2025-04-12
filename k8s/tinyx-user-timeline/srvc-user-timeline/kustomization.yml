@@ -1,0 +1,15 @@
+---
+kind: Kustomization
+
+resources:
+  - deployment.yml
+  - service.yml
+  - ingress.yml
+
+configMapGenerator:
+  - name: srvc-user-timeline-env
+    literals:
+      - TRIM_INTERVAL="10m"
+      - CLAIM_INTERVAL="5s"
+      - POST_REST_HOST="srvc-post-service.tinyx.svc.cluster.local"
+      - POST_REST_PORT="8080"

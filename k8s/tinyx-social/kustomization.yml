@@ -1,0 +1,19 @@
+---
+kind: Kustomization
+
+resources:
+  - neo4j
+  - srvc-social
+  - repo-social
+
+configMapGenerator:
+  - name: social-env
+    literals:
+      - NEO4J_HOST="neo4j.tinyx.svc.cluster.local"
+      - NEO4J_PORT="7687"
+
+images:
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/repo-social
+    newTag: 0.3.0
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/srvc-social
+    newTag: 0.3.0

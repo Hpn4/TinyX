@@ -27,12 +27,15 @@ public class UsersSubscriber extends RedisStreamReader<UserQuery> {
     super(ds, UserQuery.class, "repo-home-timeline", RedisChannel.USER);
   }
 
+  /**
+   * Isolates the queries refering to a CREATE user operation, and feeds them to an initializing
+   * service function so they can be added to the database.
+   *
+   * @param data user queries to handle
+   */
   @Override
   public void process(List<UserQuery> data) {
-    /**
-     * Isolates the queries refering to a CREATE user operation, and feeds them to an initializing
-     * service function so they can be added to the database.
-     */
+
     var filtered =
         data.stream()
             .filter(q -> q.operation == UserQuery.Operation.CREATE)

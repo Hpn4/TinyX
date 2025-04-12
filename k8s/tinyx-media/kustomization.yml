@@ -1,0 +1,18 @@
+---
+kind: Kustomization
+
+resources:
+  - srvc-media
+  - repo-media
+
+configMapGenerator:
+  - name: media-env
+    literals:
+      - MEDIA_BUCKET="Media"
+      - MAX_MEDIA_SIZE="32M"
+
+images:
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/repo-media
+    newTag: 0.3.0
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/srvc-media
+    newTag: 0.3.0

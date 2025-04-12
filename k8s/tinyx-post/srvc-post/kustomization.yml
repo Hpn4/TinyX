@@ -1,0 +1,17 @@
+---
+kind: Kustomization
+
+resources:
+  - deployment.yml
+  - service.yml
+  - ingress.yml
+
+configMapGenerator:
+  - name: srvc-post-env
+    literals:
+      - TRIM_INTERVAL="10m"
+      - CLAIM_INTERVAL="5s"
+      - MEDIA_REST_HOST="srvc-media-service.tinyx.svc.cluster.local"
+      - MEDIA_REST_PORT="8080"
+      - USER_REST_HOST="srvc-user-service.tinyx.svc.cluster.local"
+      - USER_REST_PORT="8080"

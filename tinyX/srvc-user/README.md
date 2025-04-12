@@ -1,7 +1,7 @@
 # **Service `srvc-user`**
 
 ## Description
-`srvc-user` is a microservice that manages users within the system. He is in charge of creating and geting users. This service encapsulates the business logic related to user management, including creating, updating, and retrieving user information from a MongoDB database.
+`srvc-user` is a microservice that manages users within the system. It is in charge of creating and fetching users. This service encapsulates the logic related to user management, including creating, updating, and retrieving user information from a MongoDB database.
 
 The service is exposed via a REST API documented in Swagger.
 
@@ -39,7 +39,7 @@ CLAIM_INTERVAL:5s  #Time before get data
 ```
 
 ## Redis Publisher
-`srvc-user` service publishes events on Redis to notify the following services:
+The `srvc-user` service publishes events on Redis to notify the following services:
 - `repo-social`
 - `repo-home-timeline`
 - `repo-user-timeline`

@@ -1,9 +1,9 @@
 # Service: `repo-media`
 
 ## Description
-The service `repo-media` is used to manage media in the MongoDB database. This service expose API REST to interact with the users to upload a media that will be assigned to their posts.
+The service `repo-media` is used to insert medias in a MongoDB database. This service exposes a REST API that allows to upload a media that will be assigned to their posts. Medias are represented as a chain of bytes.  
+This service also interacts with other services by receiving Queries using Redis. It allows medias to be linked to posts; when a media is no longer linked, it will be signalled to be deleted.  
 
-This service also interact with other services by receiving PostQuery using Redis.
 
 ## Exposure
 **This service is exposed externally.**  
@@ -44,7 +44,10 @@ MAX_MEDIA_SIZE:32M
 ```
 
 ## Database
-It's a MongoDB database named "quarkus.mongodb.database" and it managed medias by using a GridFSBucket a that stock their id, InputStream and the list of the post's id associated to them.
+This service uses mongodb to store medias, more precisely the GridFS tool. GridFS is powerful for storing large files  
+in quite a simple manner. By handling not usual mongodb `collections`, but a `bucket`, you can store big files in two  
+'hidden' collections: the 'files' collection stores the metadata related to an object, and the 'chunks' collection  
+holds the raw data. The `bucket` simply allows to access those two collections seamlessly.  
 
 ## Structure
 ```bash

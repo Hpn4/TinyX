@@ -1,0 +1,12 @@
+---
+kind: Kustomization
+
+resources:
+  - srvc-post
+  - repo-post
+
+images:
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/repo-post
+    newTag: 0.3.0
+  - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/srvc-post
+    newTag: 0.3.0

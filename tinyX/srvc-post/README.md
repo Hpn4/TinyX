@@ -1,7 +1,7 @@
 # **Service `srvc-post`**
 
 ## Description
-`srvc-post` is a microservice that manages posts within the system. He is in charge of the logic in creating, deleting and managing (get, replies) posts from a MongoDB database.
+`srvc-post` is a microservice that manages posts within the system. It is in charge of the logic in creating, deleting and managing (get, replies) posts from a MongoDB database.
 
 ## Exposure
 **This service is exposed externally.**  
@@ -9,7 +9,7 @@ You can interact with its REST API through the following Swagger interface:
 **Swagger UI**: `http://localhost:8085/q/swagger-ui`
 
 ## Redis Publisher
-`srvc-post` service publishes events on Redis to notify the following services:
+The `srvc-post` service publishes events on Redis to notify the following services:
 - `repo-post`
 - `repo-home-timeline`
 - `repo-user-timeline`

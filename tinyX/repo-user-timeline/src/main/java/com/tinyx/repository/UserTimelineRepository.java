@@ -80,9 +80,9 @@ public class UserTimelineRepository
   }
 
   /**
-   * Removes the given post UUIDs from all users
+   * Removes the given list of post UUIDs from all users
    *
-   * @param postIds The post UUIDs to removed
+   * @param postIds The postID to removed
    */
   public void removeFromAllUsers(List<UUID> postIds) {
     List<WriteModel<UserTimelineEntity>> writeModels = new ArrayList<>();

@@ -19,6 +19,12 @@ public class PostEntityToPostContractConverter {
         entity.postType);
   }
 
+  /**
+   * Converts a PostEntity object into a PostContract object.
+   *
+   * @param postsContracts The PostEntity to be converted.
+   * @return A PostContract object populated with values from the PostEntity.
+   */
   public List<PostContract> convert(List<PostEntity> postsContracts) {
     return postsContracts.stream().map(this::convert).collect(Collectors.toList());
   }

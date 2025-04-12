@@ -40,7 +40,7 @@ TRIM_INTERVAL:10m
 CLAIM_INTERVAL:5s
 ```
 ## Database
-It's a ElasticSearch database with the index "posts" that memorize created posts and the elements necessary to search them. For this purpose, a post is represented by a object containing it's id, content and a list of all the hashtags present in the post's content.
+It's an ElasticSearch database with the index "posts" that memorizes created posts and the elements necessary to search them. For this purpose, a post is represented by an object containing its id, content and a list of all the hashtags present in the latter.
 
 
 ## Structure

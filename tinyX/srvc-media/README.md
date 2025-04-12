@@ -1,7 +1,10 @@
 # Service `srvc-media`
 
 ## Description
-This service communicate with a MongoDB database and expose API REST to interact with the users in order to check if a media with a specific id exist or to retrieve its InputStream.
+This service exposes a REST API to get information from a MongoDB database containing medias.  
+Medias can be any chain of bytes and can represent images, text, videos, sound, anything really.  
+  
+Only read operations are available in this service.  
 
 ## Exposure
 **This service is exposed externally.**  
@@ -33,7 +36,7 @@ MEDIA_BUCKET:Media
 MAX_MEDIA_SIZE:32M
 ```
 ## Database
-It's a MongoDB database named "quarkus.mongodb.database" and it managed medias by using a GridFSBucket a that stock their id, InputStream and the list of the post's id associated to them.
+The database used to store these medias is mongodb, using the GridFS driver. For more information, check out the [repo-media](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/-/blob/main/tinyX/repo-media/README.md) page.  
 
 ## Structure
 ```bash

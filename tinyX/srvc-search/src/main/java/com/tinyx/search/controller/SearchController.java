@@ -24,6 +24,7 @@ public class SearchController {
    *     filter out posts authored by cloked users
    * @param phrase The text phrase to search for in post content (optional).
    * @param hashtags List of hashtags to filter posts by (optional).
+   * @return a Response with the list of posts found.
    */
   @Path("/posts")
   @GET

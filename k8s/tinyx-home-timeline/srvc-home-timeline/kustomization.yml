@@ -1,0 +1,15 @@
+---
+kind: Kustomization
+
+resources:
+  - deployment.yml
+  - service.yml
+  - ingress.yml
+
+configMapGenerator:
+  - name: srvc-home-timeline-env
+    literals:
+      - TRIM_INTERVAL="10m" # Unnecessary
+      - CLAIM_INTERVAL="5s"
+      - REST_HOST="srvc-user-timeline-service.tinyx.svc.cluster.local"
+      - REST_PORT="8080" # For some reason in the current version of develop, these names are real

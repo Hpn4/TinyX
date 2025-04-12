@@ -95,9 +95,7 @@ test:
       alias: neo4j
     - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/elastic
       alias: elastic
-
-      command:
-        command:
+    - command:
         - /bin/bash
         - -c
         - |

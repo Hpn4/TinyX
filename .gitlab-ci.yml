@@ -108,7 +108,7 @@ test:
     MONGODB_CONNECTION_STRING: "mongodb://admin:admin@mongo:27017/?authSource=admin&retryWrites=true&w=majority&uuidRepresentation=STANDARD"
     REDIS_CONNECTION_STRING: "redis://redis:6379"
     NEO4J_CONNECTION_STRING: "bolt://neo4j:7687"
-    ELASTIC_CONNECTION_STRING: "http://elastic:9200"
+    ELASTIC_CONNECTION_STRING: "elastic:9200"
   parallel:
     matrix:
       - SERVICE: ["common", "repo-search", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
@@ -117,6 +117,16 @@ test:
   needs:
     - compile
   script:
-    - curl -f http://127.0.0.1:9200 || (echo "Elasticsearch not reachable" && exit 1)
+    - echo "🔍 Attente du démarrage d'Elasticsearch..."
+    - |
+      for i in {1..15}; do
+        if curl -s http://elastic:9200 | grep -q "You Know, for Search"; then
+          echo "✅ Elasticsearch est prêt !"
+          break
+        else
+          echo "⏳ Elasticsearch pas encore prêt, tentative $i/15..."
+          sleep 5
+        fi
+      done
     - cd tinyX
     - mvn -pl $SERVICE $MAVEN_CLI_OPTS test -am

@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public class MediaEntity {
 
-  /** The ID of the media. In the database, it is a media's `filename` and NOT it's `ObjectId`. */
+  /** The ID of the media. In the database, it is a media's `filename` and NOT its `ObjectId`. */
   public UUID id;
 
   /**

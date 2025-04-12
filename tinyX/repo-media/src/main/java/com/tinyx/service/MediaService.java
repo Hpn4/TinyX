@@ -1,7 +1,7 @@
 package com.tinyx.service;
 
-import com.tinyx.media.MediaConverter;
 import com.tinyx.media.contracts.MediaContract;
+import com.tinyx.media.converter.MediaContractToMediaEntityConverter;
 import com.tinyx.media.entity.MediaEntity;
 import com.tinyx.post.contracts.PostContract;
 import com.tinyx.repository.MediaRepository;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class MediaService {
   @Inject MediaRepository mediaRepository;
 
-  @Inject MediaConverter mediaConverter;
+  @Inject MediaContractToMediaEntityConverter mediaContractToMediaEntityConverter;
 
   /**
    * Allows to upload a media to the database (asynchronously).
@@ -24,7 +24,7 @@ public class MediaService {
    * @param media The media information: its newly generated ID and the data stream.
    */
   public void uploadMedia(MediaContract media) {
-    MediaEntity mediaEntity = mediaConverter.convertMedia(media);
+    MediaEntity mediaEntity = mediaContractToMediaEntityConverter.convert(media);
 
     mediaRepository.uploadMedia(mediaEntity);
   }

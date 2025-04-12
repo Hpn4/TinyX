@@ -1,7 +1,7 @@
 # Service: `srvc-home-timeline`
 
 ## Description
-This service is use to get a list of all the post made by a specific user, in chronological order, by checking a MongoDB database.
+This service is used to get a list of all the posts made by a specific user, in chronological order, by checking a MongoDB database.
 
 ## Exposure
 **This service is exposed externally.**  

@@ -1,6 +1,6 @@
 # Service: `srvc-search`
 ## Description
-This service is used by a user to search for created posts by using a text phrase and/or a list of hashtags that were not posted by blocked users.
+The `repo-search` service can be used to search for created posts by using a text phrase and/or a list of hashtags.   
 
 ## Exposure
 **This service is exposed externally.**  
@@ -40,7 +40,7 @@ REST_PORT:8085
 ```
 
 ## Database
-It's a ElasticSearch database with the index "posts" that memorize created posts and the elements necessary to search them. For this purpose, a post is represented by a object containing it's id, content and a list of all the hashtags present in the post's content.
+For more information, check out the [repo-search](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/-/blob/main/tinyX/repo-search/README.md) page.
 
 
 ## Struture

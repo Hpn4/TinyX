@@ -1,7 +1,7 @@
 package com.tinyx.service;
 
-import com.tinyx.media.MediaConverter;
 import com.tinyx.media.contracts.MediaContract;
+import com.tinyx.media.converter.MediaEntityToMediaContractConverter;
 import com.tinyx.media.entity.MediaEntity;
 import com.tinyx.repository.MediaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,7 +12,7 @@ import java.util.UUID;
 public class MediaService {
   @Inject MediaRepository mediaRepository;
 
-  @Inject MediaConverter mediaConverter;
+  @Inject MediaEntityToMediaContractConverter mediaEntityToMediaContractConverter;
 
   /**
    * Fetches a media (and its data) and return it.
@@ -25,7 +25,7 @@ public class MediaService {
 
     if (media == null) return null;
 
-    return mediaConverter.convertMedia(media); // Handles the null (not found) case
+    return mediaEntityToMediaContractConverter.convert(media); // Handles the null (not found) case
   }
 
   /**

@@ -34,9 +34,7 @@ public class PostRepository implements PanacheMongoRepositoryBase<PostEntity, UU
       // For each parent we add/remove the grouped children list
       Bson filter = Filters.eq("_id", entry.getKey());
       Bson update =
-          add
-              ? Updates.addEachToSet("children", entry.getValue())
-              : Updates.pullAll("children", children);
+          add ? Updates.addEachToSet("children", children) : Updates.pullAll("children", children);
 
       writeModels.add(new UpdateOneModel<>(filter, update));
     }

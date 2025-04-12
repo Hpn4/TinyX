@@ -1,12 +1,20 @@
 # TinyX
 
+Tinyx is a POC of a tweeter like social network. It's coded in Java and Quarkus.
+
+This repo is a mono repo that contains 13 services. Here a small schema to
+illustrate the global architecture:
+
+![Services](assets/service.png)
 
 # Installation
+
 ## Pre-commit
 ```
 pip install pre-commit
 pre-commit install
 ```
+
 ## Linter JAVA
 
 In order to run checks you must use

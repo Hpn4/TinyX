@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import org.jboss.logging.Logger;
 
+/** Handle the assignment of media to a post and their deletion */
 @ApplicationScoped
 @Startup
 public class RedisMediaSubscriber extends RedisStreamReader<PostQuery> {
@@ -22,10 +23,16 @@ public class RedisMediaSubscriber extends RedisStreamReader<PostQuery> {
 
   @Inject Logger logger;
 
+  /** Constructor */
   public RedisMediaSubscriber() {
     super();
   }
 
+  /**
+   * Constructor
+   *
+   * @param ds source at which the subscriber should listen*
+   */
   @Inject
   public RedisMediaSubscriber(final ReactiveRedisDataSource ds) {
     // The group is the service/repo name. It will be useful when there will be multiple k8s pods

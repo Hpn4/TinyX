@@ -39,6 +39,12 @@ public class MediaController {
     return mediaService.doesMediaExist(mediaId);
   }
 
+  /**
+   * Looks for a media in the database and returns its data.
+   *
+   * @param mediaId The id of the media to look for.
+   * @return the InputStream (the data) of the media
+   */
   @GET
   @Path("/media/get/{mediaId}")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)

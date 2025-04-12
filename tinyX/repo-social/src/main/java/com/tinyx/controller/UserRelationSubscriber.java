@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Read a redis stream of UserRelationQuery */
 @Startup
 @ApplicationScoped
 public class UserRelationSubscriber extends RedisStreamReader<UserRelationsQuery> {
@@ -26,6 +27,12 @@ public class UserRelationSubscriber extends RedisStreamReader<UserRelationsQuery
     super(ds, UserRelationsQuery.class, "repo-social", RedisChannel.SOCIAL);
   }
 
+  /**
+   * Catches user relation related queries to keep track of which user is following or blocking
+   * which user. Can also undo those relationships by unfollowing or unblocking users.
+   *
+   * @param queries user relation queries
+   */
   @Override
   public void process(List<UserRelationsQuery> queries) {
     List<UserRelationsQuery> blocks = new ArrayList<>();

@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  labels:
+    app: tinyx
+    module: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: tinyx
+      module: mongodb
+  replicas: 1
+  serviceName: "mongodb"
+  template:
+    metadata:
+      labels:
+        app: tinyx
+        module: mongodb
+    spec:
+      imagePullSecrets:
+      - name: tinyx-pull-secret
+      containers:
+      - name: mongodb
+        image: reg.undercloud.cri.epita.fr/docker/mongo
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodb-data
+          mountPath: /data/db
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d/
+        envFrom:
+          - configMapRef:
+              name: common-env # Has MONGODB_DATABASE
+          - secretRef:
+              name: tinyx-mongodb-credentials
+        env:
+          - name: MONGO_INITDB_DATABASE
+            value: "Tinyx" # IS USEFUL: allows the init.js to work properly in the Tinyx database.
+      volumes:
+        - name: init-script
+          configMap:
+            name: mongodb-initdb
+
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

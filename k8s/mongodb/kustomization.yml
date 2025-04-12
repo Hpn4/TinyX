@@ -1,0 +1,11 @@
+---
+kind: Kustomization
+
+resources:
+  - statefulset.yml
+  - service.yml
+
+configMapGenerator:
+  - name: mongodb-initdb
+    files:
+      - init.js

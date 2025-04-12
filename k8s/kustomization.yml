@@ -1,0 +1,27 @@
+---
+kind: Kustomization
+namespace: tinyx
+
+resources:
+  - configmap.yml
+  - namespace.yml
+  - secrets.yml
+  - mongodb
+  - redis
+  - tinyx-post
+  - tinyx-user
+  - tinyx-media
+  - tinyx-social
+  - tinyx-search
+  - tinyx-user-timeline
+  - tinyx-home-timeline
+
+images:
+  - name: reg.undercloud.cri.epita.fr/docker/mongo
+    newTag: 7.0.5
+  - name: reg.undercloud.cri.epita.fr/docker/redis
+    newTag: 7.4.2-alpine
+  - name: reg.undercloud.cri.epita.fr/docker/neo4j
+    newTag: "3.5"
+  - name: reg.undercloud.cri.epita.fr/docker/elasticsearch
+    newTag: 8.8.1

@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  labels:
+    app: tinyx
+    module: redis
+spec:
+  selector:
+    matchLabels:
+      app: tinyx
+      module: redis
+  replicas: 1
+  serviceName: "redis"
+  template:
+    metadata:
+      labels:
+        app: tinyx
+        module: redis
+    spec:
+      imagePullSecrets:
+      - name: tinyx-pull-secret
+      containers:
+      - name: redis
+        image: reg.undercloud.cri.epita.fr/docker/redis
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

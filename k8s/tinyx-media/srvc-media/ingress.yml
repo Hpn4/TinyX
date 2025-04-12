@@ -1,0 +1,17 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: srvc-media-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          - path: /media
+            pathType: Prefix
+            backend:
+              service:
+                name: srvc-media-service
+                port:
+                  number: 8080

@@ -62,16 +62,15 @@ public class PostTestUtils {
   }
 
   public void assertPostsArePresent(List<PostQuery> expectedPosts, List<PostEntity> actualPosts) {
+    List<PostContract> postContract = expectedPosts.stream().map(p -> p.post).toList();
     List<PostEntity> expectedPostsEntities =
-        expectedPosts.stream()
-            .map(p -> postContractToPostEntityConverter.converter(p.post))
-            .toList();
+        postContractToPostEntityConverter.convert(postContract);
     for (PostEntity p : expectedPostsEntities) {
       Assertions.assertTrue(actualPosts.stream().anyMatch(p::equals));
     }
   }
 
-  public void assertDeletetionOfPostsSuccess(
+  public void assertDeletionOfPostsSuccess(
       List<PostQuery> createdPosts, List<PostEntity> actualPosts) {
     for (int i = 0; i < 10; i++) {
       PostQuery pq = createdPosts.get(i);

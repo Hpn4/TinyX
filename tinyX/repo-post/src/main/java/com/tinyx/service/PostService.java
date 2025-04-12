@@ -17,7 +17,8 @@ public class PostService {
   @Inject Logger log;
 
   public void createPost(List<PostContract> posts) {
-    List<PostEntity> postEntities = postContractToPostEntityConverter.converter(posts);
+    List<PostEntity> postEntities = postContractToPostEntityConverter.convert(posts);
+
     postRepository.createPost(postEntities);
   }
 

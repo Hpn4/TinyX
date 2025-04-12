@@ -86,7 +86,7 @@ public class RepoMediaTests {
       List<PostQuery> posts =
           postUtils.randomPostQueries(2); // Add 2 posts, one with the media and one without
       posts.get(1).post.mediaId = mediaId;
-      redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+      redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
       List<UUID> linkedPosts = mediaRepository.getPosts(mediaId);
       assertEquals(1, linkedPosts.size(), "Expected a post to be linked");
@@ -108,7 +108,7 @@ public class RepoMediaTests {
       // Add 5 posts, all of them with the media Id
       List<PostQuery> posts =
           postUtils.randomPostQueries(5).stream().peek(q -> q.post.mediaId = mediaId).toList();
-      redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+      redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
       List<UUID> linkedPosts = mediaRepository.getPosts(mediaId);
       assertEquals(5, linkedPosts.size(), "Expected 5 posts to be linked");
@@ -136,7 +136,7 @@ public class RepoMediaTests {
       posts.get(1).post.mediaId = mediaOne; // posts[1] and posts[3] share mediaOne
       posts.get(2).post.mediaId = mediaTwo;
       posts.get(3).post.mediaId = mediaOne;
-      redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+      redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
       List<UUID> linkedPostsOne = mediaRepository.getPosts(mediaOne);
       assertEquals(2, linkedPostsOne.size(), "Expected mediaOne to be linked with 2 posts");
@@ -167,10 +167,10 @@ public class RepoMediaTests {
       List<PostQuery> posts =
           postUtils.randomPostQueries(2); // Add 2 posts, one with the media and one without
       posts.get(1).post.mediaId = mediaId;
-      redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+      redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
       posts = posts.stream().peek(q -> q.operation = PostQuery.Operation.DELETE).toList();
-      redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+      redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
       assertNull(
           mediaRepository.getMedia(mediaId), "Expected media to be deleted when its post was");
@@ -188,17 +188,17 @@ public class RepoMediaTests {
       // Add 5 posts, all of them with the media Id
       List<PostQuery> posts =
           postUtils.randomPostQueries(5).stream().peek(q -> q.post.mediaId = mediaId).toList();
-      redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+      redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
       posts = posts.stream().peek(q -> q.operation = PostQuery.Operation.DELETE).toList();
 
-      redisUtils.PostOne(RedisChannel.POST, posts.get(0), PostQuery.class);
+      redisUtils.postOne(RedisChannel.POST, posts.get(0), PostQuery.class);
       Thread.sleep(100);
       assertNotNull(
           mediaRepository.getMedia(mediaId),
           "Expected media to still be there after one of its posts was deleted");
 
-      redisUtils.PostManyThenWait(RedisChannel.POST, posts, PostQuery.class);
+      redisUtils.postManyThenWait(RedisChannel.POST, posts, PostQuery.class);
 
       assertNull(
           mediaRepository.getMedia(mediaId),

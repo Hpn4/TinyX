@@ -17,7 +17,7 @@ public class MongoTestUtils {
   private int TIME_BETWEEN_RETRIES = 100;
   private int NUMBER_OF_RETRIES = 10;
 
-  public <E, T> void TestFind(
+  public <E, T> void testFind(
       String field, List<T> values, boolean unique, MongoCollection<E> collection)
       throws NotFoundException, DuplicateKeyException, InterruptedException {
     Thread.sleep(TIME_SETUP);
@@ -27,7 +27,7 @@ public class MongoTestUtils {
     for (int j = 0; j < values.size(); j++) {
       T value = values.get(j);
 
-      List<E> result = mongoUtils.Find(field, Collections.singletonList(value), collection);
+      List<E> result = mongoUtils.find(field, Collections.singletonList(value), collection);
 
       if (result.isEmpty()) {
         if (tries == NUMBER_OF_RETRIES)

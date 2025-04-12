@@ -59,7 +59,7 @@ public class RepoHomeTimelineTests {
 
     redisUtils.PostMany(RedisChannel.USER, duplicateQueries, UserQuery.class);
 
-    mongoTestUtils.TestFind(
+    mongoTestUtils.testFind(
         "_id", originalQueries.stream().map(q -> q.user.id).toList(), true, collection);
   }
 
@@ -71,7 +71,7 @@ public class RepoHomeTimelineTests {
       List<UserRelationsQuery> rQueries,
       BiPredicate<HomeTimelineMongoEntity, UserRelationsQuery> predicate) {
     List<HomeTimelineMongoEntity> found =
-        mongoUtils.Find(
+        mongoUtils.find(
             "_id",
             rQueries.stream().map(rq -> rq.srcUserId).toList(),
             repository.mongoCollection());
@@ -92,7 +92,7 @@ public class RepoHomeTimelineTests {
     List<UserQuery> userQueries = userTestUtils.randomUserCreationQueries(nbUsers);
     redisUtils.PostMany(RedisChannel.USER, userQueries, UserQuery.class);
 
-    mongoTestUtils.TestFind(
+    mongoTestUtils.testFind(
         "_id", userQueries.stream().map(q -> q.user.id).toList(), true, collection);
 
     logger.info("Creation passed.");

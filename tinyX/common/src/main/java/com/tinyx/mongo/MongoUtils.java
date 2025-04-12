@@ -55,7 +55,7 @@ public class MongoUtils {
     errorHandling.putIfAbsent(BWError.MODIFICATIONS_MISSING, BWEAction.IGNORE);
   }
 
-  public <T> Optional<BulkWriteResult> BulkWriteOperations(
+  public <T> Optional<BulkWriteResult> bulkWriteOperations(
       List<WriteModel<T>> operations,
       MongoCollection<T> collection,
       Map<BWError, BWEAction> errorHandling) {
@@ -105,19 +105,19 @@ public class MongoUtils {
     return Optional.of(result);
   }
 
-  public <T> Optional<BulkWriteResult> BulkWriteOperations(
+  public <T> Optional<BulkWriteResult> bulkWriteOperations(
       List<WriteModel<T>> operations, MongoCollection<T> collection) {
-    return BulkWriteOperations(operations, collection, new HashMap<>());
+    return bulkWriteOperations(operations, collection, new HashMap<>());
   }
 
-  public <T> Optional<BulkWriteResult> Insert(Stream<T> elements, MongoCollection<T> collection) {
-    return BulkWriteOperations(
+  public <T> Optional<BulkWriteResult> insert(Stream<T> elements, MongoCollection<T> collection) {
+    return bulkWriteOperations(
         elements.map(e -> (WriteModel<T>) new InsertOneModel<T>(e)).toList(), collection);
   }
 
-  public <T> Optional<BulkWriteResult> Insert(
+  public <T> Optional<BulkWriteResult> insert(
       Stream<T> elements, MongoCollection<T> collection, Map<BWError, BWEAction> errorHandling) {
-    return BulkWriteOperations(
+    return bulkWriteOperations(
         elements.map(e -> (WriteModel<T>) new InsertOneModel<T>(e)).toList(),
         collection,
         errorHandling);
@@ -125,11 +125,11 @@ public class MongoUtils {
 
   public <T, V> Optional<BulkWriteResult> Remove(
       String field, List<V> values, MongoCollection<T> collection) {
-    return BulkWriteOperations(
+    return bulkWriteOperations(
         List.of(new DeleteManyModel<T>(Filters.in(field, values))), collection);
   }
 
-  public <E, T> List<E> Find(String field, List<T> values, MongoCollection<E> collection) {
+  public <E, T> List<E> find(String field, List<T> values, MongoCollection<E> collection) {
     return collection.find(Filters.in(field, values)).into(new ArrayList<>());
   }
 }

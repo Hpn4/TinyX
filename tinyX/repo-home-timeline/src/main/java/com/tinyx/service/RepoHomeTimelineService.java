@@ -27,7 +27,7 @@ public class RepoHomeTimelineService {
    * @param users The users' UUIDs to add.
    */
   public void initializeUsersHomeTimelines(List<UUID> users) {
-    mongoUtils.Insert(
+    mongoUtils.insert(
         users.stream().map(u -> new HomeTimelineMongoEntity(u, new ArrayList<>())),
         repository.mongoCollection());
   }
@@ -61,7 +61,7 @@ public class RepoHomeTimelineService {
       operations.add(new UpdateOneModel<>(filter, update));
     }
 
-    mongoUtils.BulkWriteOperations(operations, repository.mongoCollection());
+    mongoUtils.bulkWriteOperations(operations, repository.mongoCollection());
   }
 
   /**

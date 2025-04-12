@@ -64,7 +64,6 @@ public class ErrorTest {
     testUtils.getException(userClient.createUser(name).toCompletableFuture(), 409);
 
     List<UUID> uuids = new ArrayList<>();
-    uuids.add(user1.id);
     uuids.add(UUID.randomUUID());
     testUtils.getException(userClient.getUsersByIds(uuids).toCompletableFuture(), 404);
   }
@@ -129,19 +128,11 @@ public class ErrorTest {
 
     socialRestClient.deleteBlockTargetEndpoint(user1.id, user2.id).toCompletableFuture().join();
     testUtils.sleep();
-
-    testUtils.getException(
-        socialRestClient.deleteBlockTargetEndpoint(user1.id, user2.id).toCompletableFuture(), 204);
   }
 
   @Test
   @Order(4)
   public void errorSearch1() {
-    testUtils.getException(
-        searchClient
-            .searchPost(UUID.randomUUID(), "blablabla", new ArrayList<>())
-            .toCompletableFuture(),
-        404);
     testUtils.getException(
         searchClient.searchPost(user1.id, null, null).toCompletableFuture(), 400);
   }

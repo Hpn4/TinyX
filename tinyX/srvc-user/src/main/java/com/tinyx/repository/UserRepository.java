@@ -29,6 +29,12 @@ public class UserRepository implements PanacheMongoRepositoryBase<UserEntity, UU
     collection.createIndex(Indexes.ascending("userName"), options);
   }
 
+  /**
+   * Finds a user by their username.
+   *
+   * @param userName The username of the user to be found.
+   * @return Entity of user found (empty if not found).
+   */
   public Optional<UserEntity> findByName(String userName) {
     return find("userName = ?1", userName).firstResultOptional();
   }

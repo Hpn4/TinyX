@@ -12,8 +12,15 @@ public class UserTimelineEntity {
 
   public List<UserTimelinePostEntry> posts;
 
+  /** Default constructor for UserTimelineEntity. */
   public UserTimelineEntity() {}
 
+  /**
+   * Constructs a new UserTimelineEntity with the specified ID and list of posts.
+   *
+   * @param id The unique identifier of the user timeline.
+   * @param posts A list of UserTimelinePostEntry representing the posts in the user's timeline.
+   */
   public UserTimelineEntity(UUID id, List<UserTimelinePostEntry> posts) {
     this.id = id;
     this.posts = posts;

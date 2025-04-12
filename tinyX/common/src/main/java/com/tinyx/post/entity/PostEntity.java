@@ -63,6 +63,12 @@ public class PostEntity {
         + '}';
   }
 
+  /**
+   * Compares this PostEntity object to another object for equality.
+   *
+   * @param o The object to compare this PostEntity to.
+   * @return true if the two objects are considered equal, false otherwise.
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

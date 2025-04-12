@@ -13,6 +13,14 @@ public class SocialPublisher {
 
   @Inject RedisPublisherFactory redisPublisherFactory;
 
+  /**
+   * For notify others service for a follow/unfollow or block/unblock via redis.
+   *
+   * @param operation the type of operation performed.
+   * @param userId ID of user performing action.
+   * @param postId ID of user receiving action.
+   * @param timestamp the date and time when action was performed.
+   */
   public void publish(
       UserRelationsQuery.Operation operation, UUID userId, UUID postId, ZonedDateTime timestamp) {
     final UserRelationsQuery query = new UserRelationsQuery(operation, userId, postId, timestamp);

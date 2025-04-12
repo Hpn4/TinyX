@@ -27,6 +27,11 @@ public class BlockUsersSubscriber extends RedisStreamReader<UserRelationsQuery> 
     super(ds, UserRelationsQuery.class, "repo-user-timeline", RedisChannel.SOCIAL);
   }
 
+  /**
+   * Processes a list of user relations queries, filtering and handling only the BLOCK operations.
+   *
+   * @param data The list of user relations queries to process.
+   */
   @Override
   public void process(List<UserRelationsQuery> data) {
     // Keep only BLOCK queries

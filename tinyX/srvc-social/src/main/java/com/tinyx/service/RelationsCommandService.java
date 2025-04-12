@@ -43,6 +43,12 @@ public class RelationsCommandService {
     return bulkReadStatus == LookupRepository.BulkReadStatus.BLOCKED;
   }
 
+  /**
+   * Retrieves the auhorID of the given post.
+   *
+   * @param postId The UUID of the post to get the userID.
+   * @return The UUID of the user.
+   */
   public UUID getUserIdFromPost(final UUID postId) {
     if (postId == null) ErrorCodes.WRONG_UUID.throwError("postId");
 
@@ -52,6 +58,12 @@ public class RelationsCommandService {
     return userId;
   }
 
+  /**
+   * Retrieves the auhorID of the given post.
+   *
+   * @param postId The UUID of the post to get the userID.
+   * @return The UUID of the user.
+   */
   public Integer likePost(UUID userId, UUID postId) {
     final UUID postOwnerId = getUserIdFromPost(postId);
 
@@ -67,6 +79,13 @@ public class RelationsCommandService {
     return lookupRepository.getNumberOfLike(postId);
   }
 
+  /**
+   * Removes a like from a post.
+   *
+   * @param userId The UUID of the user unliking the post.
+   * @param postId The UUID of the post being unliked.
+   * @return The updated number of likes for the post.
+   */
   public Integer unlikePost(UUID userId, UUID postId) {
     final UUID postOwnerId = getUserIdFromPost(postId);
 
@@ -82,6 +101,12 @@ public class RelationsCommandService {
     return lookupRepository.getNumberOfLike(postId);
   }
 
+  /**
+   * Follows a user and publishes the follow relation.
+   *
+   * @param userId The UUID of the user following the target user.
+   * @param targetUserId The UUID of the user to be followed.
+   */
   public void followUser(UUID userId, UUID targetUserId) {
     if (blockRelations(userId, targetUserId)) ErrorCodes.BLOCKED_USER.throwError(targetUserId);
 
@@ -94,6 +119,12 @@ public class RelationsCommandService {
         UserRelationsQuery.Operation.FOLLOW, userId, targetUserId, ZonedDateTime.now());
   }
 
+  /**
+   * Unfollows a user and publishes the unfollow relation.
+   *
+   * @param userId The UUID of the user unfollowing the target user.
+   * @param targetUserId The UUID of the user to be unfollowed.
+   */
   public void unfollowUser(UUID userId, UUID targetUserId) {
     if (blockRelations(userId, targetUserId)) ErrorCodes.BLOCKED_USER.throwError(targetUserId);
 
@@ -106,6 +137,12 @@ public class RelationsCommandService {
         UserRelationsQuery.Operation.UNFOLLOW, userId, targetUserId, ZonedDateTime.now());
   }
 
+  /**
+   * Blocks a user and publishes the block relation.
+   *
+   * @param userId The UUID of the user blocking the target user.
+   * @param targetUserId The UUID of the user to be blocked.
+   */
   public void blockUser(UUID userId, UUID targetUserId) {
     if (blockRelations(userId, targetUserId))
       ErrorCodes.ALREADY_BLOCKED_USER.throwError(targetUserId);
@@ -116,6 +153,12 @@ public class RelationsCommandService {
         UserRelationsQuery.Operation.BLOCK, userId, targetUserId, ZonedDateTime.now());
   }
 
+  /**
+   * Unblock a user and publishes the unblock relation.
+   *
+   * @param userId The UUID of the user unblocking the target user.
+   * @param targetUserId The UUID of the user to be unblocked.
+   */
   public void unblockUser(UUID userId, UUID targetUserId) {
     if (!blockRelations(userId, targetUserId)) ErrorCodes.NO_BLOCKED_USER.throwError(targetUserId);
 

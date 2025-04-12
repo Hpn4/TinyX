@@ -12,6 +12,14 @@ import java.util.UUID;
  */
 @ApplicationScoped
 public class CreatePostRequestToPostContractConverter {
+
+  /**
+   * Converts a CreatePostRequest into a PostContract.
+   *
+   * @param contract The CreatePostRequest to convert.
+   * @param userId The ID of the user creating the post.
+   * @return A PostContract representing the new post.
+   */
   public PostContract converter(CreatePostRequest contract, UUID userId) {
     PostContract postContract =
         new PostContract(

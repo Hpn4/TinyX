@@ -1,0 +1,61 @@
+# Service: `srvc-search`
+## Description
+This service is used by a user to search for created posts by using a text phrase and/or a list of hashtags that were not posted by blocked users.
+
+## Exposure
+**This service is exposed externally.**  
+You can interact with its REST API through the following Swagger interface:  
+**Swagger UI:** `http://localhost:8084/q/swagger-ui`
+
+
+## Environment Variables
+
+**Quarkus Configuration**
+```
+HTTP_PORT:8084
+```
+
+**Swagger UI**
+```
+quarkus.swagger-ui.theme=original
+quarkus.log.console.json=false
+quarkus.console.color=true
+quarkus.console.enabled=false
+```
+
+**Redis and ElascticSearch configuration**
+```
+ELASTIC_HOST:localhost
+ELASTIC_PORT:9200
+REDIS_CONNECTION_STRING:redis
+REDIS_HOST:localhost
+REDIS_PORT:6379
+ELASTIC_INDEX:posts
+```
+
+**External Services URLs**
+```
+REST_HOST:localhost
+REST_PORT:8085
+```
+
+## Database
+It's a ElasticSearch database with the index "posts" that memorize created posts and the elements necessary to search them. For this purpose, a post is represented by a object containing it's id, content and a list of all the hashtags present in the post's content.
+
+
+## Struture
+```bash
+srvc-search/
+├── src/
+│   └── main/
+│       ├── java/com/tinyx/
+│       │   ├── controller/          # REST endpoints
+│       │   ├── repository/          # Data access (ElasticSearch)
+│       │   └── service/             # Core logic
+│       └── resources/
+│           └── application.properties
+├── Dockerfile
+├── pom.xml
+└── README.md
+```
+

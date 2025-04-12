@@ -26,6 +26,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+mvn
 
 # External tool builders
 .externalToolBuilders/
@@ -199,3 +200,7 @@ README.html
 *.iml
 .idea
 .exercism
+.venv
+__pycache__
+swaggers/
+openapi/api/

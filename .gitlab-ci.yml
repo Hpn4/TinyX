@@ -1,0 +1,121 @@
+image: maven:latest
+
+stages:
+  - deploy
+  - lint
+  - build-common
+  - compile
+  - test
+
+cache:
+  paths:
+    - $CI_PROJECT_DIR/.m2/repository/
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^build-.+$/'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+variables:
+  MAVEN_CLI_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  DOCKER_CONFIG: "/kaniko/.docker/"
+
+deploy:
+  stage: deploy
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^build-.+$/
+  parallel:
+    matrix:
+      - SERVICE: ["repo-media", "repo-search", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  script:
+    - echo "${CI_COMMIT_TAG#build-}"
+    - mkdir -p /kaniko/.docker
+    - >
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}"
+      > /kaniko/.docker/config.json
+    - >
+      /kaniko/executor
+      --context "tinyX"
+      --dockerfile "tinyX/$SERVICE/Dockerfile"
+      --destination "$CI_REGISTRY_IMAGE/$SERVICE:${CI_COMMIT_TAG#build-}"
+
+lint:
+  stage: lint
+  parallel:
+    matrix:
+      - SERVICE: ["common", "repo-search", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
+  script:
+    - cd tinyX
+    - mvn -pl $SERVICE $MAVEN_CLI_OPTS spotless:check
+
+build-common:
+  stage: build-common
+  script:
+    - cd tinyX
+    - mvn -pl common $MAVEN_CLI_OPTS clean install -DskipTests
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
+  needs:
+    - lint
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/.m2/repository
+    expire_in: 1h
+
+compile:
+  stage: compile
+  parallel:
+    matrix:
+      - SERVICE: ["common", "repo-search", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
+  needs:
+    - build-common
+  script:
+    - cd tinyX
+    - mvn -pl $SERVICE $MAVEN_CLI_OPTS compile -am
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/.m2/repository
+    expire_in: 1h
+
+test:
+  stage: test
+  services:
+    - name: mongo:latest
+      alias: mongo
+    - name: redis:alpine
+      alias: redis
+    - name: neo4j:3.5
+      alias: neo4j
+    - name: registry.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/elastic
+      alias: elastic
+      command:
+        - /bin/bash
+        - -c
+        - echo -Xms256m >> /usr/share/elasticsearch/config/jvm.options && echo -Xmx256m >> /usr/share/elasticsearch/config/jvm.options && /usr/local/bin/docker-entrypoint.sh elasticsearch -Ediscovery.type=single-node
+  variables:
+    MONGO_INITDB_ROOT_USERNAME: admin
+    MONGO_INITDB_ROOT_PASSWORD: admin
+    MONGO_INITDB_DATABASE: Tinyx
+    NEO4J_AUTH: "none"
+    ES_JAVA_OPTS: "-Des.discovery.type=single-node -Des.bootstrap.system_call_filter=false -Des.network.host=127.0.0.1 -Xms512m -Xmx512m"
+    MONGODB_CONNECTION_STRING: "mongodb://admin:admin@mongo:27017/?authSource=admin&retryWrites=true&w=majority&uuidRepresentation=STANDARD"
+    REDIS_CONNECTION_STRING: "redis://redis:6379"
+    NEO4J_CONNECTION_STRING: "bolt://neo4j:7687"
+    ELASTIC_CONNECTION_STRING: "elastic:9200"
+  parallel:
+    matrix:
+      - SERVICE: ["common", "repo-search", "repo-media", "repo-post", "repo-social", "repo-home-timeline", "repo-user-timeline", "srvc-media", "srvc-user", "srvc-post", "srvc-social", "srvc-home-timeline", "srvc-search", "srvc-user-timeline"]
+  rules:
+    - if: $CI_COMMIT_TAG !~ /^build-.+$/
+  needs:
+    - compile
+  script:
+    - cd tinyX
+    - mvn -pl $SERVICE $MAVEN_CLI_OPTS test -am

@@ -28,6 +28,11 @@ public class UsersSubscriber extends RedisStreamReader<UserQuery> {
     super(ds, UserQuery.class, "repo-user-timeline", RedisChannel.USER);
   }
 
+  /**
+   * Processes a list of user queries, filtering and extracting the user IDs from CREATE operations.
+   *
+   * @param data The list of user queries to process.
+   */
   @Override
   public void process(List<UserQuery> data) {
     // Keep only CREATE queries and extract the userId

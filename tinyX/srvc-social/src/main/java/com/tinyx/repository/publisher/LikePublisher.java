@@ -13,6 +13,14 @@ public class LikePublisher {
 
   @Inject RedisPublisherFactory redisPublisherFactory;
 
+  /**
+   * For notify others service for a like/unlike via redis.
+   *
+   * @param operation the type of operation performed.
+   * @param srcId ID of user performing like/unlike.
+   * @param destId ID of user receiving like/unlike.
+   * @param timestamp the date and time when like/unlike was performed.
+   */
   public void publish(
       LikePostQuery.Operation operation, UUID srcId, UUID destId, ZonedDateTime timestamp) {
     final LikePostQuery userRelationsQuery = new LikePostQuery(operation, srcId, destId, timestamp);

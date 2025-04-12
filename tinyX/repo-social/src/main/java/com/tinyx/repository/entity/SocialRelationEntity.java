@@ -3,6 +3,7 @@ package com.tinyx.repository.entity;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+/** Class that represent a like, block or follow relation in the Neo4j relation. */
 public class SocialRelationEntity {
   public UUID srcId;
   public UUID targetId;

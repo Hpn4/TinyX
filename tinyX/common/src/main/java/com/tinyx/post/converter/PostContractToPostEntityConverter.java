@@ -10,6 +10,13 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PostContractToPostEntityConverter {
+
+  /**
+   * Converts a PostContract object into a PostEntity object.
+   *
+   * @param contract The PostContract object to be converted.
+   * @return The resulting PostEntity object, populated with values from the given contract.
+   */
   public PostEntity convert(PostContract contract) {
     return new PostEntity(
         contract.id,
@@ -22,6 +29,13 @@ public class PostContractToPostEntityConverter {
         new ArrayList<UUID>());
   }
 
+  /**
+   * Converts a list of PostContract objects into a list of PostEntity objects.
+   *
+   * @param postsContracts The list of PostContract objects to be converted.
+   * @return A list of PostEntity objects, each populated with values from the respective
+   *     PostContract.
+   */
   public List<PostEntity> convert(List<PostContract> postsContracts) {
     return postsContracts.stream().map(this::convert).collect(Collectors.toList());
   }

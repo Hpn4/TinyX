@@ -44,6 +44,11 @@ public class PostQueryToSearchPostEntity {
         postContract.id, postContract.content, extractHashtags(postContract.content));
   }
 
+  /**
+   * Convert multiple post query into a list of SearchPostEntity
+   *
+   * @param queries list of post query to convert.
+   */
   public List<SearchPostEntity> convert(final List<PostQuery> queries) {
     return queries.stream().map(this::convert).collect(Collectors.toList());
   }

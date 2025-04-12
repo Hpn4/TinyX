@@ -25,6 +25,12 @@ public class UserQuery {
 
   public UserQuery() {}
 
+  /**
+   * Constructs a new UserQuery with the specified operation and user data.
+   *
+   * @param operation The type of operation to be performed on the user.
+   * @param user The user data to be included in the query.
+   */
   public UserQuery(Operation operation, UserContract user) {
     this.operation = operation;
     this.user = user;

@@ -44,6 +44,11 @@ public class MediaRepository {
   String metadataPostIdsPath = "metadata.postIds";
   String postIdsPath = "postIds";
 
+  /**
+   * Initalize the MongoDB database and the bucket. The bucket creates two collections,
+   * bucketName.files and bucketName.chunks. The files collection stores the metadata of a media,
+   * and the chunks stores the raw data.
+   */
   // Somehow doesn't work if placed in constructor
   @PostConstruct
   public void init() {

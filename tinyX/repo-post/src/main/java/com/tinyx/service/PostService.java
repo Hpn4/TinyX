@@ -16,6 +16,11 @@ public class PostService {
 
   @Inject Logger log;
 
+  /**
+   * Creates posts in the repository from the provided list of post contracts.
+   *
+   * @param posts The list of posts to be created.
+   */
   public void createPost(List<PostContract> posts) {
     List<PostEntity> postEntities = postContractToPostEntityConverter.convert(posts);
 

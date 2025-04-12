@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elastic
+  labels:
+    app: tinyx
+    module: elastic
+spec:
+  selector:
+    matchLabels:
+      app: tinyx
+      module: elastic
+  replicas: 1
+  serviceName: "elastic"
+  template:
+    metadata:
+      labels:
+        app: tinyx
+        module: elastic
+    spec:
+      imagePullSecrets:
+      - name: tinyx-pull-secret
+      containers:
+      - name: elastic
+        image: reg.undercloud.cri.epita.fr/docker/elasticsearch
+        ports:
+        - containerPort: 9200
+        - containerPort: 9300 # Another exposed port, comes from the docker-compose of tinyx
+        volumeMounts:
+        - name: elastic-data
+          mountPath: /data/db
+        env:
+          - name: xpack.security.enabled # Same as neo4j, these come from the docker-compose of tinyx
+            value: "false"
+          - name: discovery.type
+            value: single-node
+
+  volumeClaimTemplates:
+    - metadata:
+        name: elastic-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

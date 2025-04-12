@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/** Read RedisStream for post queries */
 @Startup
 @ApplicationScoped
 public class SearchPostSubscriber extends RedisStreamReader<PostQuery> {
@@ -28,6 +29,11 @@ public class SearchPostSubscriber extends RedisStreamReader<PostQuery> {
     super(ds, PostQuery.class, "repo-search", RedisChannel.POST);
   }
 
+  /**
+   * This function catches post queries in order to index and delete post.
+   *
+   * @param queries The post queries to handle.
+   */
   @Override
   public void process(final List<PostQuery> queries) {
     final List<PostQuery> createPosts = new ArrayList<>();

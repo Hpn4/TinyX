@@ -53,12 +53,24 @@ public class PostService {
     return user.blockedUsers != null && user.blockedUsers.contains(parentPost.userId);
   }
 
+  /**
+   * Retrieves a post entity by its UUID.
+   *
+   * @param postUUID The postID to retrieve.
+   * @return The PostEntity associated with the given UUID.
+   */
   private PostEntity getPostEntity(UUID postUUID) {
     return postServiceRepository
         .findPost(postUUID)
         .orElseThrow(ErrorCodes.POST_NOT_FOUND.asSupplier(postUUID));
   }
 
+  /**
+   * Retrieves a user contract by their UUID.
+   *
+   * @param userId The userID to retrieve.
+   * @return The UserContract associated with the given UUID.
+   */
   private UserContract getUser(UUID userId) {
     try {
       return userRestClient.getUserById(userId).readEntity(UserContract.class);
@@ -72,6 +84,12 @@ public class PostService {
     return null;
   }
 
+  /**
+   * Checks if the user and post UUIDs are valid.
+   *
+   * @param userId The userId to check.
+   * @param postId The postId to check.
+   */
   private void isUserOrPostExist(UUID userId, UUID postId) {
     if (userId == null) {
       ErrorCodes.WRONG_UUID.throwError("userId");
@@ -84,7 +102,7 @@ public class PostService {
   /**
    * Create a new post
    *
-   * @param userUUID: user UUID
+   * @param userUUID: user UUID of the user creating the post.
    * @param post: http contract from controller
    */
   public void newPost(UUID userUUID, CreatePostRequest post) {
@@ -124,7 +142,7 @@ public class PostService {
   /**
    * Delete a post
    *
-   * @param userUUID: user UUID
+   * @param userUUID: user UUID of the user deleting the post.
    * @param postUUID: ID of the post
    */
   public void deletePost(UUID userUUID, UUID postUUID) {

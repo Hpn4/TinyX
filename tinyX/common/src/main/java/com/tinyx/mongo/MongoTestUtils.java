@@ -17,6 +17,14 @@ public class MongoTestUtils {
   private int TIME_BETWEEN_RETRIES = 100;
   private int NUMBER_OF_RETRIES = 10;
 
+  /**
+   * Tests if elements with given field values exist in the Mongo collection.
+   *
+   * @param field The field to filter on.
+   * @param values The list of values to search for.
+   * @param unique True if each value should match only one element.
+   * @param collection The MongoDB collection to search.
+   */
   public <E, T> void testFind(
       String field, List<T> values, boolean unique, MongoCollection<E> collection)
       throws NotFoundException, DuplicateKeyException, InterruptedException {

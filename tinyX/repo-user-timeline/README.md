@@ -1,13 +1,13 @@
 # **Service `repo-user-timeline`**
 
 ## Description
-`repo-user-timeline` is a microservice that manages user's timeline the system. He is in charge of creating, deleting and changing posts in the user's timeline by interacting with MongoDB and Redis.
+`repo-user-timeline` is a microservice that manages users' timelines in the system. It is in charge of creating, deleting and changing posts in the user's timeline by interacting with MongoDB and Redis.
 
 ## Exposure
 **This service is not exposed externally.**  
 
 ## Redis Listener
-`repo-user-timeline` service listens events on Redis for these events:
+The `repo-user-timeline` service listens events on Redis for these events:
 - Create posts in user's timeline
 - Like/Unlike posts in user's timeline
 - Block users

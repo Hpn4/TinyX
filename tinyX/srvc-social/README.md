@@ -2,7 +2,7 @@
 
 ## Description
 `srvc-social` is a microservice that manages the social relationships between users: follow, block, likes of posts, and retrieval of social interactions.
-It encapsulates the business logic related to connections between users and their interactions with content.
+It encapsulates the logic related to connections between users and their interactions with content.
 
 This service is exposed externally, via a REST API documented in Swagger.
 
@@ -12,7 +12,7 @@ You can interact with its REST API through the following Swagger interface:
 **Swagger UI**: `http://localhost:8083/q/swagger-ui`
 
 ## Redis Publisher
-`srvc-social` service publishes events on Redis to notify the following services:
+The `srvc-social` service publishes events on Redis to notify the following services:
 - `repo-social`
 
 The events published include:

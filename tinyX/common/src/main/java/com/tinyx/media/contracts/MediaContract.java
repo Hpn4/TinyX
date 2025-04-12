@@ -19,6 +19,12 @@ public class MediaContract {
 
   public MediaContract() {}
 
+  /**
+   * Constructs a new MediaContract from the specified ID and data stream.
+   *
+   * @param id The mediaID.
+   * @param data The InputStream containing the media data.
+   */
   public MediaContract(UUID id, InputStream data) {
     this.id = id;
     this.data = data;

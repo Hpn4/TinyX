@@ -51,6 +51,10 @@ public abstract class RedisStreamReader<T> {
     STREAM_CONSUMER = STREAM_GROUP + UUID.randomUUID();
   }
 
+  /**
+   * Initializes the consumer for the Redis stream by creating a consumer group and setting up a
+   * listener.
+   */
   @PostConstruct
   public void init() {
     consumer =
@@ -73,11 +77,13 @@ public abstract class RedisStreamReader<T> {
             .with(cancellable -> consumer = cancellable);
   }
 
+  /** Cleans up the consumer by canceling it when the service is destroyed. */
   @PreDestroy
   public void destroy() {
     consumer.cancel();
   }
 
+  /** Creates a listener that consumes messages from a Redis stream as part of a consumer group. */
   private Cancellable createStreamListener() {
     log.info("Creating stream listener");
 
@@ -117,6 +123,11 @@ public abstract class RedisStreamReader<T> {
 
   public abstract void process(List<T> data);
 
+  /**
+   * Processes a list of messages retrieved from a Redis stream and performs an operation on the
+   * payloads. After processing, it returns an array of message IDs to acknowledge the processed
+   * messages.
+   */
   private Uni<String[]> processMessage(List<StreamMessage<String, String, T>> messages) {
     if (messages == null || messages.isEmpty()) return Uni.createFrom().item(new String[0]);
 
@@ -138,6 +149,10 @@ public abstract class RedisStreamReader<T> {
         .replaceWith(messageIds.toArray(String[]::new));
   }
 
+  /**
+   * Acknowledges the processing of messages by sending their IDs to Redis for acknowledgment. If no
+   * IDs are provided, it returns a Uni containing 0 to indicate no acknowledgment was needed.
+   */
   private Uni<Integer> acknowledge(String[] ids) {
     return ids.length > 0 ? this.stream.xack(STREAM, STREAM_GROUP, ids) : Uni.createFrom().item(0);
   }

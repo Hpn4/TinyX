@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: neo4j
+  labels:
+    app: tinyx
+    module: neo4j
+spec:
+  selector:
+    matchLabels:
+      app: tinyx
+      module: neo4j
+  replicas: 1
+  serviceName: "neo4j"
+  template:
+    metadata:
+      labels:
+        app: tinyx
+        module: neo4j
+    spec:
+      imagePullSecrets:
+      - name: tinyx-pull-secret
+      containers:
+      - name: neo4j
+        image: reg.undercloud.cri.epita.fr/docker/neo4j
+        ports:
+        - containerPort: 7687
+        - containerPort: 7474 # The webapp port
+        volumeMounts:
+        - name: neo4j-data
+          mountPath: /data/db
+        envFrom:
+          - configMapRef:
+              name: common-env
+        env:
+          - name: NEO4J_AUTH # These variables come from the docker-compose used in tinyx
+            value: "none"
+          - name: NEO4J_dbms_memory_pagecache_size
+            value: "1G"
+          - name: NEO4J_dbms.memory.heap.initial_size
+            value: "1G"
+          - name: NEO4J_dbms_memory_heap_max__size
+            value: "1G"
+
+  volumeClaimTemplates:
+    - metadata:
+        name: neo4j-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

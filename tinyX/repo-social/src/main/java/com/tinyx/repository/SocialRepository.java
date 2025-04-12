@@ -17,6 +17,12 @@ public class SocialRepository {
 
   @Inject Logger log;
 
+  /**
+   * Execute a query with parameters in order to retrieve a list ids.
+   *
+   * @param query query to execute.
+   * @param parameter parameters to use with the query.
+   */
   protected List<UUID> readUUID(final String query, final Value parameter) {
     try (Session session = neo4jDriver.session()) {
       return session.executeRead(
@@ -34,6 +40,14 @@ public class SocialRepository {
     return new ArrayList<>();
   }
 
+  /**
+   * Safely add or delete nodes from the database using a query.
+   *
+   * @param query query to execute
+   * @param parameters elements to modify
+   * @param message name of the operation done
+   * @param count number of elements to modify
+   */
   protected void safeWrite(
       final String query,
       final Map<String, Object> parameters,
@@ -48,6 +62,11 @@ public class SocialRepository {
     }
   }
 
+  /**
+   * Create Post nodes in the neo4j.
+   *
+   * @param posts list of posts to create
+   */
   public void createPosts(final List<PostEntity> posts) {
     final String query =
         """
@@ -63,6 +82,11 @@ public class SocialRepository {
     safeWrite(query, Map.of("posts", postParams), "create posts", posts.size());
   }
 
+  /**
+   * Delete Post nodes in the neo4j.
+   *
+   * @param posts list of posts to delete
+   */
   public void deletePosts(final List<PostEntity> posts) {
     final String query =
         """
@@ -77,6 +101,11 @@ public class SocialRepository {
     safeWrite(query, Map.of("posts", postParams), "delete posts", posts.size());
   }
 
+  /**
+   * Create User nodes in the neo4j .
+   *
+   * @param ids list of user's id to create
+   */
   public void createUsers(final List<UUID> ids) {
     final String query =
         """
@@ -90,6 +119,29 @@ public class SocialRepository {
     safeWrite(query, Map.of("users", userParams), "create users", ids.size());
   }
 
+  /**
+   * Get the ids of all the users that as like a post.
+   *
+   * @param postId id of the post that the users has liked
+   * @return the list of id of the users that liked the post
+   */
+  public List<UUID> getLikersId(final UUID postId) {
+    final String query =
+        """
+        MATCH (u:User)-[:LIKE]->(:Post {id: $postId})
+        RETURN u.id AS uuid
+        """;
+
+    return readUUID(query, Values.parameters("postId", postId.toString()));
+  }
+
+  /**
+   * get the ids of all the posts from a user that another user has liked
+   *
+   * @param authorId author of the liked posts
+   * @param likerId user that has liked posts from the author
+   * @return The list of ids of the posts authored by the author and liked by the liker
+   */
   public List<UUID> getPostIdsFromUser(final UUID likerId, final UUID authorId) {
     final String query =
         """

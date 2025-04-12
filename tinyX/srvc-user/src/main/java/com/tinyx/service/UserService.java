@@ -32,6 +32,23 @@ public class UserService {
   @Inject UserContractToUserEntityConverter userContractToUserEntityConverter;
   @Inject UserEntityToLightContractConverter userEntityToLightContractConverter;
 
+  /**
+   * Represents the possible operations that can be done on a user in the Mongo USER collection.
+   *
+   * <p>Can be either ADD (adding UUIDs to the list containing blocked users) or DELETE (removing
+   * UUIDs from the list containing blocked users).
+   */
+  public enum UserOperation {
+    ADD,
+    DELETE
+  }
+
+  /**
+   * Creates a new user with the given username.
+   *
+   * @param userName The username of the new user.
+   * @return A Contract representing the created user.
+   */
   public LightUserContract createUser(String userName) {
     UserEntity newUser = new UserEntity(UUID.randomUUID(), userName, ZonedDateTime.now());
     try {
@@ -44,6 +61,12 @@ public class UserService {
     return userEntityToLightContractConverter.convert(newUser);
   }
 
+  /**
+   * Retrieves a user by their username.
+   *
+   * @param userName The username of the user.
+   * @return Contract of the user.
+   */
   public LightUserContract getUserByName(String userName) {
     UserEntity user =
         userRepository
@@ -52,6 +75,12 @@ public class UserService {
     return userEntityToLightContractConverter.convert(user);
   }
 
+  /**
+   * Retrieves a user by their ID.
+   *
+   * @param userId The UUID of the user.
+   * @return Contract of the user.
+   */
   public UserContract getUserById(UUID userId) {
     UserEntity user =
         userRepository
@@ -60,6 +89,12 @@ public class UserService {
     return userEntityToUserContractConverter.convert(user);
   }
 
+  /**
+   * Retrieves a list of users by their UUIDs.
+   *
+   * @param userIds A list of UUIDs of the users to retrieve.
+   * @return Contract of the users.
+   */
   public List<UserContract> getUsersById(List<UUID> userIds) {
     Bson filter = Filters.in("_id", userIds);
     List<UserContract> users =

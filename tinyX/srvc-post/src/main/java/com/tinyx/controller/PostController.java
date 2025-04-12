@@ -22,6 +22,13 @@ public class PostController {
 
   @Inject private PostService postService;
 
+  /**
+   * Creation of a new post by the user.
+   *
+   * @param userId The ID of the user creating the post.
+   * @param post The post data to be created.
+   * @return A Response indicating the result of the post creation.
+   */
   @POST
   @Path("/new")
   @APIResponses({
@@ -38,6 +45,13 @@ public class PostController {
     return Response.ok().build();
   }
 
+  /**
+   * Deletion of a post by the user.
+   *
+   * @param userId The ID of the user deleting the post.
+   * @param postId The ID of the post to be deleted.
+   * @return A Response indicating the result of the post deletion.
+   */
   @DELETE
   @Path("/delete/{postId}")
   @APIResponses({
@@ -70,6 +84,13 @@ public class PostController {
     return Response.ok(postService.getAllPost(postIds, userId)).build();
   }
 
+  /**
+   * Get all posts from a user.
+   *
+   * @param userId The ID of the requesting user.
+   * @param authorId The ID of the user whose posts are being retrieved.
+   * @return A Response containing the list of posts from the specified user.
+   */
   @GET
   @Path("/posts/{authorId}")
   @APIResponses({
@@ -83,6 +104,13 @@ public class PostController {
     return Response.ok(postService.getAllPostsFromUser(authorId, userId)).build();
   }
 
+  /**
+   * Retrieves a specific post by its ID.
+   *
+   * @param userId The ID of the requesting user.
+   * @param postId The ID of the post to get.
+   * @return Response containing the requested post.
+   */
   @GET
   @Path("/post/{postId}")
   @APIResponses({
@@ -96,6 +124,13 @@ public class PostController {
     return Response.ok(postService.getPostById(postId, userId)).build();
   }
 
+  /**
+   * Get replies for a specific post.
+   *
+   * @param userId The ID of the requesting user.
+   * @param postId The ID of the post to retrieve replies for.
+   * @return A Response containing the list of replies for the post.
+   */
   @GET
   @Path("/replies/{postId}")
   @APIResponses({

@@ -27,14 +27,17 @@ public class RelationsSubscriber extends RedisStreamReader<UserRelationsQuery> {
     super(ds, UserRelationsQuery.class, "repo-home-timeline", RedisChannel.SOCIAL);
   }
 
+  /**
+   * Splits the queries depending on the operation, only Follows or Unfollows may affect the
+   * HomeTimeline, others are ignored. Each query operating one of those two will be added to a
+   * newly-created HashMap, as such : followsMap contains as value all newly-following users of the
+   * key user unfollowsMap contains as value all newly-unfollowing users of the key user
+   *
+   * @param data user relation queries to handle
+   */
   @Override
   public void process(List<UserRelationsQuery> data) {
-    /**
-     * Splits the queries depending on the operation, only Follows or Unfollows may affect the
-     * HomeTimeline, others are ignored. Each query operating one of those two will be added to a
-     * newly-created HashMap, as such : followsMap contains as value all newly-following users of
-     * the key user unfollowsMap contains as value all newly-unfollowing users of the key user
-     */
+
     HashMap<UUID, ArrayList<UUID>> followsMap = new HashMap<>();
     HashMap<UUID, ArrayList<UUID>> unfollowsMap = new HashMap<>();
 

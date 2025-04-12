@@ -1,0 +1,6 @@
+---
+kind: Kustomization
+
+resources:
+  - statefulset.yml
+  - service.yml

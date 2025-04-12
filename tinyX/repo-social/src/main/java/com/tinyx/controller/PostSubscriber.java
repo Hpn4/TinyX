@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Read from a redis stream of PostQuery */
 @Startup
 @ApplicationScoped
 public class PostSubscriber extends RedisStreamReader<PostQuery> {
@@ -26,6 +27,11 @@ public class PostSubscriber extends RedisStreamReader<PostQuery> {
     super(ds, PostQuery.class, "repo-social", RedisChannel.POST);
   }
 
+  /**
+   * This function handle the creation and deletion of post in the Neo4j database
+   *
+   * @param queries post queries to handle
+   */
   @Override
   public void process(List<PostQuery> queries) {
     List<PostQuery> creations = new ArrayList<>();

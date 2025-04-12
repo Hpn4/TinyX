@@ -10,6 +10,11 @@ import jakarta.inject.Inject;
 public class PostPublisher {
   @Inject RedisPublisherFactory redisPublisherFactory;
 
+  /**
+   * Publishes a PostQuery to the Redis stream for post-related actions.
+   *
+   * @param postQuery The post query to be published.
+   */
   public void publish(PostQuery postQuery) {
     redisPublisherFactory
         .<PostQuery>createPublisher()

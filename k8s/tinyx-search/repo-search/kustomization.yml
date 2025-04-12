@@ -1,0 +1,11 @@
+---
+kind: Kustomization
+
+resources:
+  - deployment.yml
+
+configMapGenerator:
+  - name: repo-search-env
+    literals:
+      - TRIM_INTERVAL="10m"
+      - CLAIM_INTERVAL="5s"

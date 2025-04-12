@@ -32,6 +32,7 @@ public class MediaRepository {
 
   @Inject Logger logger;
 
+  /** Initialise the database and the GridFSBuckets */
   // Somehow doesn't work if placed in constructor
   @PostConstruct
   public void init() {
@@ -39,6 +40,12 @@ public class MediaRepository {
     bucket = GridFSBuckets.create(db, bucketName);
   }
 
+  /**
+   * Get a media of a specific id from the bucket
+   *
+   * @param mediaId id of the media to retrieve
+   * @return a MediaEntity representing the retrieved media
+   */
   public MediaEntity getMedia(UUID mediaId) {
     try {
       GridFSDownloadStream downloadStream = bucket.openDownloadStream(new BsonBinary(mediaId));
@@ -51,11 +58,23 @@ public class MediaRepository {
     }
   }
 
+  /**
+   * Check if a media exits
+   *
+   * @param mediaId id of the media to check
+   * @return a boolean indicating if the media exist or not
+   */
   public boolean exists(UUID mediaId) {
     GridFSFile file = bucket.find(Filters.eq("_id", mediaId)).first();
     return file != null;
   }
 
+  /**
+   * Made for testing purpose, upload a media in the database
+   *
+   * @param mediaId id of the media to upload
+   * @param media data of the media to upload
+   */
   // Only for test purposes
   public void uploadMediaForTests(UUID mediaId, InputStream media) {
     CompletableFuture.runAsync(
@@ -67,6 +86,11 @@ public class MediaRepository {
         });
   }
 
+  /**
+   * Made for testing purpose, remove a media from the database
+   *
+   * @param mediaId id of the media to delete
+   */
   // Only for test purposes
   public void removeMediaForTests(UUID mediaId) {
     GridFSFile file = bucket.find(Filters.eq("_id", mediaId)).first();

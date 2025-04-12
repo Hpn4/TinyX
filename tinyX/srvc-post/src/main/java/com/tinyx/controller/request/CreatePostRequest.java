@@ -12,6 +12,14 @@ public class CreatePostRequest {
 
   public CreatePostRequest() {}
 
+  /**
+   * Constructs a CreatePostRequest with the given parameters.
+   *
+   * @param content The content of the post.
+   * @param parentId The ID of the parent post, if any.
+   * @param mediaId The ID of the media associated with the post, if any.
+   * @param postType The type of the post.
+   */
   public CreatePostRequest(String content, UUID parentId, UUID mediaId, PostType postType) {
     this.content = content;
     this.parentId = parentId;

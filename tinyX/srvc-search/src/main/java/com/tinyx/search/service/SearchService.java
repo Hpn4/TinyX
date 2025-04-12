@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 @ApplicationScoped
@@ -18,6 +19,8 @@ public class SearchService {
   @RestClient PostServiceClient postServiceClient;
 
   @Inject SearchRepository searchRepository;
+
+  @Inject Logger log;
 
   /**
    * Returns a list of PostContract from a list of UUID. Also handles errors in case of network

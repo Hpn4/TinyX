@@ -7,15 +7,17 @@ import com.tinyx.repository.PostRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.*;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class PostService {
   @Inject PostRepository postRepository;
   @Inject PostContractToPostEntityConverter postContractToPostEntityConverter;
 
+  @Inject Logger log;
+
   public void createPost(List<PostContract> posts) {
     List<PostEntity> postEntities = postContractToPostEntityConverter.converter(posts);
-
     postRepository.createPost(postEntities);
   }
 

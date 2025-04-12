@@ -2,6 +2,7 @@ package com.tinyx.user;
 
 import com.tinyx.redis.UserQuery;
 import com.tinyx.redis.UserRelationsQuery;
+import com.tinyx.user.converter.UserConverter;
 import com.tinyx.user.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

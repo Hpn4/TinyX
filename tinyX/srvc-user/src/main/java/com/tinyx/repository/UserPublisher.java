@@ -3,7 +3,7 @@ package com.tinyx.repository;
 import com.tinyx.redis.UserQuery;
 import com.tinyx.redis.stream.RedisChannel;
 import com.tinyx.redis.stream.RedisPublisherFactory;
-import com.tinyx.user.UserConverter;
+import com.tinyx.user.converter.UserConverter;
 import com.tinyx.user.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

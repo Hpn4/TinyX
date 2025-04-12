@@ -39,7 +39,7 @@ public class SearchRepository {
 
     try {
       final SearchResponse<SearchPostEntity> document =
-          esClient.search(s -> s.index(indexName).query(query), SearchPostEntity.class);
+          esClient.search(s -> s.index(indexName).query(query).size(10000), SearchPostEntity.class);
 
       return document.hits().hits().stream()
           .map(Hit::source)

@@ -29,10 +29,10 @@ public class RelationsRepository {
   public List<UUID> getLikers(final UUID postId, final UUID userId) {
     final String cipher =
         """
-        MATCH (viewer:User {id: "%s"}), (u:User)-[:LIKE]->(p:Post {id: "%s"})
-        WHERE NOT (viewer)-[:BLOCKED]->(u)
-        RETURN u.id as id
-        """
+                MATCH (viewer:User {id: "%s"}), (u:User)-[:LIKE]->(p:Post {id: "%s"})
+                WHERE NOT (viewer)-[:BLOCKED]->(u)
+                RETURN u.id as id
+                """
             .formatted(userId, postId);
 
     return getResultAsList(cipher);
@@ -49,15 +49,20 @@ public class RelationsRepository {
   public List<UUID> getLikedPosts(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:LIKE]->(p:Post)
-        WITH viewer, p, p.authorId AS authorId
-        WHERE NOT EXISTS {
-          MATCH (viewer)-[:BLOCKED]->(author:User)
-          WHERE author.id = authorId
-        }
-        RETURN p.id as id
-        """
+                MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:LIKE]->(p:Post)
+                WHERE NOT (viewer)-[:BLOCKED]->(:User {id: p.authorId})
+                RETURN p.id as id
+                """
             .formatted(userId, targetId);
+
+    /*
+
+                   WITH viewer, p, p.authorId AS authorId
+               WHERE NOT EXISTS {
+                 MATCH (viewer)-[:BLOCKED]->(author:User)
+                 WHERE author.id = authorId
+               }
+    */
 
     return getResultAsList(cipher);
   }
@@ -73,10 +78,10 @@ public class RelationsRepository {
   public List<UUID> getUserFollow(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:FOLLOW]->(v:User)
-        WHERE NOT (viewer)-[:BLOCKED]->(v)
-        RETURN v.id as id
-        """
+                MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:FOLLOW]->(v:User)
+                WHERE NOT (viewer)-[:BLOCKED]->(v)
+                RETURN v.id as id
+                """
             .formatted(userId, targetId);
 
     return getResultAsList(cipher);
@@ -93,9 +98,9 @@ public class RelationsRepository {
   public List<UUID> getFollowers(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (viewer:User {id: "%s"}), (u:User)-[:FOLLOW]->(v:User {id: "%s"})
-        WHERE NOT (viewer)-[:BLOCKED]->(u)
-        RETURN u.id as id"""
+                MATCH (viewer:User {id: "%s"}), (u:User)-[:FOLLOW]->(v:User {id: "%s"})
+                WHERE NOT (viewer)-[:BLOCKED]->(u)
+                RETURN u.id as id"""
             .formatted(userId, targetId);
 
     return getResultAsList(cipher);
@@ -112,9 +117,9 @@ public class RelationsRepository {
   public List<UUID> getBlockedUsers(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:BLOCK]->(v:User)
-        WHERE NOT (viewer)-[:BLOCKED]->(v)
-        RETURN v.id as id"""
+                MATCH (viewer:User {id: "%s"}), (u:User {id: "%s"})-[:BLOCK]->(v:User)
+                WHERE NOT (viewer)-[:BLOCKED]->(v)
+                RETURN v.id as id"""
             .formatted(userId, targetId);
 
     return getResultAsList(cipher);
@@ -131,9 +136,9 @@ public class RelationsRepository {
   public List<UUID> getTargetBlock(final UUID targetId, final UUID userId) {
     final String cipher =
         """
-        MATCH (viewer:User {id: "%s"}), (u:User)-[:BLOCK]->(v:User {id: "%s"})
-        WHERE NOT (viewer)-[:BLOCKED]->(u)
-        RETURN u.id as id"""
+                MATCH (viewer:User {id: "%s"}), (u:User)-[:BLOCK]->(v:User {id: "%s"})
+                WHERE NOT (viewer)-[:BLOCKED]->(u)
+                RETURN u.id as id"""
             .formatted(userId, targetId);
 
     return getResultAsList(cipher);

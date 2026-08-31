@@ -2,6 +2,8 @@
 
 TinyX is a proof-of-concept (POC) of a Twitter-like social network, developed in Java using the Quarkus framework.
 
+This repository was originally developed and hosted on EPITA's internal GitLab instance as a group project for school. It has then been migrated here to showcase the work. This is also why the repo still includes GitLab-specific files (`.gitlab-ci.yml`, wiki links, etc.) and why some documentation links point back to the original GitLab instance, which is private and only reachable by EPITA students. We were 12 on this project and i was the project leader. The team : Bastien Gaulier, Grégoire Suissa, Guillaume Hanry, Jinhyuk Hong, Kendrick Ory, Kylian Gilbert, Lucas Burgaud, Martin Levesque, Neil Sauvage, Paul Pazart, Pierre Braud and myself.
+
 # Architecture
 
 ```bash
@@ -51,7 +53,7 @@ mvn -pl srvc-search spotless:apply  # Fix a specific module
 
 You can try the project by either:
 - Running the services locally
-- Pulling prebuilt images from the [container registry](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/container_registry)
+- Pulling prebuilt images from the [container registry](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/container_registry) (hosted on the original school GitLab, only reachable with an EPITA account)
 
 The `docker` folder contains a `docker-compose.yml` file that launches all required databases.
 
@@ -59,6 +61,6 @@ The `docker` folder contains a `docker-compose.yml` file that launches all requi
 
 Each service is documented individually.
 
-A detailed explanation of the architecture, design choices, service roles, and CI/CD pipelines is available in the project wiki.
+A detailed explanation of the architecture, design choices, service roles, and CI/CD pipelines is available in the [project wiki](https://github.com/Hpn4/TinyX/wiki).
 
-Read the architecture documentation [here](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/-/wikis/Architecture).
+Read the architecture documentation [here](https://github.com/Hpn4/TinyX/wiki/Architecture).

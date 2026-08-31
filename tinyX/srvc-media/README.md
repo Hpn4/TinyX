@@ -36,7 +36,7 @@ MEDIA_BUCKET:Media
 MAX_MEDIA_SIZE:32M
 ```
 ## Database
-The database used to store these medias is mongodb, using the GridFS driver. For more information, check out the [repo-media](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/-/blob/main/tinyX/repo-media/README.md) page.  
+The database used to store these medias is MongoDB, using the GridFS driver. For more information, check out the [repo-media](../repo-media/README.md) page.  
 
 ## Structure
 ```bash

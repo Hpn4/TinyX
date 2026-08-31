@@ -11,7 +11,7 @@ You can interact with its REST API through the following Swagger interface:
 **Swagger UI:** http://localhost:8088/q/swagger-ui
 
 ## Redis Listener
-repo-media receive queries from Redis:
+repo-media receives queries from Redis:
 - Create & Delete posts
 
 ## Environment Variable

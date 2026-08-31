@@ -21,7 +21,7 @@ The events published include:
 - Block & Unblock
 
 ## Environment Variables
-**Quarkus Configuartion**
+**Quarkus Configuration**
 ```
 HTTP_PORT:8083
 ```

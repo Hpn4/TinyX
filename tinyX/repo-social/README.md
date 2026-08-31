@@ -8,7 +8,7 @@
 
 ## Redis Listener
 
-repo-social receive queries from Redis:
+repo-social receives queries from Redis:
 - Create & Delete Post
 - Create & Delete User
 - Follow & Unfollow
@@ -69,7 +69,7 @@ Unidirectional relation between a User and a Post, where an existing User liked 
 Unidirectional relation between two Users, where an existing User decided to follow another existing User.
 
 #### BLOCK (User->User)
-Unidirectional relation between txo Users, where an existing User decided to block another existing User.
+Unidirectional relation between two Users, where an existing User decided to block another existing User.
 When the relation is initialized, all existing FOLLOW and LIKE relations between the two Users and their Posts are deleted.
 If there is a BLOCK relation between two Users, no LIKE or FOLLOW relations can be created between those Users and their Posts.
 

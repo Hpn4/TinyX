@@ -1,6 +1,6 @@
 # Service: `srvc-search`
 ## Description
-The `repo-search` service can be used to search for created posts by using a text phrase and/or a list of hashtags.   
+The `srvc-search` service can be used to search for created posts by using a text phrase and/or a list of hashtags.   
 
 ## Exposure
 **This service is exposed externally.**  
@@ -23,7 +23,7 @@ quarkus.console.color=true
 quarkus.console.enabled=false
 ```
 
-**Redis and ElascticSearch configuration**
+**Redis and ElasticSearch configuration**
 ```
 ELASTIC_HOST:localhost
 ELASTIC_PORT:9200
@@ -40,10 +40,10 @@ REST_PORT:8085
 ```
 
 ## Database
-For more information, check out the [repo-search](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/-/blob/main/tinyX/repo-search/README.md) page.
+For more information, check out the [repo-search](../repo-search/README.md) page.
 
 
-## Struture
+## Structure
 ```bash
 srvc-search/
 ├── src/

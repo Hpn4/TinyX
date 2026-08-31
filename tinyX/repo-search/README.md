@@ -3,11 +3,11 @@
 ## Description
 `repo-search` is used to add and delete the content of the created posts with the list of hashtags present in them. This is done so that they can be searched and found later with the srvc-search service.
 
-## Exposition
+## Exposure
 **This service is not exposed externally.**   
 
 ## Redis Listener
-repo-search receive queries from Redis:
+repo-search receives queries from Redis:
 - Create and delete posts
 
 ## Environment Variables

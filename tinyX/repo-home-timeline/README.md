@@ -1,6 +1,6 @@
 # Service `repo-home-timeline`
 ## Description
-This service is used to add, delete and modify user timelines of users followed by querying users that are stocked in a MongoDB database.
+This service is used to add, delete and modify user timelines of users followed by querying users that are stored in a MongoDB database.
 
 ## Exposure
 **This service is exposed externally.**  
@@ -47,7 +47,7 @@ CLAIM_INTERVAL:5s
 ```
 
 ## Database
-This service references the User collection present in Mongodb. For more information, check out the [srvc-user](https://gitlab.cri.epita.fr/ing/majeures/tc/info/student/2026/2025-epitweet-tinyx-14/-/blob/main/tinyX/srvc-user/README.md) page.  
+This service references the User collection present in MongoDB. For more information, check out the [srvc-user](../srvc-user/README.md) page.  
 For each user of the database, there is a list of all the id of the users followed by this user. This list is modified depending on if the user has followed a new user or unfollowed another one.
 
 ## Structure
